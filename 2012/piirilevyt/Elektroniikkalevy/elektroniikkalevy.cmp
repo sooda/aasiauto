@@ -1,0 +1,311 @@
+Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 15.10.2012 17:55:38
+
+BeginCmp
+TimeStamp = /507BE245;
+Reference = 5V_extra1;
+ValeurCmp = CONN_1;
+IdModule  = 1pin_small;
+EndCmp
+
+BeginCmp
+TimeStamp = /5075D485;
+Reference = battery_connector1;
+ValeurCmp = CONN_2;
+IdModule  = PIN_ARRAY_2X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /507BDD60;
+Reference = brake_ad1;
+ValeurCmp = CONN_3;
+IdModule  = PIN_ARRAY_3X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /50714207;
+Reference = brake_controller1;
+ValeurCmp = ARDUINO_MEGA_SHIELD;
+IdModule  = ARDUINO_MEGA_SHIELD;
+EndCmp
+
+BeginCmp
+TimeStamp = /50716AFB;
+Reference = brake_extrabutton1;
+ValeurCmp = SW_PUSH;
+IdModule  = SW_PUSH_SMALL;
+EndCmp
+
+BeginCmp
+TimeStamp = /507C236E;
+Reference = brake_extra_digi1;
+ValeurCmp = CONN_3;
+IdModule  = PIN_ARRAY_3X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /50714485;
+Reference = brake_reset1;
+ValeurCmp = SW_PUSH;
+IdModule  = SW_PUSH_SMALL;
+EndCmp
+
+BeginCmp
+TimeStamp = /507BDDB1;
+Reference = brake_spi1;
+ValeurCmp = CONN_4;
+IdModule  = PIN_ARRAY_2X2;
+EndCmp
+
+BeginCmp
+TimeStamp = /507168DE;
+Reference = brake_uart2;
+ValeurCmp = CONN_3;
+IdModule  = PIN_ARRAY_3X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /50745ED0;
+Reference = etuliitin1;
+ValeurCmp = CONN_16;
+IdModule  = pin_array_8x2;
+EndCmp
+
+BeginCmp
+TimeStamp = /50716978;
+Reference = i2c_liitin1;
+ValeurCmp = CONN_6;
+IdModule  = pin_array_3x2;
+EndCmp
+
+BeginCmp
+TimeStamp = /5071632D;
+Reference = keltainen_ledi1;
+ValeurCmp = LED;
+IdModule  = LED-5MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /5071638C;
+Reference = keltainen_ledi2;
+ValeurCmp = LED;
+IdModule  = LED-5MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /507BE0A3;
+Reference = main_ad1;
+ValeurCmp = CONN_3;
+IdModule  = PIN_ARRAY_3X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /50713592;
+Reference = main_controller1;
+ValeurCmp = ARDUINO_MEGA_SHIELD;
+IdModule  = ARDUINO_MEGA_SHIELD;
+EndCmp
+
+BeginCmp
+TimeStamp = /5071604A;
+Reference = main_extrabutton1;
+ValeurCmp = SW_PUSH;
+IdModule  = SW_PUSH_SMALL;
+EndCmp
+
+BeginCmp
+TimeStamp = /507C2350;
+Reference = main_extra_digi1;
+ValeurCmp = CONN_3;
+IdModule  = PIN_ARRAY_3X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /50714415;
+Reference = main_reset1;
+ValeurCmp = SW_PUSH;
+IdModule  = SW_PUSH_SMALL;
+EndCmp
+
+BeginCmp
+TimeStamp = /507BDC08;
+Reference = main_spi1;
+ValeurCmp = CONN_4;
+IdModule  = PIN_ARRAY_2X2;
+EndCmp
+
+BeginCmp
+TimeStamp = /507159B9;
+Reference = main_uart2;
+ValeurCmp = CONN_3;
+IdModule  = PIN_ARRAY_3X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /5071841F;
+Reference = P1;
+ValeurCmp = CONN_1;
+IdModule  = 1pin;
+EndCmp
+
+BeginCmp
+TimeStamp = /50718423;
+Reference = P2;
+ValeurCmp = CONN_1;
+IdModule  = 1pin;
+EndCmp
+
+BeginCmp
+TimeStamp = /50718425;
+Reference = P3;
+ValeurCmp = CONN_1;
+IdModule  = 1pin;
+EndCmp
+
+BeginCmp
+TimeStamp = /50718427;
+Reference = P4;
+ValeurCmp = CONN_1;
+IdModule  = 1pin;
+EndCmp
+
+BeginCmp
+TimeStamp = /50716331;
+Reference = punainen_ledi1;
+ValeurCmp = LED;
+IdModule  = LED-5MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /50716395;
+Reference = punainen_ledi2;
+ValeurCmp = LED;
+IdModule  = LED-5MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /507164B5;
+Reference = R_keltainen1;
+ValeurCmp = 300;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /50716513;
+Reference = R_keltainen2;
+ValeurCmp = 300;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /507164D5;
+Reference = R_punainen1;
+ValeurCmp = 145;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /50716501;
+Reference = R_punainen2;
+ValeurCmp = 145;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /50715F8D;
+Reference = R_sininen1;
+ValeurCmp = 90;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /50716AB4;
+Reference = R_sininen2;
+ValeurCmp = 90;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /507162B5;
+Reference = R_vihrea1;
+ValeurCmp = 90;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /507164A2;
+Reference = R_vihrea2;
+ValeurCmp = 90;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /50715F6E;
+Reference = sininen_ledi1;
+ValeurCmp = LED;
+IdModule  = LED-5MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /50716AB5;
+Reference = sininen_ledi2;
+ValeurCmp = LED;
+IdModule  = LED-5MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /50715C67;
+Reference = SP1;
+ValeurCmp = SPEAKER;
+IdModule  = buzzer;
+EndCmp
+
+BeginCmp
+TimeStamp = /50745F1B;
+Reference = takaliitin1;
+ValeurCmp = CONN_16;
+IdModule  = pin_array_8x2;
+EndCmp
+
+BeginCmp
+TimeStamp = /50715B5E;
+Reference = takamoottorit1;
+ValeurCmp = CONN_2;
+IdModule  = PIN_ARRAY_2X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /50713FCC;
+Reference = teensy1;
+ValeurCmp = TEENSY++2.0;
+IdModule  = teensy++2.0;
+EndCmp
+
+BeginCmp
+TimeStamp = /5071622A;
+Reference = vihrea_ledi1;
+ValeurCmp = LED;
+IdModule  = LED-5MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /5071637E;
+Reference = vihrea_ledi2;
+ValeurCmp = LED;
+IdModule  = LED-5MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /50714662;
+Reference = virranjakoliitin1;
+ValeurCmp = CONN_6;
+IdModule  = pin_array_3x2;
+EndCmp
+
+BeginCmp
+TimeStamp = /507145B9;
+Reference = xbee1;
+ValeurCmp = CONN_6;
+IdModule  = pin_array_3x2;
+EndCmp
+
+EndListe

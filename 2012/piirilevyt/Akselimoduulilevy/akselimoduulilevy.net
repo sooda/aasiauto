@@ -1,0 +1,130 @@
+# EESchema Netlist Version 1.1 created  15.10.2012 18:30:30
+(
+ ( /50701CFD bornier2 akkuliitin1 CONN_2
+  ( 1 +8V )
+  ( 2 GND )
+ )
+ ( /50701C23 PIN_ARRAY_3X1 clutch_servo1 CONN_3
+  ( 1 GND )
+  ( 2 N-000012 )
+  ( 3 N-000013 )
+ )
+ ( /507C2BC6 pin_array_8x2 elektroniikkaliitin1 CONN_16
+  ( 1 N-000009 )
+  ( 2 N-000016 )
+  ( 3 N-000023 )
+  ( 4 N-000024 )
+  ( 5 N-000020 )
+  ( 6 N-000030 )
+  ( 7 N-000025 )
+  ( 8 N-000026 )
+  ( 9 N-000018 )
+  ( 10 N-000013 )
+  ( 11 ? )
+  ( 12 N-000021 )
+  ( 13 ? )
+  ( 14 +5V )
+  ( 15 ? )
+  ( 16 ? )
+ )
+ ( /50702356 PIN_ARRAY_2X1 led1 CONN_2
+  ( 1 N-000009 )
+  ( 2 N-000010 )
+ )
+ ( /50702542 PIN_ARRAY_2X1 led2 CONN_2
+  ( 1 N-000023 )
+  ( 2 N-000006 )
+ )
+ ( /50701BD2 PIN_ARRAY_3X1 left_brake_servo1 CONN_3
+  ( 1 GND )
+  ( 2 N-000015 )
+  ( 3 N-000016 )
+ )
+ ( /50701D46 PIN_ARRAY_5x1 left_encoder1 CONN_5
+  ( 1 N-000025 )
+  ( 2 +5V )
+  ( 3 N-000020 )
+  ( 4 ? )
+  ( 5 GND )
+ )
+ ( /5070288A 1pin P1 CONN_1
+  ( 1 ? )
+ )
+ ( /5070288F 1pin P4 CONN_1
+  ( 1 ? )
+ )
+ ( /50702890 1pin P5 CONN_1
+  ( 1 ? )
+ )
+ ( /50702892 1pin P6 CONN_1
+  ( 1 ? )
+ )
+ ( /50701D6E PIN_ARRAY_3X1 potentiometer1 CONN_3
+  ( 1 +5V )
+  ( 2 N-000018 )
+  ( 3 GND )
+ )
+ ( /507027DF SM0805 R1 R
+  ( 1 N-000010 )
+  ( 2 GND )
+ )
+ ( /507027E7 SM0805 R2 R
+  ( 1 N-000006 )
+  ( 2 GND )
+ )
+ ( /50701C0C PIN_ARRAY_3X1 right_brake_servo1 CONN_3
+  ( 1 GND )
+  ( 2 N-000017 )
+  ( 3 N-000024 )
+ )
+ ( /50701D4A PIN_ARRAY_5x1 right_encoder1 CONN_5
+  ( 1 N-000026 )
+  ( 2 +5V )
+  ( 3 N-000030 )
+  ( 4 ? )
+  ( 5 GND )
+ )
+ ( /50701C1E PIN_ARRAY_3X1 steering_servo1 CONN_3
+  ( 1 GND )
+  ( 2 N-000014 )
+  ( 3 N-000021 )
+ )
+ ( /50702123 LM78XXV U1 7805
+  ( GND GND )
+  ( VI +8V )
+  ( VO N-000015 )
+ )
+ ( /507020C1 LM78XXV U2 7805
+  ( GND GND )
+  ( VI +8V )
+  ( VO N-000017 )
+ )
+ ( /5070212A LM78XXV U3 7805
+  ( GND GND )
+  ( VI +8V )
+  ( VO N-000014 )
+ )
+ ( /5070213F LM78XXV U4 7805
+  ( GND GND )
+  ( VI +8V )
+  ( VO N-000012 )
+ )
+)
+*
+{ Allowed footprints by component:
+$component R1
+ R?
+ SM0603
+ SM0805
+ R?-*
+ SM1206
+$endlist
+$component R2
+ R?
+ SM0603
+ SM0805
+ R?-*
+ SM1206
+$endlist
+$endfootprintlist
+}

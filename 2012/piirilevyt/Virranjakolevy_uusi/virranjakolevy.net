@@ -1,0 +1,162 @@
+# EESchema Netlist Version 1.1 created  5.11.2012 14:28:15
+(
+ ( /507C0960 $noname  ele_supply1 CONN_2 {Lib=CONN_2}
+  (    1 N-000015 )
+  (    2 GND )
+ )
+ ( /50703330 $noname  motor_driver2 CONN_3 {Lib=CONN_3}
+  (    1 GND )
+  (    2 +5V )
+  (    3 N-000010 )
+ )
+ ( /507032FB $noname  motor_driver1 CONN_3 {Lib=CONN_3}
+  (    1 GND )
+  (    2 +5V )
+  (    3 N-000008 )
+ )
+ ( /5070322F $noname  data_conn1 CONN_6 {Lib=CONN_6}
+  (    1 N-000009 )
+  (    2 N-000014 )
+  (    3 N-000008 )
+  (    4 N-000010 )
+  (    5 ? )
+  (    6 +5V )
+ )
+ ( /507003F1 $noname  P4 CONN_1 {Lib=CONN_1}
+  (    1 ? )
+ )
+ ( /507003EF $noname  P3 CONN_1 {Lib=CONN_1}
+  (    1 ? )
+ )
+ ( /507003EE $noname  P2 CONN_1 {Lib=CONN_1}
+  (    1 ? )
+ )
+ ( /507003E5 $noname  P1 CONN_1 {Lib=CONN_1}
+  (    1 ? )
+ )
+ ( /506F1286 $noname  rearservofuse1 FUSE {Lib=FUSE}
+  (    1 +8V )
+  (    2 N-000012 )
+ )
+ ( /506F1283 $noname  frontservofuse1 FUSE {Lib=FUSE}
+  (    1 +8V )
+  (    2 N-000013 )
+ )
+ ( /506F127C $noname  elefuse1 FUSE {Lib=FUSE}
+  (    1 +12V )
+  (    2 N-000015 )
+ )
+ ( /506F0369 $noname  R_motor2 22k {Lib=R}
+  (    1 N-000014 )
+  (    2 GND )
+ )
+ ( /506F0366 $noname  R_motor1 15k {Lib=R}
+  (    1 +8V )
+  (    2 N-000014 )
+ )
+ ( /506F034B $noname  R_ele2 20k {Lib=R}
+  (    1 N-000009 )
+  (    2 GND )
+ )
+ ( /506F0344 $noname  R_ele1 30k {Lib=R}
+  (    1 +12V )
+  (    2 N-000009 )
+ )
+ ( /506EFF93 $noname  rear_servos1 CONN_2 {Lib=CONN_2}
+  (    1 N-000012 )
+  (    2 GND )
+ )
+ ( /506EFF90 $noname  front_servos1 CONN_2 {Lib=CONN_2}
+  (    1 N-000013 )
+  (    2 GND )
+ )
+ ( /506EFF8B $noname  motor_battery1 CONN_2 {Lib=CONN_2}
+  (    1 +8V )
+  (    2 GND )
+ )
+ ( /506EFF0F $noname  controller_battery1 CONN_2 {Lib=CONN_2}
+  (    1 +12V )
+  (    2 GND )
+ )
+)
+*
+{ Allowed footprints by component:
+$component R_motor2
+ R?
+ SM0603
+ SM0805
+ R?-*
+ SM1206
+$endlist
+$component R_motor1
+ R?
+ SM0603
+ SM0805
+ R?-*
+ SM1206
+$endlist
+$component R_ele2
+ R?
+ SM0603
+ SM0805
+ R?-*
+ SM1206
+$endlist
+$component R_ele1
+ R?
+ SM0603
+ SM0805
+ R?-*
+ SM1206
+$endlist
+$endfootprintlist
+}
+{ Pin List by Nets
+Net 5 "GND" "GND"
+ controller_battery1 2
+ rear_servos1 2
+ front_servos1 2
+ motor_battery1 2
+ R_motor2 2
+ R_ele2 2
+ motor_driver2 1
+ motor_driver1 1
+ ele_supply1 2
+Net 6 "+8V" "+8V"
+ frontservofuse1 1
+ rearservofuse1 1
+ R_motor1 1
+ motor_battery1 1
+Net 7 "+5V" "+5V"
+ motor_driver2 2
+ motor_driver1 2
+ data_conn1 6
+Net 8 "" ""
+ motor_driver1 3
+ data_conn1 3
+Net 9 "" ""
+ data_conn1 1
+ R_ele2 1
+ R_ele1 2
+Net 10 "" ""
+ data_conn1 4
+ motor_driver2 3
+Net 12 "" ""
+ rearservofuse1 2
+ rear_servos1 1
+Net 13 "" ""
+ frontservofuse1 2
+ front_servos1 1
+Net 14 "" ""
+ R_motor2 1
+ R_motor1 2
+ data_conn1 2
+Net 15 "" ""
+ elefuse1 2
+ ele_supply1 1
+Net 16 "+12V" "+12V"
+ R_ele1 1
+ elefuse1 1
+ controller_battery1 1
+}
+#End

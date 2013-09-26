@@ -1,0 +1,285 @@
+EESchema Schematic File Version 2  date 15.10.2012 20:08:49
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:special
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:I2C-levy-cache
+EELAYER 25  0
+EELAYER END
+$Descr A4 11700 8267
+encoding utf-8
+Sheet 1 1
+Title ""
+Date "15 oct 2012"
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Wire Wire Line
+	8000 1950 8000 2200
+Wire Wire Line
+	7500 1900 7500 2100
+Connection ~ 4700 3500
+Wire Wire Line
+	4700 3050 4700 3500
+Wire Wire Line
+	4700 2550 4700 2250
+Wire Wire Line
+	4700 2250 4200 2250
+Wire Wire Line
+	4200 2250 4200 2550
+Wire Wire Line
+	7250 5000 7250 5350
+Connection ~ 5100 3500
+Wire Wire Line
+	2600 3500 6750 3500
+Wire Wire Line
+	6750 3500 6750 5350
+Wire Wire Line
+	5200 5350 5200 3400
+Wire Wire Line
+	4800 5050 4800 5350
+Wire Wire Line
+	4600 4950 4600 5350
+Wire Wire Line
+	2600 3800 3000 3800
+Wire Wire Line
+	2600 3700 2850 3700
+Wire Wire Line
+	2600 3900 2850 3900
+Wire Wire Line
+	2850 3900 2850 4150
+Wire Wire Line
+	4700 5350 4700 5100
+Wire Wire Line
+	4700 5100 4600 5100
+Connection ~ 4600 5100
+Wire Wire Line
+	5100 3500 5100 5350
+Wire Wire Line
+	6650 5350 6650 3400
+Wire Wire Line
+	6650 3400 2600 3400
+Connection ~ 5200 3400
+Wire Wire Line
+	7350 5100 7350 5350
+Wire Wire Line
+	7150 5350 7150 5200
+Wire Wire Line
+	7150 5200 7250 5200
+Connection ~ 7250 5200
+Wire Wire Line
+	4200 3050 4200 3400
+Connection ~ 4200 3400
+Wire Wire Line
+	4400 2000 4400 2250
+Connection ~ 4400 2250
+Wire Wire Line
+	7750 1900 7750 2100
+$Comp
+L PWR_FLAG #FLG01
+U 1 1 507C42E3
+P 7500 2100
+F 0 "#FLG01" H 7500 2195 30  0001 C CNN
+F 1 "PWR_FLAG" H 7500 2280 30  0000 C CNN
+	1    7500 2100
+	-1   0    0    1   
+$EndComp
+$Comp
+L PWR_FLAG #FLG02
+U 1 1 507C42DF
+P 7750 2100
+F 0 "#FLG02" H 7750 2195 30  0001 C CNN
+F 1 "PWR_FLAG" H 7750 2280 30  0000 C CNN
+	1    7750 2100
+	-1   0    0    1   
+$EndComp
+$Comp
+L PWR_FLAG #FLG03
+U 1 1 507C42CF
+P 8000 1950
+F 0 "#FLG03" H 8000 2045 30  0001 C CNN
+F 1 "PWR_FLAG" H 8000 2130 30  0000 C CNN
+	1    8000 1950
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR04
+U 1 1 507C42CA
+P 8000 2200
+F 0 "#PWR04" H 8000 2200 30  0001 C CNN
+F 1 "GND" H 8000 2130 30  0001 C CNN
+	1    8000 2200
+	1    0    0    -1  
+$EndComp
+$Comp
+L +5V #PWR05
+U 1 1 507C42C7
+P 7500 1900
+F 0 "#PWR05" H 7500 1990 20  0001 C CNN
+F 1 "+5V" H 7500 1990 30  0000 C CNN
+	1    7500 1900
+	1    0    0    -1  
+$EndComp
+$Comp
+L +3,3V #PWR06
+U 1 1 507C42C2
+P 7750 1900
+F 0 "#PWR06" H 7750 1860 30  0001 C CNN
+F 1 "+3,3V" H 7750 2010 30  0000 C CNN
+	1    7750 1900
+	1    0    0    -1  
+$EndComp
+$Comp
+L +3,3V #PWR07
+U 1 1 507C4250
+P 4400 2000
+F 0 "#PWR07" H 4400 1960 30  0001 C CNN
+F 1 "+3,3V" H 4400 2110 30  0000 C CNN
+	1    4400 2000
+	1    0    0    -1  
+$EndComp
+$Comp
+L R sda_pullup1
+U 1 1 507C4238
+P 4700 2800
+F 0 "sda_pullup1" V 4780 2800 50  0000 C CNN
+F 1 "1k8" V 4700 2800 50  0000 C CNN
+	1    4700 2800
+	1    0    0    -1  
+$EndComp
+$Comp
+L R scl_puullup1
+U 1 1 507C4235
+P 4200 2800
+F 0 "scl_puullup1" V 4280 2800 50  0000 C CNN
+F 1 "1k8" V 4200 2800 50  0000 C CNN
+	1    4200 2800
+	1    0    0    -1  
+$EndComp
+NoConn ~ 7050 5350
+NoConn ~ 6950 5350
+NoConn ~ 6850 5350
+$Comp
+L +3,3V #PWR08
+U 1 1 507C3F5F
+P 7250 5000
+F 0 "#PWR08" H 7250 4960 30  0001 C CNN
+F 1 "+3,3V" H 7250 5110 30  0000 C CNN
+	1    7250 5000
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR09
+U 1 1 507C3F5C
+P 7350 5100
+F 0 "#PWR09" H 7350 5100 30  0001 C CNN
+F 1 "GND" H 7350 5030 30  0001 C CNN
+	1    7350 5100
+	-1   0    0    1   
+$EndComp
+NoConn ~ 5000 5350
+NoConn ~ 4900 5350
+$Comp
+L +3,3V #PWR010
+U 1 1 507C3CD0
+P 4600 4950
+F 0 "#PWR010" H 4600 4910 30  0001 C CNN
+F 1 "+3,3V" H 4600 5060 30  0000 C CNN
+	1    4600 4950
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR011
+U 1 1 507C3CC5
+P 4800 5050
+F 0 "#PWR011" H 4800 5050 30  0001 C CNN
+F 1 "GND" H 4800 4980 30  0001 C CNN
+	1    4800 5050
+	-1   0    0    1   
+$EndComp
+$Comp
+L CONN_7 gyroliitin1
+U 1 1 507C3BCC
+P 4900 5700
+F 0 "gyroliitin1" V 4870 5700 60  0000 C CNN
+F 1 "CONN_7" V 4970 5700 60  0000 C CNN
+	1    4900 5700
+	0    -1   1    0   
+$EndComp
+$Comp
+L CONN_8 kiihtyvyysliitin1
+U 1 1 507C3BB2
+P 7000 5700
+F 0 "kiihtyvyysliitin1" V 6950 5700 60  0000 C CNN
+F 1 "CONN_8" V 7050 5700 60  0000 C CNN
+	1    7000 5700
+	0    -1   1    0   
+$EndComp
+NoConn ~ 2600 3600
+$Comp
+L +5V #PWR012
+U 1 1 507C3B58
+P 3000 3800
+F 0 "#PWR012" H 3000 3890 20  0001 C CNN
+F 1 "+5V" H 3000 3890 30  0000 C CNN
+	1    3000 3800
+	0    1    1    0   
+$EndComp
+$Comp
+L +3,3V #PWR013
+U 1 1 507C3B4F
+P 2850 3700
+F 0 "#PWR013" H 2850 3660 30  0001 C CNN
+F 1 "+3,3V" H 2850 3810 30  0000 C CNN
+	1    2850 3700
+	0    1    1    0   
+$EndComp
+$Comp
+L GND #PWR014
+U 1 1 507C3B46
+P 2850 4150
+F 0 "#PWR014" H 2850 4150 30  0001 C CNN
+F 1 "GND" H 2850 4080 30  0001 C CNN
+	1    2850 4150
+	1    0    0    -1  
+$EndComp
+$Comp
+L CONN_6 i2c_liitin1
+U 1 1 507C3AA3
+P 2250 3650
+F 0 "i2c_liitin1" V 2200 3650 60  0000 C CNN
+F 1 "CONN_6" V 2300 3650 60  0000 C CNN
+	1    2250 3650
+	-1   0    0    -1  
+$EndComp
+$EndSCHEMATC

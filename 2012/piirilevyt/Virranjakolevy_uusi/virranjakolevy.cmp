@@ -1,0 +1,136 @@
+Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 15.10.2012 18:44:02
+
+BeginCmp
+TimeStamp = /506EFF0F;
+Reference = controller_battery1;
+ValeurCmp = CONN_2;
+IdModule  = bornier2;
+EndCmp
+
+BeginCmp
+TimeStamp = /5070322F;
+Reference = data_conn1;
+ValeurCmp = CONN_6;
+IdModule  = pin_array_3x2;
+EndCmp
+
+BeginCmp
+TimeStamp = /506F127C;
+Reference = elefuse1;
+ValeurCmp = FUSE;
+IdModule  = fuseholder;
+EndCmp
+
+BeginCmp
+TimeStamp = /507C0960;
+Reference = ele_supply1;
+ValeurCmp = CONN_2;
+IdModule  = PIN_ARRAY_2X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /506F1283;
+Reference = frontservofuse1;
+ValeurCmp = FUSE;
+IdModule  = fuseholder;
+EndCmp
+
+BeginCmp
+TimeStamp = /506EFF90;
+Reference = front_servos1;
+ValeurCmp = CONN_2;
+IdModule  = bornier2;
+EndCmp
+
+BeginCmp
+TimeStamp = /506EFF8B;
+Reference = motor_battery1;
+ValeurCmp = CONN_2;
+IdModule  = bornier2;
+EndCmp
+
+BeginCmp
+TimeStamp = /507032FB;
+Reference = motor_driver1;
+ValeurCmp = CONN_3;
+IdModule  = PIN_ARRAY_3X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /50703330;
+Reference = motor_driver2;
+ValeurCmp = CONN_3;
+IdModule  = PIN_ARRAY_3X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /507003E5;
+Reference = P1;
+ValeurCmp = CONN_1;
+IdModule  = 1pin;
+EndCmp
+
+BeginCmp
+TimeStamp = /507003EE;
+Reference = P2;
+ValeurCmp = CONN_1;
+IdModule  = 1pin;
+EndCmp
+
+BeginCmp
+TimeStamp = /507003EF;
+Reference = P3;
+ValeurCmp = CONN_1;
+IdModule  = 1pin;
+EndCmp
+
+BeginCmp
+TimeStamp = /507003F1;
+Reference = P4;
+ValeurCmp = CONN_1;
+IdModule  = 1pin;
+EndCmp
+
+BeginCmp
+TimeStamp = /506F1286;
+Reference = rearservofuse1;
+ValeurCmp = FUSE;
+IdModule  = fuseholder;
+EndCmp
+
+BeginCmp
+TimeStamp = /506EFF93;
+Reference = rear_servos1;
+ValeurCmp = CONN_2;
+IdModule  = bornier2;
+EndCmp
+
+BeginCmp
+TimeStamp = /506F0344;
+Reference = R_ele1;
+ValeurCmp = 33k;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /506F034B;
+Reference = R_ele2;
+ValeurCmp = 27k;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /506F0366;
+Reference = R_motor1;
+ValeurCmp = 13k;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /506F0369;
+Reference = R_motor2;
+ValeurCmp = 27k;
+IdModule  = SM0805;
+EndCmp
+
+EndListe
