@@ -267,10 +267,12 @@ Auton varsinainen kehitys eli ohjelmistopuolen jatkokehitys alkaa hyvissä ajoin
 
 Listan neljäs vaihe on Matlab-käyttöliittymän kehitys, ja samalla kommunikaatioväylien uudelleenmäärittely ja tarkka dokumentointi. Käyttöliittymään lisätään myös kaikki loput auton parametrit ja niiden tallennus, sekä automaattiajo ennaltamääriteltyjen reittipisteiden kautta. Neljäs vaihe voidaan suorittaa muiden vaiheiden kanssa samanaikaisesti, koska siihen liittyvät tehtävät eivät riipu muista vaiheista.
 
-Taulukossa \ref{fig:osaalueet} on eritelty projektin osa-alueet tarkemmin ja arvioitu jokaiselle osa-alueelle summittainen työmäärä. Työmäärää on vaikea arvioida ennalta, ja se tullee vielä venymään ja elämään projektin kuluessa; aika-arviot ovat suhteellisia ja todennäköisesti kaikki tulevat tutustumaan toistensa osa-alueisiin hieman, mikä kasvattaa omalta osaltaan työmääriä. Muun muassa tarvittavat palaverit mekaniikasta vastaavien kanssa ovat ennustamattomia.
+Taulukossa \ref{tab:osaalueet} on eritelty projektin osa-alueet tarkemmin ja arvioitu jokaiselle osa-alueelle summittainen työmäärä. Työmäärää on vaikea arvioida ennalta, ja se tullee vielä venymään ja elämään projektin kuluessa; aika-arviot ovat suhteellisia ja todennäköisesti kaikki tulevat tutustumaan toistensa osa-alueisiin hieman, mikä kasvattaa omalta osaltaan työmääriä. Muun muassa tarvittavat palaverit mekaniikasta vastaavien kanssa ovat ennustamattomia.
 
 
-\begin{figure}
+\begin{table}
+	\caption{Projektin osa-alueet, niiden vastuuhenkilöt, riippuvuudet ja arvioidut työmäärät.}
+	\label{tab:osaalueet}
 	\begin{tabular}{l l l l l}
 		No. & Tehtävä & Vastuu & Riippuu teht. & Työmäärä (h) \\
 		\hline
@@ -299,9 +301,7 @@ Taulukossa \ref{fig:osaalueet} on eritelty projektin osa-alueet tarkemmin ja arv
 		23 & Kauko-ohjauksen lopputestaus & Konsta, Toni & 12 & 5 \\
 		24 & Käyttöliittymän lopputestaus & Toni & 19 & 5 \\
 	\end{tabular}
-	\label{fig:osaalueet}
-	\caption{Projektin osa-alueet, niiden vastuuhenkilöt, riippuvuudet ja arvioidut työmäärät.}
-\end{figure}
+\end{table}
 
 \subsection{Ajankäyttöarvio ja aikataulutus}
 \label{sec:ajankaytto}
@@ -312,9 +312,11 @@ Työn jakaminen pyritään tasapainottamaan siten, että kaikilla on jatkuvasti 
 
 Osa-alueiden työmääräarvioista voidaan laskea jokaiselle oma kurssin työmäärä. Osa-alueissa ei ole otettu huomioon luentoihin, esityksiin ja dokumentointiin kuluvaa aikaa.
 
-Taulukossa \ref{fig:aikataulu} on esitettynä tehtävien suunniteltu aikataulutus. Perustoiminnallisuudet pyritään saamaan toimivaksi aikaisessa vaiheessa; lopuksi keskitytään varsinaiseen ajodatan analysointiin ja säätöön, mikä tarvitsee toimivan ja luotettavan pohjakoodin. Taulukko ei ole lopullinen, vaan kuvaa karkeasti, milloin eri ominaisuuksien tärkeimmät toiminnallisuudet pitäisi olla valmiina. Jatkokehitys tullee venymään myöhemmäksikin, jos myöhemmät osa-alueet tarvitsevat lisäominaisuuksia aiemmista.
+Taulukossa \ref{tab:aikataulu} on esitettynä tehtävien suunniteltu aikataulutus. Perustoiminnallisuudet pyritään saamaan toimivaksi aikaisessa vaiheessa; lopuksi keskitytään varsinaiseen ajodatan analysointiin ja säätöön, mikä tarvitsee toimivan ja luotettavan pohjakoodin. Taulukko ei ole lopullinen, vaan kuvaa karkeasti, milloin eri ominaisuuksien tärkeimmät toiminnallisuudet pitäisi olla valmiina. Jatkokehitys tullee venymään myöhemmäksikin, jos myöhemmät osa-alueet tarvitsevat lisäominaisuuksia aiemmista.
 
-\begin{figure}[H]
+\begin{table}[H]
+	\caption{Projektin osa-alueiden aikataulusuunnitelma viikoittain.}
+	\label{tab:aikataulu}
 	\begin{tabular}{l|l|l|l|l|l|l|l|l|l|l|l|}
 		Tehtävä & \multicolumn{10}{l}{Viikko} \\
 		& 38 & 39 & 40 & 41 & 42 & 43 & 44 & 45 & 46 & 47 & 48 \\
@@ -380,9 +382,7 @@ Taulukossa \ref{fig:aikataulu} on esitettynä tehtävien suunniteltu aikataulutu
 		\hline
 		& 38 & 39 & 40 & 41 & 42 & 43 & 44 & 45 & 46 & 47 & 48
 	\end{tabular}
-	\label{fig:aikataulu}
-	\caption{Projektin osa-alueiden aikataulusuunnitelma viikoittain.}
-\end{figure}
+\end{table}
 
 \section{Riskienhallinta}
 
