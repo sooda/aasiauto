@@ -267,37 +267,37 @@ Auton varsinainen kehitys eli ohjelmistopuolen jatkokehitys alkaa hyvissä ajoin
 
 Listan neljäs vaihe on Matlab-käyttöliittymän kehitys, ja samalla kommunikaatioväylien uudelleenmäärittely ja tarkka dokumentointi. Käyttöliittymään lisätään myös kaikki loput auton parametrit ja niiden tallennus, sekä automaattiajo ennaltamääriteltyjen reittipisteiden kautta. Neljäs vaihe voidaan suorittaa muiden vaiheiden kanssa samanaikaisesti, koska siihen liittyvät tehtävät eivät riipu muista vaiheista.
 
-Taulukossa \ref{fig:osaalueet} on eritelty projektin osa-alueet tarkemmin ja arvioitu jokaiselle osa-alueelle summittainen työmäärä.
+Taulukossa \ref{fig:osaalueet} on eritelty projektin osa-alueet tarkemmin ja arvioitu jokaiselle osa-alueelle summittainen työmäärä. Työmäärää on vaikea arvioida ennalta, ja se tullee vielä venymään ja elämään projektin kuluessa; aika-arviot ovat suhteellisia ja todennäköisesti kaikki tulevat tutustumaan toistensa osa-alueisiin hieman, mikä kasvattaa omalta osaltaan työmääriä. Muun muassa tarvittavat palaverit mekaniikasta vastaavien kanssa ovat ennustamattomia.
 
 
 \begin{figure}
 	\begin{tabular}{l l l l l}
 		No. & Tehtävä & Vastuu & Riippuu teht. & Työmäärä (h) \\
 		\hline
-		1 & Jarruservojen tilaus ja vaihto & Konsta, Lasse & 4 \\
-		2 & Etäisyysantureiden tilaus ja asentaminen & Konsta, Lasse & 5\\
-		3 & Koodeihin tutustuminen & Kaikki & 5\\
-		4 & Dokumentteihin tutustuminen & Kaikki & 3\\
-		5 & Autoon tutustuminen & Kaikki & 3\\
-		6 & ABS-algoritmi & Lasse & 10\\
-		7 & ESP-algoritmi & Lasse & 10 \\
-		8 & Ajotietokoneen skeduleri ja kehyskoodi & Konsta & 12 \\
-		9 & Kommunikaatiokoodin tulkinta & Toni, Konsta & 2 \\
+		1 & Jarruservojen tilaus ja vaihto & Konsta, Lasse & 5 & 4 \\
+		2 & Etäisyysantureiden tilaus ja asentaminen & Konsta, Lasse & 5 & 6\\
+		3 & Koodeihin tutustuminen & Kaikki &  & 6\\
+		4 & Dokumentteihin tutustuminen & Kaikki &  & 4\\
+		5 & Autoon tutustuminen & Kaikki &  & 3\\
+		6 & ABS-algoritmi & Lasse &  & 20\\
+		7 & ESP-algoritmi & Lasse &  & 20 \\
+		8 & Ajotietokoneen skeduleri ja kehyskoodi & Konsta &   & 12 \\
+		9 & Kommunikaatiokoodin tulkinta & Toni, Konsta & & 2 \\
 		10 & Kommunikaatioprotokollan määrittely/muutokset & Toni, Konsta & 9 & 6 \\
-		11 & Kalman-filtteri paikan mittaukseen & Konsta & 12 \\
-		12 & Kauko-ohjauksen toteutus & Konsta, Toni & 8 \\
-		13 & Auton Simulink-mallin luominen & Lasse, Konsta & 8 \\
-		14 & Auton mallin parametrien mittaaminen & Lasse, Konsta & 4 \\
-		15 & Käyttöliittymäkoodin kehittäminen & Toni & 10 \\
+		11 & Kalman-filtteri paikan mittaukseen & Konsta & 12 & 20 \\
+		12 & Kauko-ohjauksen toteutus & Konsta, Toni & & 8 \\
+		13 & Auton Simulink-mallin luominen & Lasse, Konsta & & 8 \\
+		14 & Auton mallin parametrien mittaaminen & Lasse, Konsta & & 4 \\
+		15 & Käyttöliittymäkoodin kehittäminen & Toni & 10 & 10 \\
 		16 & Kaikkien mittaustietojen tuonti käyttöliittymään & Toni & 10 & 3 \\
 		17 & Auton paikan päivitys käyttöliittymään & Toni & 16 & 3 \\
-		18 & Mittausdatan tallentaminen & Toni & 16 & 2 \\
-		19 & Automaattiajo reittipisteiden kautta & Toni, Konsta & 17 & 12 \\
-		20 & Automaattiajon lopputestaus ja muutokset & Toni, Konsta & 11, 19 & 5 \\
-		21 & ABS:n lopputestaus & Lasse & 1, 6 & 3 \\
-		22 & ESP:n lopputestaus & Lasse & 1, 7 & 3\\
-		23 & Kauko-ohjauksen lopputestaus & Konsta, Toni & 12 & 3 \\
-		24 & Käyttöliittymän lopputestaus & Toni & 19 & 3 \\
+		18 & Mittausdatan tallentaminen & Toni, Konsta & 16 & 2 \\
+		19 & Automaattiajo reittipisteiden kautta & Toni, Konsta & 17 & 15 \\
+		20 & Automaattiajon lopputestaus ja muutokset & Toni, Konsta & 11, 19 & 10 \\
+		21 & ABS:n lopputestaus & Lasse & 1, 6 & 5 \\
+		22 & ESP:n lopputestaus & Lasse & 1, 7 & 5\\
+		23 & Kauko-ohjauksen lopputestaus & Konsta, Toni & 12 & 5 \\
+		24 & Käyttöliittymän lopputestaus & Toni & 19 & 5 \\
 	\end{tabular}
 	\label{fig:osaalueet}
 	\caption{Projektin osa-alueet, niiden vastuuhenkilöt, riippuvuudet ja arvioidut työmäärät.}
@@ -312,17 +312,14 @@ Työn jakaminen pyritään tasapainottamaan siten, että kaikilla on jatkuvasti 
 
 Osa-alueiden työmääräarvioista voidaan laskea jokaiselle oma kurssin työmäärä. Osa-alueissa ei ole otettu huomioon luentoihin, esityksiin ja dokumentointiin kuluvaa aikaa.
 
-Taulukossa \ref{fig:aikataulu} on esitettynä tehtävien suunniteltu aikataulutus. Perustoiminnallisuudet pyritään saamaan toimivaksi aikaisessa vaiheessa; lopuksi keskitytään varsinaiseen ajodatan analysointiin ja säätöön, mikä tarvitsee toimivan ja luotettavan pohjakoodin.
+Taulukossa \ref{fig:aikataulu} on esitettynä tehtävien suunniteltu aikataulutus. Perustoiminnallisuudet pyritään saamaan toimivaksi aikaisessa vaiheessa; lopuksi keskitytään varsinaiseen ajodatan analysointiin ja säätöön, mikä tarvitsee toimivan ja luotettavan pohjakoodin. Taulukko ei ole lopullinen, vaan kuvaa karkeasti, milloin eri ominaisuuksien tärkeimmät toiminnallisuudet pitäisi olla valmiina. Jatkokehitys tullee venymään myöhemmäksikin, jos myöhemmät osa-alueet tarvitsevat lisäominaisuuksia aiemmista.
 
 \begin{figure}[H]
 	\begin{tabular}{l|l|l|l|l|l|l|l|l|l|l|l|}
-		Tehtävä \\
+		Tehtävä & \multicolumn{10}{l}{Viikko} \\
+		& 38 & 39 & 40 & 41 & 42 & 43 & 44 & 45 & 46 & 47 & 48 \\
 		\hline
 
-		Jarruservojen vaihto
-		&   &   & x & x &   &   &   &   &   &   &   \\
-		Etäisyysantureiden asentaminen
-		&   &   & x & x &   &   &   &   &   &   &   \\
 		Koodeihin tutustuminen
 		& x & x & x &   &   &   &   &   &   &   &   \\
 		Dokumentteihin tutustuminen
@@ -331,6 +328,10 @@ Taulukossa \ref{fig:aikataulu} on esitettynä tehtävien suunniteltu aikataulutu
 		& x & x & x &   &   &   &   &   &   &   &   \\
 		Ajonvakautusalgoritmien opiskelu
 		& x & x & x &   &   &   &   &   &   &   &   \\
+		Jarruservojen vaihto
+		&   &   & x & x &   &   &   &   &   &   &   \\
+		Etäisyysantureiden asentaminen
+		&   &   & x & x &   &   &   &   &   &   &   \\
 		Ajotietokoneen kehyskoodin hahmottelu
 		&   & x & x & x &   &   &   &   &   &   &   \\
 		Kommunikointiprotokollan määrittely
@@ -377,10 +378,10 @@ Taulukossa \ref{fig:aikataulu} on esitettynä tehtävien suunniteltu aikataulutu
 		&   &   &   &   &   &   &   &   &   & x & x  \\
 
 		\hline
-		Viikko & 38 & 39 & 40 & 41 & 42 & 43 & 44 & 45 & 46 & 47 & 48
+		& 38 & 39 & 40 & 41 & 42 & 43 & 44 & 45 & 46 & 47 & 48
 	\end{tabular}
 	\label{fig:aikataulu}
-	\caption{Projektin osa-alueiden aikataulusuunnitelma.}
+	\caption{Projektin osa-alueiden aikataulusuunnitelma viikoittain.}
 \end{figure}
 
 \section{Riskienhallinta}
