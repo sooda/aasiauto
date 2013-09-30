@@ -11,8 +11,14 @@
 \usepackage{listings}
 \usepackage[finnish]{babel}
 \usepackage{float}
-
+\usepackage{afterpage}
+% settings
 \addtolength{\parskip}{\baselineskip}
+\setlength\parindent{0pt}	% remove indent
+\afterpage{\clearpage}
+\let\oldsection\section
+%\renewcommand{\section}{\clearpage\oldsection} % pagebreak before every new section
+
 
 \begin{document}
 
@@ -24,8 +30,15 @@ AS-0.3200 Automaatio- ja systeemitekniikan projektityöt
 \author{Toni Liski, Konsta Hölttä, Lasse Kortetjärvi}
 \date{30.9.2013}
 
+% Title page
 \maketitle
+\clearpage
 
+% Table of content
+\tableofcontents
+\clearpage
+
+% Content
 \section{Projektin tavoite}
 \subsection{Tausta}
 
@@ -48,7 +61,7 @@ Projektin toteuttavat Automaatio- ja Systeemitekniikan laitokselta Toni Liski, K
 
 \subsection{Ajankäyttö}
 
-Projektin ajankäyttösuunnitelma esitetään luvussa 4: Ajankäyttö.
+Projektin ajankäyttösuunnitelma esitetään luvussa~\ref{sec:ajankaytto}.
 
 \section{Projektin lähtökohta}
 
@@ -290,6 +303,7 @@ Taulukossa \ref{fig:osaalueet} on eritelty projektin osa-alueet tarkemmin ja arv
 \end{figure}
 
 \subsection{Ajankäyttöarvio ja aikataulutus}
+\label{sec:ajankaytto}
 
 Alkuperäisen projektikuvauksen mukaan työstä oli tarkoitus saada 4 opintopistettä per henkilö. Työ oli lisäksi tarkoitettu vain kahdelle henkilölle. Nyt ryhmässämme on kolme henkilöä, mutta työtä kuulemma riittää niin paljon kun halutaan, eli kaikille todennäköisesti riittää tekemistä. Opintopisteiden suhteen lähdetään liikkeelle siitä, että Konsta olisi ottamassa projektista muita vähän suuremman osan, siten että hänen osuutensa vastaisi suurin piirtein 5 opintopistettä. Lasselle pyritään jakamaan noin 4 opintopisteen suuruinen osuus ja Tonille 3 opintopistettä.
 
