@@ -1,6 +1,5 @@
 % Specifies communication class for connecting and transferring data from
 % and to RC car.
-
 classdef Communication < handle
     
     properties
@@ -48,7 +47,7 @@ classdef Communication < handle
                     Logging.log('Connected, please wait for car initialization...');
                     this.status = this.STATUSCODE.Connecting;
 
-                    this.connectionTimer = timer('Executionmode','fixedRate','Period', 0.05, ...
+                    this.connectionTimer = timer('Executionmode', 'fixedRate', 'Period', 0.05, ...
                         'TimerFcn', {@this.connectionTimer_triggered});
                     start(this.connectionTimer); %Timer to check for Initialization
 
@@ -102,6 +101,16 @@ classdef Communication < handle
             end
             stop(this.connectionTimer);
         end % / check_initialized
+        
+        % Read byte from the serial communication with car.
+        function val = getByte(this)
+            if (this.serial_data.BytesAvailable && ...
+                    this.status == this.STATUSCODE.Initialized)
+                val = fread(this.serial_data, 1);
+            else
+                val = -1;
+            end
+        end
 
     end % /methods
 

@@ -43,7 +43,6 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-
 % --- Executes just before RCCarGUI is made visible.
 function RCCarGUI_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
@@ -76,6 +75,9 @@ set(handles.monitoringText,'Units','normalized')
 set(handles.carSetupText,'Units','normalized')
 set(handles.monitoringPanel,'Units','normalized')
 set(handles.carSetupPanel,'Units','normalized')
+
+% Set logging console handle
+Logging.console(handles.console);
 
 % Tab 1
 pos1=get(handles.monitoringText,'Position');
@@ -213,7 +215,6 @@ savedrivedatacheckbox_Callback(handles.savedrivedatacheckbox, eventdata, handles
 % Update handles structure
 guidata(hObject, handles);
 
-
 % --- Outputs from this function are returned to the command line.
 function varargout = RCCarGUI_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
@@ -251,7 +252,6 @@ set(handles.t2,'BackgroundColor',handles.unselectedTabColor)
 set(handles.monitoringPanel,'Visible','on')
 set(handles.carSetupPanel,'Visible','off')
 
-
 % Axes object 2 callback (tab 2)
 function a2bd(hObject,eventdata,handles)
 set(hObject,'Color',handles.selectedTabColor)
@@ -282,10 +282,10 @@ if appdata.connected
     start(handles.timer);
     %set(handles.textFieldSaveDataTo,'Enable', 'off');
     %set(handles.savedrivedatacheckbox,'Enable', 'off');
-    console_Callback(hObject, eventdata, handles, 'Manual drive activated.')
+    Logging.log('Manual drive activated.')
     
 else
-    console_Callback(hObject, eventdata, handles, 'You are not connected to the car.')
+    Logging.log('You are not connected to the car.')
 end
 
 
@@ -306,7 +306,7 @@ if (appdata.manualdrive)
     
     ListenChar(0); %Stop listening for keyboard inputs
     stop(handles.timer);
-    console_Callback(handles.console, eventdata, handles,'Manual drive stopped.');
+    Logging.log('Manual drive stopped.');
 
     %Save Data
     if(get(handles.savedrivedatacheckbox, 'Value'))
@@ -316,7 +316,7 @@ if (appdata.manualdrive)
         filename = '\dSession';
         nameAndDir = strcat(appdata.save_drive_directory,filename,tim,'.mat');
         save(nameAndDir, 'carData')
-        console_Callback(handles.console, eventdata, handles,'Data saved to selected directory.');
+        Logging.log('Data saved to selected directory.');
     end
     
     %Reset Car Data
@@ -346,7 +346,7 @@ appdata = getappdata(handles.figure1, 'App_Data');
 
 if appdata.serial.BytesAvailable && ~appdata.initialized 
     appdata.initialized = 1;
-    console_Callback(handles.console, eventdata, handles,'Initialized and ready for drive session.');
+    Logging.log('Initialized and ready for drive session.');
     setappdata(handles.figure1, 'App_Data', appdata);
 end
 
@@ -498,7 +498,7 @@ function update_display(hObject,eventdata,hfigure,handles)
                      i = i+2;
                      readcurrentdata = 0;
                  elseif datastr(i+1) ~= 0 %Wrong message ID
-                     console_Callback(handles.console, eventdata, handles,'Received wrong message ID.');
+                     Logging.log('Received wrong message ID.');
                      break;                     
                  else %Read 255 followed by 0 is 255;
                      jump = 1;
@@ -636,7 +636,7 @@ function update_display(hObject,eventdata,hfigure,handles)
                  
                 
              otherwise             
-                 console_Callback(handles.console, eventdata, handles,'Read exceeds normal message length.');
+                 Logging.log('Read exceeds normal message length.');
                 % 'Read exceeds normal message length.'
                 % strcat('Current byte is: ', num2str(appdata.serialcurrentbytenum))
              end
@@ -697,14 +697,6 @@ set(handles2.throttle,'YData',thro);
 set(handles2.brake,'YData',brake);
 set(handles2.direction,'YData',dir);
 
-
-
-% --- Executes on mouse press over axes background.
-function ButtonPressDisplay_ButtonDownFcn(hObject, eventdata, handles)
-% hObject    handle to ButtonPressDisplay (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
 % --- Executes on button press in Connect To Car.
 function connecttocarbtn_Callback(hObject, eventdata, handles)
 % hObject    handle to connecttocarbtn (see GCBO)
@@ -715,7 +707,7 @@ function connecttocarbtn_Callback(hObject, eventdata, handles)
 appdata = getappdata(handles.figure1, 'App_Data');
 
 if(strcmp(appdata.selectedcomport, '--'))
-    console_Callback(handles.console, eventdata, handles, 'Please select a serial port.')
+    Logging.log('Please select a serial port.')
 
 else
     try 
@@ -725,15 +717,15 @@ else
         fopen (appdata.serial);
         appdata.connected = 1;
         setappdata(handles.figure1,'App_Data',appdata);
-        console_Callback(handles.console, eventdata, handles, 'Connected, please wait for car initialization...')
+        Logging.log('Connected, please wait for car initialization...')
         
         start(handles.timer2); %Timer to check for Iniatilzation
     catch err
     
         if(strcmp(err.identifier,'MATLAB:serial:fopen:opfailed'))
-            console_Callback(handles.console, eventdata, handles, 'Failed to connect to selected port.')
+            Logging.log('Failed to connect to selected port.')
         else
-            console_Callback(handles.console, eventdata, handles, 'Undefined error occured, check matlab command window.')
+            Logging.log('Undefined error occured, check matlab command window.')
             rethrow(err);
         end
     end
@@ -757,21 +749,7 @@ if(appdata.connected)
     appdata.connected = 0;
     appdata.initialized = 0;
     setappdata(handles.figure1, 'App_Data', appdata);
-    console_Callback(handles.console, eventdata, handles,'Disconnected.'); 
-end
-
-
-
-% --- Executes during object creation, after setting all properties.
-function textFieldReadDataFrom_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to textFieldReadDataFrom (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
+    Logging.log('Disconnected.'); 
 end
 
 % --- Executes on selection change in portConnectpop.
@@ -797,34 +775,7 @@ selectedValue = get(hObject,'Value');
 appdata.selectedcomport = values{selectedValue};
 setappdata(handles.figure1, 'App_Data', appdata);
 
-
-% --- Executes during object creation, after setting all properties.
-function portConnectpop_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to portConnectpop (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white'); %Autogenerated code
-end
-
-
-% --- Executes during object creation, after setting all properties.
-function console_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to console (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-function console_Callback(hObject, eventdata, handles, message)
+function console_callBack(hObject, eventdata, handles, message)
 % hObject    handle to console (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -839,8 +790,6 @@ if(msgssize(1)>8)
 end
 set(handles.console,'String',[oldmsgs;{message}]);
 set(handles.console2,'String',[oldmsgs;{message}]);
-
-
 
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
 % --- Otherwise, executes on mouse press in 5 pixel border or over textFieldSaveDataTo.
@@ -923,7 +872,6 @@ end
 %Save save directory
 setappdata(handles.figure1, 'App_Data', appdata);
 
-
 % --- Executes when user attempts to close figure1.
 function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
@@ -947,6 +895,586 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
     
 % Hint: delete(hObject) closes the figure
 delete(hObject);
+
+% --------------------------------------------------------------------
+function saveConfiguration_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to saveConfiguration (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+appdata = getappdata(handles.figure1, 'App_Data');
+
+[filename, pathname, ~] = uiputfile('*.mat', 'Save car setup parameters as');
+
+ %Save data
+ if ~isequal(pathname,0) && ~isequal(filename,0)
+   appdata.save_parameters_directory = pathname;
+   
+   nameAndDir = strcat(pathname,filename);
+
+   carParametersData = getCarParametersData(handles);
+   save(nameAndDir, 'carParametersData');
+ 
+   %Save appdata
+   setappdata(handles.figure1, 'App_Data', appdata);
+    
+   Logging.log('Car parameters data saved.');
+ end   
+
+% --------------------------------------------------------------------
+function openConfiguration_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to openConfiguration (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+[filename, pathname, ~] = uigetfile('*.mat', 'Load car setup parameters from file');
+
+ %Load data
+ if ~isequal(pathname,0) && ~isequal(filename,0)
+   
+   nameAndDir = strcat(pathname,filename);
+
+   carParametersData = load(nameAndDir);
+   carParametersData = carParametersData.carParametersData; %Simplify the struct structure
+   setCarParametersData(handles,carParametersData);
+    
+   Logging.log('Car parameters data loaded.');
+ end
+
+%Read and return the data from the car paramterers edit boxes
+function data = getCarParametersData(handles)
+
+%Get Vehicle parameters
+data.dynamicWheelRollRadius = get(handles.dynamicWheelRollRadiusEdit, 'String');
+data.wheelbase = get(handles.wheelbaseEdit, 'String');
+data.vehicleMass = get(handles.vehicleMassEdit, 'String');
+data.distanceFrontAxleCoG = get(handles.distanceFrontAxleCoGEdit, 'String');
+data.distanceRearAxleCoG = get(handles.distanceRearAxleCoGEdit, 'String');
+data.frontAxleTurnStiffness = get(handles.frontAxleTurnStiffnessEdit, 'String');
+data.rearAxleTurnStiffness = get(handles.rearAxleTurnStiffnessEdit, 'String');
+
+%Get servo calibration
+data.frontAxleLeftBrakeServosNeutralPositions = get(handles.frontAxleLeftBrakeServosNeutralPositionsEdit, 'String');
+data.frontAxleRightBrakeServosNeutralPositions = get(handles.frontAxleRightBrakeServosNeutralPositionsEdit, 'String');
+data.rearAxleLeftBrakeServosNeutralPositions = get(handles.rearAxleLeftBrakeServosNeutralPositionsEdit, 'String');
+data.rearAxleRightBrakeServosNeutralPositions = get(handles.rearAxleRightBrakeServosNeutralPositionsEdit, 'String');
+data.frontAxleLeftBrakeServosMaximumPositions = get(handles.frontAxleLeftBrakeServosMaximumPositionsEdit, 'String');
+data.frontAxleRightBrakeServosMaximumPositions = get(handles.frontAxleRightBrakeServosMaximumPositionsEdit, 'String');
+data.rearAxleLeftBrakeServosMaximumPositions = get(handles.rearAxleLeftBrakeServosMaximumPositionsEdit, 'String');
+data.rearAxleRightBrakeServosMaximumPositions = get(handles.rearAxleRightBrakeServosMaximumPositionsEdit, 'String');
+
+%Get ABS Parameters
+data.absEnabled = get(handles.absEnabledCheckBox,'Value');
+data.absLowThres = get(handles.absLowThresEdit, 'String');
+data.absMiddleThres = get(handles.absMiddleThresEdit, 'String');
+data.absHighThres = get(handles.absHighThresEdit, 'String');
+data.finalPhaseLengthLift = get(handles.finalPhaseLengthLiftEdit, 'String');
+data.finalPhaseLengthHolding = get(handles.finalPhaseLengthHoldingEdit, 'String');
+data.slopeFirstPhaseCalcBrake = get(handles.slopeFirstPhaseCalcBrakeEdit, 'String');
+data.thirdPhaseReleaseBrake = get(handles.thirdPhaseReleaseBrakeEdit, 'String');
+data.lastPhaseReleaseBrake = get(handles.lastPhaseReleaseBrakeEdit, 'String');
+
+%Get ESP Parameters
+data.espEnabled = get(handles.espEnabledCheckBox,'Value');
+data.espSensitivityControlAngVel = get(handles.espSensitivityControlAngVelEdit, 'String');
+data.espSensitivityAdjSlipAngle = get(handles.espSensitivityAdjSlipAngleEdit, 'String');
+data.espBrakeForceFactor = get(handles.espBrakeForceFactorEdit, 'String');
+data.espBrakeForceDist = get(handles.espBrakeForceDistEdit, 'String');
+data.espAngularVelContPCoeff = get(handles.espAngularVelContPCoeffEdit, 'String');
+data.espAngularVelContDCoeff = get(handles.espAngularVelContDCoeffEdit, 'String');
+data.espDriftAngleContrPCoeff = get(handles.espDriftAngleContrPCoeffEdit, 'String');
+data.espDriftAngleContrDCoeff = get(handles.espDriftAngleContrDCoeffEdit, 'String');
+data.espThresValAngularVelToSlipAngleContrl = get(handles.espThresValAngularVelToSlipAngleContrlEdit, 'String');
+ 
+%Set the parameter data to the car parameters editboxes
+function setCarParametersData(handles,data)
+
+%Set Vehicle parameters
+set(handles.dynamicWheelRollRadiusEdit, 'String', data.dynamicWheelRollRadius);
+set(handles.wheelbaseEdit, 'String',data.wheelbase);
+set(handles.vehicleMassEdit, 'String', data.vehicleMass);
+set(handles.distanceFrontAxleCoGEdit, 'String',data.distanceFrontAxleCoG);
+set(handles.distanceRearAxleCoGEdit, 'String', data.distanceRearAxleCoG);
+set(handles.frontAxleTurnStiffnessEdit, 'String', data.frontAxleTurnStiffness);
+set(handles.rearAxleTurnStiffnessEdit, 'String', data.rearAxleTurnStiffness);
+
+%Set servo calibration
+set(handles.frontAxleLeftBrakeServosNeutralPositionsEdit, 'String', data.frontAxleLeftBrakeServosNeutralPositions);
+set(handles.frontAxleRightBrakeServosNeutralPositionsEdit, 'String', data.frontAxleRightBrakeServosNeutralPositions);
+set(handles.rearAxleLeftBrakeServosNeutralPositionsEdit, 'String', data.rearAxleLeftBrakeServosNeutralPositions);
+set(handles.rearAxleRightBrakeServosNeutralPositionsEdit, 'String', data.rearAxleRightBrakeServosNeutralPositions);
+set(handles.frontAxleLeftBrakeServosMaximumPositionsEdit, 'String', data.frontAxleLeftBrakeServosMaximumPositions);
+set(handles.frontAxleRightBrakeServosMaximumPositionsEdit, 'String', data.frontAxleRightBrakeServosMaximumPositions);
+set(handles.rearAxleLeftBrakeServosMaximumPositionsEdit, 'String', data.rearAxleLeftBrakeServosMaximumPositions);
+set(handles.rearAxleRightBrakeServosMaximumPositionsEdit, 'String', data.rearAxleRightBrakeServosMaximumPositions);
+
+%Set ABS Parameters
+set(handles.absEnabledCheckBox,'Value',data.absEnabled);
+set(handles.absLowThresEdit, 'String', data.absLowThres);
+set(handles.absMiddleThresEdit, 'String', data.absMiddleThres);
+set(handles.absHighThresEdit, 'String', data.absHighThres);
+set(handles.finalPhaseLengthLiftEdit, 'String', data.finalPhaseLengthLift);
+set(handles.finalPhaseLengthHoldingEdit, 'String', data.finalPhaseLengthHolding);
+set(handles.slopeFirstPhaseCalcBrakeEdit, 'String', data.slopeFirstPhaseCalcBrake);
+set(handles.thirdPhaseReleaseBrakeEdit, 'String', data.thirdPhaseReleaseBrake);
+set(handles.lastPhaseReleaseBrakeEdit, 'String', data.lastPhaseReleaseBrake);
+
+%Set ESP Parameters
+set(handles.espEnabledCheckBox,'Value',data.espEnabled);
+set(handles.espSensitivityControlAngVelEdit, 'String', data.espSensitivityControlAngVel);
+set(handles.espSensitivityAdjSlipAngleEdit, 'String', data.espSensitivityAdjSlipAngle);
+set(handles.espBrakeForceFactorEdit, 'String', data.espBrakeForceFactor);
+set(handles.espBrakeForceDistEdit, 'String', data.espBrakeForceDist);
+set(handles.espAngularVelContPCoeffEdit, 'String', data.espAngularVelContPCoeff);
+set(handles.espAngularVelContDCoeffEdit, 'String', data.espAngularVelContDCoeff);
+set(handles.espDriftAngleContrPCoeffEdit, 'String', data.espDriftAngleContrPCoeff);
+set(handles.espDriftAngleContrDCoeffEdit, 'String', data.espDriftAngleContrDCoeff);
+set(handles.espThresValAngularVelToSlipAngleContrlEdit, 'String', data.espThresValAngularVelToSlipAngleContrl);
+
+% Resets the parameters
+function resetToDefault_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to resetToDefault (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+ response = questdlg('This action will reset the car configuration parameters to the default parameters. All unsaved data will be lost. Are you sure?', ...
+                         'Confirm parameters reset', ...
+                         'Reset parameters', 'Cancel', 'Cancel');
+
+if strcmp(response, 'Reset parameters')
+    
+   carParametersData = load('default_car_parameters.mat');
+   setCarParametersData(handles,carParametersData.carParametersData); %Simplify the struct structure and set data
+   
+   Logging.log('Default car data parameters loaded.');
+end
+
+%Request and save the current car parameters
+function getCarConfParamBtn_Callback(hObject, eventdata, handles)
+
+appdata = getappdata(handles.figure1, 'App_Data');
+
+if appdata.serial.BytesAvailable %Clear car buffer
+    fread(appdata.serial,appdata.serial.BytesAvailable);
+end
+
+%Request car parameters
+%stopasync(appdata.serial);
+readasync(appdata.serial);
+%pause(0.1);
+
+fwrite(appdata.serial, [255 67 255 0], 'async');
+%readasync(appdata.serial);
+%  fwrite(appdata.serial, 255);
+%  fwrite(appdata.serial, 67);
+%  fwrite(appdata.serial, 255);
+%  fwrite(appdata.serial, 0);
+
+D = 0; %The struct where the loaded data is stored.
+ver_matrix = zeros(34,1); %Verification matrix used to check that all parameters were updated
+
+current_Message_Id = 0;
+curremt_Parameter_Id = 0;
+reading_byte_num = 0;
+high_byte = 0;
+counter = 0;
+
+%READ PARAMETER DATA FROM CAR
+while (~min(ver_matrix) && counter < 3000) %Continue untill verification matrix is "full" or counter == 1000
+    counter = counter + 1;
+    reading_byte_num = reading_byte_num + 1;
+    
+    if appdata.serial.BytesAvailable
+      datavalue = fread(appdata.serial,1); 
+      %datavalue
+         if datavalue == 255 %Check if it's maybe a new message
+              datavalue = fread(appdata.serial,1); %Pick the next byte to see what is following
+              %datavalue
+              
+              if datavalue ~= 0 %If it's a new message
+                 current_Message_Id = datavalue;        
+                 curremt_Parameter_Id = fread(appdata.serial,1);
+                 %curremt_Parameter_Id
+                 reading_byte_num = 0; %Reset the counter
+                 
+              else %If it was 255 + 0, meaning a data byte 255
+                 datavalue = 255;
+              end   
+         end    
+          
+         if(reading_byte_num ~= 0)
+            
+            if current_Message_Id == 52 %Current parameter message from car  
+             switch curremt_Parameter_Id    
+                 
+                 case 10
+                     if reading_byte_num == 1 %First Byte
+                         high_byte = datavalue; 
+                     elseif reading_byte_num == 2%Second Byte  
+                         D.frontAxleLeftBrakeServosNeutralPositions = ByteTools.calcHighLowByteUnsignedValue(high_byte, datavalue);
+                         ver_matrix(1)=1;
+                     end
+                 case 11
+                     if reading_byte_num == 1 %First Byte
+                         high_byte = datavalue; 
+                     elseif reading_byte_num == 2%Second Byte  
+                         D.frontAxleRightBrakeServosNeutralPositions = ByteTools.calcHighLowByteUnsignedValue(high_byte, datavalue);
+                         ver_matrix(2)=1;
+                     end
+                 case 12
+                     if reading_byte_num == 1 %First Byte
+                         high_byte = datavalue; 
+                     elseif reading_byte_num == 2%Second Byte  
+                         D.rearAxleLeftBrakeServosNeutralPositions = ByteTools.calcHighLowByteUnsignedValue(high_byte, datavalue);
+                         ver_matrix(3)=1;
+                     end
+                 case 13
+                     if reading_byte_num == 1 %First Byte
+                         high_byte = datavalue; 
+                     elseif reading_byte_num == 2%Second Byte  
+                         D.rearAxleRightBrakeServosNeutralPositions = ByteTools.calcHighLowByteUnsignedValue(high_byte, datavalue);
+                         ver_matrix(4)=1;
+                     end
+                     case 14
+                     if reading_byte_num == 1 %First Byte
+                         high_byte = datavalue; 
+                     elseif reading_byte_num == 2%Second Byte  
+                         D.frontAxleLeftBrakeServosMaximumPositions = ByteTools.calcHighLowByteUnsignedValue(high_byte, datavalue);
+                         ver_matrix(5)=1;
+                     end
+                 case 15
+                     if reading_byte_num == 1 %First Byte
+                         high_byte = datavalue; 
+                     elseif reading_byte_num == 2%Second Byte  
+                         D.frontAxleRightBrakeServosMaximumPositions = ByteTools.calcHighLowByteUnsignedValue(high_byte, datavalue);
+                         ver_matrix(6)=1;
+                     end
+                 case 16
+                     if reading_byte_num == 1 %First Byte
+                         high_byte = datavalue; 
+                     elseif reading_byte_num == 2%Second Byte  
+                         D.rearAxleLeftBrakeServosMaximumPositions = ByteTools.calcHighLowByteUnsignedValue(high_byte, datavalue);
+                         ver_matrix(7)=1;
+                     end
+                 case 17
+                     if reading_byte_num == 1 %First Byte
+                         high_byte = datavalue; 
+                     elseif reading_byte_num == 2%Second Byte  
+                         D.rearAxleRightBrakeServosMaximumPositions = ByteTools.calcHighLowByteUnsignedValue(high_byte, datavalue);
+                         ver_matrix(8)=1;
+                     end
+                 case 20
+                     if reading_byte_num == 1 %First Byte
+                         D.absEnabled = datavalue;
+                         ver_matrix(9)=1;
+                     end
+                 case 21
+                      if reading_byte_num == 1 %First Byte
+                         D.absLowThres = num2str(datavalue);
+                         ver_matrix(10)=1;
+                     end
+                 case 22
+                     if reading_byte_num == 1 %First Byte
+                         D.absMiddleThres = num2str(datavalue);
+                         ver_matrix(11)=1;
+                     end
+                 case 23
+                     if reading_byte_num == 1 %First Byte
+                         D.absHighThres = num2str(datavalue);
+                         ver_matrix(12)=1;
+                     end
+                 case 24
+                     if reading_byte_num == 1 %First Byte
+                         D.finalPhaseLengthLift = num2str(datavalue);
+                         ver_matrix(13)=1;
+                     end
+                 case 25
+                     if reading_byte_num == 1 %First Byte
+                         D.finalPhaseLengthHolding = num2str(datavalue);
+                         ver_matrix(14)=1;
+                     end                                
+                 case 26
+                     if reading_byte_num == 1 %First Byte
+                         D.slopeFirstPhaseCalcBrake = num2str(datavalue);
+                         ver_matrix(15)=1;
+                     end
+                 case 27
+                     if reading_byte_num == 1 %First Byte
+                         D.thirdPhaseReleaseBrake = num2str(datavalue);
+                         ver_matrix(16)=1;
+                     end
+                 case 28
+                     if reading_byte_num == 1 %First Byte
+                         D.lastPhaseReleaseBrake = num2str(datavalue);
+                         ver_matrix(17)=1;
+                     end          
+                 case 40
+                     if reading_byte_num == 1 %First Byte
+                         D.espEnabled = datavalue;
+                         ver_matrix(18)=1;
+                     end
+                 case 41
+                      if reading_byte_num == 1 %First Byte
+                         D.espSensitivityControlAngVel = num2str(datavalue);
+                         ver_matrix(19)=1;
+                     end
+                 case 42
+                      if reading_byte_num == 1 %First Byte
+                         D.espSensitivityAdjSlipAngle = num2str(datavalue);
+                         ver_matrix(20)=1;
+                     end
+                 case 43
+                      if reading_byte_num == 1 %First Byte
+                         D.espBrakeForceFactor = num2str(datavalue);
+                         ver_matrix(21)=1;
+                     end
+                 case 44
+                      if reading_byte_num == 1 %First Byte
+                         D.espBrakeForceDist = num2str(datavalue);
+                         ver_matrix(22)=1;
+                     end
+                 case 45
+                      if reading_byte_num == 1 %First Byte
+                         D.espAngularVelContPCoeff = num2str(datavalue);
+                         ver_matrix(23)=1;
+                     end
+                 case 46
+                      if reading_byte_num == 1 %First Byte
+                         D.espAngularVelContDCoeff = num2str(datavalue);
+                         ver_matrix(24)=1;
+                     end
+                 case 47
+                      if reading_byte_num == 1 %First Byte
+                         D.espDriftAngleContrPCoeff = num2str(datavalue);
+                         ver_matrix(25)=1;
+                     end
+                 case 48
+                      if reading_byte_num == 1 %First Byte
+                         D.espDriftAngleContrDCoeff = num2str(datavalue);
+                         ver_matrix(26)=1;
+                     end
+                 case 49
+                      if reading_byte_num == 1 %First Byte
+                         D.espThresValAngularVelToSlipAngleContrl = num2str(datavalue);
+                         ver_matrix(27)=1;
+                      end
+                           
+                 case 50   
+                      if reading_byte_num == 1 %First Byte
+                         D.dynamicWheelRollRadius = num2str(datavalue);
+                         ver_matrix(28)=1;
+                      end                
+                 case 51
+                       if reading_byte_num == 1 %First Byte
+                         high_byte = datavalue; 
+                       elseif reading_byte_num == 2%Second Byte  
+                         D.wheelbase = ByteTools.calcHighLowByteUnsignedValue(high_byte, datavalue); %scaled to mm   
+                         ver_matrix(29)=1;
+                       end
+                 case 52
+                     if reading_byte_num == 1 %First Byte
+                         high_byte = datavalue; 
+                     elseif reading_byte_num == 2%Second Byte  
+                         D.vehicleMass = ByteTools.calcHighLowByteUnsignedValue(high_byte, datavalue, 1000); %scaled to kg   
+                         ver_matrix(30)=1;
+                     end
+                 case 53
+                     if reading_byte_num == 1 %First Byte
+                         high_byte = datavalue; 
+                     elseif reading_byte_num == 2%Second Byte  
+                         D.distanceFrontAxleCoG = ByteTools.calcHighLowByteUnsignedValue(high_byte, datavalue);
+                         ver_matrix(31)=1;
+                     end
+                 case 54
+                     if reading_byte_num == 1 %First Byte
+                         high_byte = datavalue; 
+                     elseif reading_byte_num == 2%Second Byte  
+                         D.distanceRearAxleCoG = ByteTools.calcHighLowByteUnsignedValue(high_byte, datavalue);  
+                         ver_matrix(32)=1;
+                     end
+                 case 55
+                     if reading_byte_num == 1 %First Byte
+                         high_byte = datavalue; 
+                     elseif reading_byte_num == 2%Second Byte  
+                         D.frontAxleTurnStiffness = ByteTools.calcHighLowByteUnsignedValue(high_byte, datavalue);
+                         ver_matrix(33)=1;
+                     end
+                 case 56
+                     if reading_byte_num == 1 %First Byte
+                         high_byte = datavalue; 
+                     elseif reading_byte_num == 2%Second Byte  
+                         D.rearAxleTurnStiffness = ByteTools.calcHighLowByteUnsignedValue(high_byte, datavalue);
+                         ver_matrix(34)=1;
+                     end
+                     
+                 otherwise
+                    Logging.log('Invalid message ID');
+             end   
+            end
+         end
+    end
+end
+  
+disp('Current car configuration:')
+disp(D);
+
+if ~min(ver_matrix)
+    Logging.log('Warning: All parameters were Not loaded successfully! Current car data parameters printed to MATLAB Command Window..');
+else
+    response = questdlg('The current car parameters have been printed to MATLAB Command Window, would you like to import these parameters to the GUI? Warning: Current parameters in GUI will be lost.', ...
+                         'Confirm import of parameters', ...
+                         'Import parameters', 'Cancel', 'Cancel');
+
+    if strcmp(response, 'Import parameters')
+        setCarParametersData(handles,D);
+        Logging.log('Current car data parameters loaded.');
+    end
+end
+
+%Save car parameters to car
+function setCarConfParamBtn_Callback(hObject, eventdata, handles)
+% hObject    handle to setCarConfParamBtn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+data = getCarParametersData(handles);
+appdata = getappdata(handles.figure1, 'App_Data');
+
+%Write brake controller parameters to car
+[hi, lo] = ByteTools.calcHighLowByte_From_Value(data.frontAxleLeftBrakeServosNeutralPositions);
+fcustomwrite(appdata.serial,hi,lo,10);
+
+[hi, lo] = ByteTools.calcHighLowByte_From_Value(data.frontAxleRightBrakeServosNeutralPositions);
+fcustomwrite(appdata.serial,hi,lo,11);
+
+[hi, lo] = ByteTools.calcHighLowByte_From_Value(data.rearAxleLeftBrakeServosNeutralPositions);
+fcustomwrite(appdata.serial,hi,lo,12);
+
+[hi, lo] = ByteTools.calcHighLowByte_From_Value(data.rearAxleRightBrakeServosNeutralPositions);
+fcustomwrite(appdata.serial,hi,lo,13);
+
+[hi, lo] = ByteTools.calcHighLowByte_From_Value(data.frontAxleLeftBrakeServosMaximumPositions);
+fcustomwrite(appdata.serial,hi,lo,14);
+
+[hi, lo] = ByteTools.calcHighLowByte_From_Value(data.frontAxleRightBrakeServosMaximumPositions);
+fcustomwrite(appdata.serial,hi,lo,15);
+
+[hi, lo] = ByteTools.calcHighLowByte_From_Value(data.rearAxleLeftBrakeServosMaximumPositions);
+fcustomwrite(appdata.serial,hi,lo,16);
+
+[hi, lo] = ByteTools.calcHighLowByte_From_Value(data.rearAxleRightBrakeServosMaximumPositions);
+fcustomwrite(appdata.serial,hi,lo,17);
+
+%Write ABS Parameters to car
+fcustomwrite(appdata.serial,data.absEnabled,'',20);
+fcustomwrite(appdata.serial,str2double(data.absLowThres),'',21);
+fcustomwrite(appdata.serial,str2double(data.absMiddleThres),'',22);
+fcustomwrite(appdata.serial,str2double(data.absHighThres),'',23);
+fcustomwrite(appdata.serial,str2double(data.finalPhaseLengthLift),'',24);
+fcustomwrite(appdata.serial,str2double(data.finalPhaseLengthHolding),'',25);
+fcustomwrite(appdata.serial,str2double(data.slopeFirstPhaseCalcBrake),'',26);
+fcustomwrite(appdata.serial,str2double(data.thirdPhaseReleaseBrake),'',27);
+fcustomwrite(appdata.serial,str2double(data.lastPhaseReleaseBrake),'',28);
+
+%Write ESP Parameters to car
+fcustomwrite(appdata.serial,data.espEnabled,'',40);
+fcustomwrite(appdata.serial,str2double(data.espSensitivityControlAngVel),'',41);
+fcustomwrite(appdata.serial,str2double(data.espSensitivityAdjSlipAngle),'',42);
+fcustomwrite(appdata.serial,str2double(data.espBrakeForceFactor),'',43);
+fcustomwrite(appdata.serial,str2double(data.espBrakeForceDist),'',44);
+fcustomwrite(appdata.serial,str2double(data.espAngularVelContPCoeff),'',45);
+fcustomwrite(appdata.serial,str2double(data.espAngularVelContDCoeff),'',46);
+fcustomwrite(appdata.serial,str2double(data.espDriftAngleContrPCoeff),'',47);
+fcustomwrite(appdata.serial,str2double(data.espDriftAngleContrDCoeff),'',48);
+fcustomwrite(appdata.serial,str2double(data.espThresValAngularVelToSlipAngleContrl),'',49);
+
+%Write Vehicle Parameters to car
+fcustomwrite(appdata.serial,str2double(data.dynamicWheelRollRadius),'',50);
+[hi, lo] = ByteTools.calcHighLowByte_From_Value(data.wheelbase); %scaled mm to range [0 65535]
+fcustomwrite(appdata.serial,hi,lo,51);
+[hi, lo] = ByteTools.calcHighLowByte_From_Value(data.vehicleMass, 1000); %scaled kg to range [0 65535]
+fcustomwrite(appdata.serial,hi,lo,52);
+[hi, lo] = ByteTools.calcHighLowByte_From_Value(data.distanceFrontAxleCoG);
+fcustomwrite(appdata.serial,hi,lo,53);
+[hi, lo] = ByteTools.calcHighLowByte_From_Value(data.distanceRearAxleCoG);
+fcustomwrite(appdata.serial,hi,lo,54);
+[hi, lo] = ByteTools.calcHighLowByte_From_Value(data.frontAxleTurnStiffness);
+fcustomwrite(appdata.serial,hi,lo,55);
+[hi, lo] = ByteTools.calcHighLowByte_From_Value(data.rearAxleTurnStiffness);
+fcustomwrite(appdata.serial,hi,lo,56);
+Logging.log('GUI Car data parameters uploaded to car.');
+
+% --------------------------------------------------------------------
+function aboutGUI_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to aboutGUI (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+msgbox('Author: Valter Sandström                                                 E-mail: valter.sandstrom@aalto.fi                                26.11.2012',...
+    'About this GUI...');
+
+
+
+
+
+
+
+% --------------------------------------------------------------------
+% --------------------------------------------------------------------
+% NÄMÄ MUUALLE!!!!
+% --------------------------------------------------------------------
+% --------------------------------------------------------------------
+
+
+
+
+
+
+
+% --- Executes on mouse press over axes background.
+function ButtonPressDisplay_ButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to ButtonPressDisplay (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% --- Executes during object creation, after setting all properties.
+function textFieldReadDataFrom_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to textFieldReadDataFrom (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+% --- Executes during object creation, after setting all properties.
+function portConnectpop_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to portConnectpop (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white'); %Autogenerated code
+end
+
+% --- Executes during object creation, after setting all properties.
+function console_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to console (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
 
 % --- Executes during object creation, after setting all properties.
 function frontAxleLeftBrakeServosNeutralPositionsEdit_CreateFcn(hObject, eventdata, handles)
@@ -1095,7 +1623,7 @@ function espBrakeForceFactorEdit_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of espBrakeForceFactorEdit as text
 %        str2double(get(hObject,'String')) returns contents of espBrakeForceFactorEdit as a double
-
+return
 
 % --- Executes during object creation, after setting all properties.
 function espBrakeForceFactorEdit_CreateFcn(hObject, eventdata, handles)
@@ -1373,527 +1901,5 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-% --------------------------------------------------------------------
-function saveConfiguration_ClickedCallback(hObject, eventdata, handles)
-% hObject    handle to saveConfiguration (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-appdata = getappdata(handles.figure1, 'App_Data');
-
-[filename, pathname, ~] = uiputfile('*.mat', 'Save car setup parameters as');
-
- %Save data
- if ~isequal(pathname,0) && ~isequal(filename,0)
-   appdata.save_parameters_directory = pathname;
-   
-   nameAndDir = strcat(pathname,filename);
-
-   carParametersData = getCarParametersData(handles);
-   save(nameAndDir, 'carParametersData');
- 
-   %Save appdata
-   setappdata(handles.figure1, 'App_Data', appdata);
-    
-   console_Callback(handles.console, eventdata, handles,'Car parameters data saved.');
- end   
-
-% --------------------------------------------------------------------
-function openConfiguration_ClickedCallback(hObject, eventdata, handles)
-% hObject    handle to openConfiguration (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-[filename, pathname, ~] = uigetfile('*.mat', 'Load car setup parameters from file');
-
- %Load data
- if ~isequal(pathname,0) && ~isequal(filename,0)
-   
-   nameAndDir = strcat(pathname,filename);
-
-   carParametersData = load(nameAndDir);
-   carParametersData = carParametersData.carParametersData; %Simplify the struct structure
-   setCarParametersData(handles,carParametersData);
-    
-   console_Callback(handles.console, eventdata, handles,'Car parameters data loaded.');
- end
-
-%Read and return the data from the car paramterers edit boxes
-function data = getCarParametersData(handles)
-
-%Get Vehicle parameters
-data.dynamicWheelRollRadius = get(handles.dynamicWheelRollRadiusEdit, 'String');
-data.wheelbase = get(handles.wheelbaseEdit, 'String');
-data.vehicleMass = get(handles.vehicleMassEdit, 'String');
-data.distanceFrontAxleCoG = get(handles.distanceFrontAxleCoGEdit, 'String');
-data.distanceRearAxleCoG = get(handles.distanceRearAxleCoGEdit, 'String');
-data.frontAxleTurnStiffness = get(handles.frontAxleTurnStiffnessEdit, 'String');
-data.rearAxleTurnStiffness = get(handles.rearAxleTurnStiffnessEdit, 'String');
-
-%Get servo calibration
-data.frontAxleLeftBrakeServosNeutralPositions = get(handles.frontAxleLeftBrakeServosNeutralPositionsEdit, 'String');
-data.frontAxleRightBrakeServosNeutralPositions = get(handles.frontAxleRightBrakeServosNeutralPositionsEdit, 'String');
-data.rearAxleLeftBrakeServosNeutralPositions = get(handles.rearAxleLeftBrakeServosNeutralPositionsEdit, 'String');
-data.rearAxleRightBrakeServosNeutralPositions = get(handles.rearAxleRightBrakeServosNeutralPositionsEdit, 'String');
-data.frontAxleLeftBrakeServosMaximumPositions = get(handles.frontAxleLeftBrakeServosMaximumPositionsEdit, 'String');
-data.frontAxleRightBrakeServosMaximumPositions = get(handles.frontAxleRightBrakeServosMaximumPositionsEdit, 'String');
-data.rearAxleLeftBrakeServosMaximumPositions = get(handles.rearAxleLeftBrakeServosMaximumPositionsEdit, 'String');
-data.rearAxleRightBrakeServosMaximumPositions = get(handles.rearAxleRightBrakeServosMaximumPositionsEdit, 'String');
-
-%Get ABS Parameters
-data.absEnabled = get(handles.absEnabledCheckBox,'Value');
-data.absLowThres = get(handles.absLowThresEdit, 'String');
-data.absMiddleThres = get(handles.absMiddleThresEdit, 'String');
-data.absHighThres = get(handles.absHighThresEdit, 'String');
-data.finalPhaseLengthLift = get(handles.finalPhaseLengthLiftEdit, 'String');
-data.finalPhaseLengthHolding = get(handles.finalPhaseLengthHoldingEdit, 'String');
-data.slopeFirstPhaseCalcBrake = get(handles.slopeFirstPhaseCalcBrakeEdit, 'String');
-data.thirdPhaseReleaseBrake = get(handles.thirdPhaseReleaseBrakeEdit, 'String');
-data.lastPhaseReleaseBrake = get(handles.lastPhaseReleaseBrakeEdit, 'String');
-
-%Get ESP Parameters
-data.espEnabled = get(handles.espEnabledCheckBox,'Value');
-data.espSensitivityControlAngVel = get(handles.espSensitivityControlAngVelEdit, 'String');
-data.espSensitivityAdjSlipAngle = get(handles.espSensitivityAdjSlipAngleEdit, 'String');
-data.espBrakeForceFactor = get(handles.espBrakeForceFactorEdit, 'String');
-data.espBrakeForceDist = get(handles.espBrakeForceDistEdit, 'String');
-data.espAngularVelContPCoeff = get(handles.espAngularVelContPCoeffEdit, 'String');
-data.espAngularVelContDCoeff = get(handles.espAngularVelContDCoeffEdit, 'String');
-data.espDriftAngleContrPCoeff = get(handles.espDriftAngleContrPCoeffEdit, 'String');
-data.espDriftAngleContrDCoeff = get(handles.espDriftAngleContrDCoeffEdit, 'String');
-data.espThresValAngularVelToSlipAngleContrl = get(handles.espThresValAngularVelToSlipAngleContrlEdit, 'String');
-
- 
-%Set the parameter data to the car parameters editboxes
-function setCarParametersData(handles,data)
-
-%Set Vehicle parameters
-set(handles.dynamicWheelRollRadiusEdit, 'String', data.dynamicWheelRollRadius);
-set(handles.wheelbaseEdit, 'String',data.wheelbase);
-set(handles.vehicleMassEdit, 'String', data.vehicleMass);
-set(handles.distanceFrontAxleCoGEdit, 'String',data.distanceFrontAxleCoG);
-set(handles.distanceRearAxleCoGEdit, 'String', data.distanceRearAxleCoG);
-set(handles.frontAxleTurnStiffnessEdit, 'String', data.frontAxleTurnStiffness);
-set(handles.rearAxleTurnStiffnessEdit, 'String', data.rearAxleTurnStiffness);
-
-%Set servo calibration
-set(handles.frontAxleLeftBrakeServosNeutralPositionsEdit, 'String', data.frontAxleLeftBrakeServosNeutralPositions);
-set(handles.frontAxleRightBrakeServosNeutralPositionsEdit, 'String', data.frontAxleRightBrakeServosNeutralPositions);
-set(handles.rearAxleLeftBrakeServosNeutralPositionsEdit, 'String', data.rearAxleLeftBrakeServosNeutralPositions);
-set(handles.rearAxleRightBrakeServosNeutralPositionsEdit, 'String', data.rearAxleRightBrakeServosNeutralPositions);
-set(handles.frontAxleLeftBrakeServosMaximumPositionsEdit, 'String', data.frontAxleLeftBrakeServosMaximumPositions);
-set(handles.frontAxleRightBrakeServosMaximumPositionsEdit, 'String', data.frontAxleRightBrakeServosMaximumPositions);
-set(handles.rearAxleLeftBrakeServosMaximumPositionsEdit, 'String', data.rearAxleLeftBrakeServosMaximumPositions);
-set(handles.rearAxleRightBrakeServosMaximumPositionsEdit, 'String', data.rearAxleRightBrakeServosMaximumPositions);
-
-%Set ABS Parameters
-set(handles.absEnabledCheckBox,'Value',data.absEnabled);
-set(handles.absLowThresEdit, 'String', data.absLowThres);
-set(handles.absMiddleThresEdit, 'String', data.absMiddleThres);
-set(handles.absHighThresEdit, 'String', data.absHighThres);
-set(handles.finalPhaseLengthLiftEdit, 'String', data.finalPhaseLengthLift);
-set(handles.finalPhaseLengthHoldingEdit, 'String', data.finalPhaseLengthHolding);
-set(handles.slopeFirstPhaseCalcBrakeEdit, 'String', data.slopeFirstPhaseCalcBrake);
-set(handles.thirdPhaseReleaseBrakeEdit, 'String', data.thirdPhaseReleaseBrake);
-set(handles.lastPhaseReleaseBrakeEdit, 'String', data.lastPhaseReleaseBrake);
-
-%Set ESP Parameters
-set(handles.espEnabledCheckBox,'Value',data.espEnabled);
-set(handles.espSensitivityControlAngVelEdit, 'String', data.espSensitivityControlAngVel);
-set(handles.espSensitivityAdjSlipAngleEdit, 'String', data.espSensitivityAdjSlipAngle);
-set(handles.espBrakeForceFactorEdit, 'String', data.espBrakeForceFactor);
-set(handles.espBrakeForceDistEdit, 'String', data.espBrakeForceDist);
-set(handles.espAngularVelContPCoeffEdit, 'String', data.espAngularVelContPCoeff);
-set(handles.espAngularVelContDCoeffEdit, 'String', data.espAngularVelContDCoeff);
-set(handles.espDriftAngleContrPCoeffEdit, 'String', data.espDriftAngleContrPCoeff);
-set(handles.espDriftAngleContrDCoeffEdit, 'String', data.espDriftAngleContrDCoeff);
-set(handles.espThresValAngularVelToSlipAngleContrlEdit, 'String', data.espThresValAngularVelToSlipAngleContrl);
 
 
-% Resets the parameters
-function resetToDefault_ClickedCallback(hObject, eventdata, handles)
-% hObject    handle to resetToDefault (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
- response = questdlg('This action will reset the car configuration parameters to the default parameters. All unsaved data will be lost. Are you sure?', ...
-                         'Confirm parameters reset', ...
-                         'Reset parameters', 'Cancel', 'Cancel');
-
-if strcmp(response, 'Reset parameters')
-    
-   carParametersData = load('default_car_parameters.mat');
-   setCarParametersData(handles,carParametersData.carParametersData); %Simplify the struct structure and set data
-   
-   console_Callback(handles.console, eventdata, handles,'Default car data parameters loaded.');
-end
-
-
-%Request and save the current car parameters
-function getCarConfParamBtn_Callback(hObject, eventdata, handles)
-
-appdata = getappdata(handles.figure1, 'App_Data');
-
-if appdata.serial.BytesAvailable %Clear car buffer
-    fread(appdata.serial,appdata.serial.BytesAvailable);
-end
-
-%Request car parameters
-%stopasync(appdata.serial);
-readasync(appdata.serial);
-%pause(0.1);
-
-fwrite(appdata.serial, [255 67 255 0], 'async');
-%readasync(appdata.serial);
-%  fwrite(appdata.serial, 255);
-%  fwrite(appdata.serial, 67);
-%  fwrite(appdata.serial, 255);
-%  fwrite(appdata.serial, 0);
-
-D = 0; %The struct where the loaded data is stored.
-ver_matrix = zeros(34,1); %Verification matrix used to check that all parameters were updated
-
-current_Message_Id = 0;
-curremt_Parameter_Id = 0;
-reading_byte_num = 0;
-high_byte = 0;
-counter = 0;
-
-%READ PARAMETER DATA FROM CAR
-while (~min(ver_matrix) && counter < 3000) %Continue untill verification matrix is "full" or counter == 1000
-    counter = counter + 1;
-    reading_byte_num = reading_byte_num + 1;
-    
-    if appdata.serial.BytesAvailable
-      datavalue = fread(appdata.serial,1); 
-      %datavalue
-         if datavalue == 255 %Check if it's maybe a new message
-              datavalue = fread(appdata.serial,1); %Pick the next byte to see what is following
-              %datavalue
-              
-              if datavalue ~= 0 %If it's a new message
-                 current_Message_Id = datavalue;        
-                 curremt_Parameter_Id = fread(appdata.serial,1);
-                 %curremt_Parameter_Id
-                 reading_byte_num = 0; %Reset the counter
-                 
-              else %If it was 255 + 0, meaning a data byte 255
-                 datavalue = 255;
-              end   
-         end    
-          
-         if(reading_byte_num ~= 0)
-            
-            if current_Message_Id == 52 %Current parameter message from car  
-             switch curremt_Parameter_Id    
-                 
-                 case 10
-                     if reading_byte_num == 1 %First Byte
-                         high_byte = datavalue; 
-                     elseif reading_byte_num == 2%Second Byte  
-                         D.frontAxleLeftBrakeServosNeutralPositions = calcHighLowByteUnsignedValue(high_byte, datavalue,1);
-                         ver_matrix(1)=1;
-                     end
-                 case 11
-                     if reading_byte_num == 1 %First Byte
-                         high_byte = datavalue; 
-                     elseif reading_byte_num == 2%Second Byte  
-                         D.frontAxleRightBrakeServosNeutralPositions = calcHighLowByteUnsignedValue(high_byte, datavalue,1);
-                         ver_matrix(2)=1;
-                     end
-                 case 12
-                     if reading_byte_num == 1 %First Byte
-                         high_byte = datavalue; 
-                     elseif reading_byte_num == 2%Second Byte  
-                         D.rearAxleLeftBrakeServosNeutralPositions = calcHighLowByteUnsignedValue(high_byte, datavalue,1);
-                         ver_matrix(3)=1;
-                     end
-                 case 13
-                     if reading_byte_num == 1 %First Byte
-                         high_byte = datavalue; 
-                     elseif reading_byte_num == 2%Second Byte  
-                         D.rearAxleRightBrakeServosNeutralPositions = calcHighLowByteUnsignedValue(high_byte, datavalue,1);
-                         ver_matrix(4)=1;
-                     end
-                     case 14
-                     if reading_byte_num == 1 %First Byte
-                         high_byte = datavalue; 
-                     elseif reading_byte_num == 2%Second Byte  
-                         D.frontAxleLeftBrakeServosMaximumPositions = calcHighLowByteUnsignedValue(high_byte, datavalue,1);
-                         ver_matrix(5)=1;
-                     end
-                 case 15
-                     if reading_byte_num == 1 %First Byte
-                         high_byte = datavalue; 
-                     elseif reading_byte_num == 2%Second Byte  
-                         D.frontAxleRightBrakeServosMaximumPositions = calcHighLowByteUnsignedValue(high_byte, datavalue,1);
-                         ver_matrix(6)=1;
-                     end
-                 case 16
-                     if reading_byte_num == 1 %First Byte
-                         high_byte = datavalue; 
-                     elseif reading_byte_num == 2%Second Byte  
-                         D.rearAxleLeftBrakeServosMaximumPositions = calcHighLowByteUnsignedValue(high_byte, datavalue,1);
-                         ver_matrix(7)=1;
-                     end
-                 case 17
-                     if reading_byte_num == 1 %First Byte
-                         high_byte = datavalue; 
-                     elseif reading_byte_num == 2%Second Byte  
-                         D.rearAxleRightBrakeServosMaximumPositions = calcHighLowByteUnsignedValue(high_byte, datavalue,1);
-                         ver_matrix(8)=1;
-                     end
-                 case 20
-                     if reading_byte_num == 1 %First Byte
-                         D.absEnabled = datavalue;
-                         ver_matrix(9)=1;
-                     end
-                 case 21
-                      if reading_byte_num == 1 %First Byte
-                         D.absLowThres = num2str(datavalue);
-                         ver_matrix(10)=1;
-                     end
-                 case 22
-                     if reading_byte_num == 1 %First Byte
-                         D.absMiddleThres = num2str(datavalue);
-                         ver_matrix(11)=1;
-                     end
-                 case 23
-                     if reading_byte_num == 1 %First Byte
-                         D.absHighThres = num2str(datavalue);
-                         ver_matrix(12)=1;
-                     end
-                 case 24
-                     if reading_byte_num == 1 %First Byte
-                         D.finalPhaseLengthLift = num2str(datavalue);
-                         ver_matrix(13)=1;
-                     end
-                 case 25
-                     if reading_byte_num == 1 %First Byte
-                         D.finalPhaseLengthHolding = num2str(datavalue);
-                         ver_matrix(14)=1;
-                     end                                
-                 case 26
-                     if reading_byte_num == 1 %First Byte
-                         D.slopeFirstPhaseCalcBrake = num2str(datavalue);
-                         ver_matrix(15)=1;
-                     end
-                 case 27
-                     if reading_byte_num == 1 %First Byte
-                         D.thirdPhaseReleaseBrake = num2str(datavalue);
-                         ver_matrix(16)=1;
-                     end
-                 case 28
-                     if reading_byte_num == 1 %First Byte
-                         D.lastPhaseReleaseBrake = num2str(datavalue);
-                         ver_matrix(17)=1;
-                     end          
-                 case 40
-                     if reading_byte_num == 1 %First Byte
-                         D.espEnabled = datavalue;
-                         ver_matrix(18)=1;
-                     end
-                 case 41
-                      if reading_byte_num == 1 %First Byte
-                         D.espSensitivityControlAngVel = num2str(datavalue);
-                         ver_matrix(19)=1;
-                     end
-                 case 42
-                      if reading_byte_num == 1 %First Byte
-                         D.espSensitivityAdjSlipAngle = num2str(datavalue);
-                         ver_matrix(20)=1;
-                     end
-                 case 43
-                      if reading_byte_num == 1 %First Byte
-                         D.espBrakeForceFactor = num2str(datavalue);
-                         ver_matrix(21)=1;
-                     end
-                 case 44
-                      if reading_byte_num == 1 %First Byte
-                         D.espBrakeForceDist = num2str(datavalue);
-                         ver_matrix(22)=1;
-                     end
-                 case 45
-                      if reading_byte_num == 1 %First Byte
-                         D.espAngularVelContPCoeff = num2str(datavalue);
-                         ver_matrix(23)=1;
-                     end
-                 case 46
-                      if reading_byte_num == 1 %First Byte
-                         D.espAngularVelContDCoeff = num2str(datavalue);
-                         ver_matrix(24)=1;
-                     end
-                 case 47
-                      if reading_byte_num == 1 %First Byte
-                         D.espDriftAngleContrPCoeff = num2str(datavalue);
-                         ver_matrix(25)=1;
-                     end
-                 case 48
-                      if reading_byte_num == 1 %First Byte
-                         D.espDriftAngleContrDCoeff = num2str(datavalue);
-                         ver_matrix(26)=1;
-                     end
-                 case 49
-                      if reading_byte_num == 1 %First Byte
-                         D.espThresValAngularVelToSlipAngleContrl = num2str(datavalue);
-                         ver_matrix(27)=1;
-                      end
-                           
-                 case 50   
-                      if reading_byte_num == 1 %First Byte
-                         D.dynamicWheelRollRadius = num2str(datavalue);
-                         ver_matrix(28)=1;
-                      end                
-                 case 51
-                       if reading_byte_num == 1 %First Byte
-                         high_byte = datavalue; 
-                       elseif reading_byte_num == 2%Second Byte  
-                         D.wheelbase = calcHighLowByteUnsignedValue(high_byte, datavalue, 1); %scaled to mm   
-                         ver_matrix(29)=1;
-                       end
-                 case 52
-                     if reading_byte_num == 1 %First Byte
-                         high_byte = datavalue; 
-                     elseif reading_byte_num == 2%Second Byte  
-                         D.vehicleMass = calcHighLowByteUnsignedValue(high_byte, datavalue, 1000); %scaled to kg   
-                         ver_matrix(30)=1;
-                     end
-                 case 53
-                     if reading_byte_num == 1 %First Byte
-                         high_byte = datavalue; 
-                     elseif reading_byte_num == 2%Second Byte  
-                         D.distanceFrontAxleCoG = calcHighLowByteUnsignedValue(high_byte, datavalue,1);
-                         ver_matrix(31)=1;
-                     end
-                 case 54
-                     if reading_byte_num == 1 %First Byte
-                         high_byte = datavalue; 
-                     elseif reading_byte_num == 2%Second Byte  
-                         D.distanceRearAxleCoG = calcHighLowByteUnsignedValue(high_byte, datavalue,1);  
-                         ver_matrix(32)=1;
-                     end
-                 case 55
-                     if reading_byte_num == 1 %First Byte
-                         high_byte = datavalue; 
-                     elseif reading_byte_num == 2%Second Byte  
-                         D.frontAxleTurnStiffness = calcHighLowByteUnsignedValue(high_byte, datavalue,1);
-                         ver_matrix(33)=1;
-                     end
-                 case 56
-                     if reading_byte_num == 1 %First Byte
-                         high_byte = datavalue; 
-                     elseif reading_byte_num == 2%Second Byte  
-                         D.rearAxleTurnStiffness = calcHighLowByteUnsignedValue(high_byte, datavalue,1);
-                         ver_matrix(34)=1;
-                     end
-                     
-                 otherwise
-                    console_Callback(handles.console, eventdata, handles,'Invalid message ID');
-             end   
-            end
-         end
-    end
-end
-  
-if ~min(ver_matrix)
-    console_Callback(handles.console, eventdata, handles,'Warning: All parameters were Not loaded successfully! Current car data parameters printed to MATLAB Command Window..');
-    disp('Current car configuration:')
-    disp(D);
-else
-    disp('Current car configuration:')
-    disp(D);
-
-    response = questdlg('The current car parameters have been printed to MATLAB Command Window, would you like to import these parameters to the GUI? Warning: Current parameters in GUI will be lost.', ...
-                         'Confirm import of parameters', ...
-                         'Import parameters', 'Cancel', 'Cancel');
-
-    if strcmp(response, 'Import parameters')
-        setCarParametersData(handles,D);
-        console_Callback(handles.console, eventdata, handles,'Current car data parameters loaded.');
-    end
-end
-
-
-%Save car parameters to car
-function setCarConfParamBtn_Callback(hObject, eventdata, handles)
-% hObject    handle to setCarConfParamBtn (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-data = getCarParametersData(handles);
-appdata = getappdata(handles.figure1, 'App_Data');
-
-%Write brake controller parameters to car
-[hi, lo] = calcHighLowByte_From_Value(data.frontAxleLeftBrakeServosNeutralPositions, 1);
-fcustomwrite(appdata.serial,hi,lo,10);
-
-[hi, lo] = calchighlowbyte_from_value(data.frontAxleRightBrakeServosNeutralPositions, 1);
-fcustomwrite(appdata.serial,hi,lo,11);
-
-[hi, lo] = calchighlowbyte_from_value(data.rearAxleLeftBrakeServosNeutralPositions, 1);
-fcustomwrite(appdata.serial,hi,lo,12);
-
-[hi, lo] = calchighlowbyte_from_value(data.rearAxleRightBrakeServosNeutralPositions, 1);
-fcustomwrite(appdata.serial,hi,lo,13);
-
-[hi, lo] = calcHighLowByte_From_Value(data.frontAxleLeftBrakeServosMaximumPositions, 1);
-fcustomwrite(appdata.serial,hi,lo,14);
-
-[hi, lo] = calchighlowbyte_from_value(data.frontAxleRightBrakeServosMaximumPositions, 1);
-fcustomwrite(appdata.serial,hi,lo,15);
-
-[hi, lo] = calchighlowbyte_from_value(data.rearAxleLeftBrakeServosMaximumPositions, 1);
-fcustomwrite(appdata.serial,hi,lo,16);
-
-[hi, lo] = calchighlowbyte_from_value(data.rearAxleRightBrakeServosMaximumPositions, 1);
-fcustomwrite(appdata.serial,hi,lo,17);
-
-%Write ABS Parameters to car
-fcustomwrite(appdata.serial,data.absEnabled,'',20);
-fcustomwrite(appdata.serial,str2double(data.absLowThres),'',21);
-fcustomwrite(appdata.serial,str2double(data.absMiddleThres),'',22);
-fcustomwrite(appdata.serial,str2double(data.absHighThres),'',23);
-fcustomwrite(appdata.serial,str2double(data.finalPhaseLengthLift),'',24);
-fcustomwrite(appdata.serial,str2double(data.finalPhaseLengthHolding),'',25);
-fcustomwrite(appdata.serial,str2double(data.slopeFirstPhaseCalcBrake),'',26);
-fcustomwrite(appdata.serial,str2double(data.thirdPhaseReleaseBrake),'',27);
-fcustomwrite(appdata.serial,str2double(data.lastPhaseReleaseBrake),'',28);
-
-%Write ESP Parameters to car
-fcustomwrite(appdata.serial,data.espEnabled,'',40);
-fcustomwrite(appdata.serial,str2double(data.espSensitivityControlAngVel),'',41);
-fcustomwrite(appdata.serial,str2double(data.espSensitivityAdjSlipAngle),'',42);
-fcustomwrite(appdata.serial,str2double(data.espBrakeForceFactor),'',43);
-fcustomwrite(appdata.serial,str2double(data.espBrakeForceDist),'',44);
-fcustomwrite(appdata.serial,str2double(data.espAngularVelContPCoeff),'',45);
-fcustomwrite(appdata.serial,str2double(data.espAngularVelContDCoeff),'',46);
-fcustomwrite(appdata.serial,str2double(data.espDriftAngleContrPCoeff),'',47);
-fcustomwrite(appdata.serial,str2double(data.espDriftAngleContrDCoeff),'',48);
-fcustomwrite(appdata.serial,str2double(data.espThresValAngularVelToSlipAngleContrl),'',49);
-
-%Write Vehicle Parameters to car
-fcustomwrite(appdata.serial,str2double(data.dynamicWheelRollRadius),'',50);
-[hi, lo] = calchighlowbyte_from_value(data.wheelbase, 1); %scaled mm to range [0 65535]
-fcustomwrite(appdata.serial,hi,lo,51);
-[hi, lo] = calchighlowbyte_from_value(data.vehicleMass, 1000); %scaled kg to range [0 65535]
-fcustomwrite(appdata.serial,hi,lo,52);
-[hi, lo] = calchighlowbyte_from_value(data.distanceFrontAxleCoG, 1);
-fcustomwrite(appdata.serial,hi,lo,53);
-[hi, lo] = calchighlowbyte_from_value(data.distanceRearAxleCoG, 1);
-fcustomwrite(appdata.serial,hi,lo,54);
-[hi, lo] = calchighlowbyte_from_value(data.frontAxleTurnStiffness, 1);
-fcustomwrite(appdata.serial,hi,lo,55);
-[hi, lo] = calchighlowbyte_from_value(data.rearAxleTurnStiffness, 1);
-fcustomwrite(appdata.serial,hi,lo,56);
-console_Callback(handles.console, eventdata, handles,'GUI Car data parameters uploaded to car.');
-
-%readasync(appdata.serial);
-
-% --------------------------------------------------------------------
-function aboutGUI_ClickedCallback(hObject, eventdata, handles)
-% hObject    handle to aboutGUI (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-msgbox('Author: Valter Sandström                                                 E-mail: valter.sandstrom@aalto.fi                                26.11.2012',...
-    'About this GUI...');
