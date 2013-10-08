@@ -1,58 +1,79 @@
 classdef Car < handle
-    properties
-        % Vehicle parameters
-        dynamicWheelRollRadius
-        wheelbase
-        vehicleMass
-        distanceFrontAxleCoG
-        distanceRearAxleCoG
-        frontAxleTurnStiffness
-        rearAxleTurnStiffness
-
-        % Servo calibration
-        frontAxleLeftBrakeServosNeutralPositions
-        frontAxleRightBrakeServosNeutralPositions
-        rearAxleLeftBrakeServosNeutralPositions
-        rearAxleRightBrakeServosNeutralPositions
-        frontAxleLeftBrakeServosMaximumPositions
-        frontAxleRightBrakeServosMaximumPositions
-        rearAxleLeftBrakeServosMaximumPositions
-        rearAxleRightBrakeServosMaximumPositions
+    properties (Access = private)
+        % Values are stored here
+        params
+    end
+    properties (Access = public)
+        
+        % Servo param id's
+        frontAxleLeftBrakeServosNeutralPositions = 10
+        frontAxleRightBrakeServosNeutralPositions = 11
+        rearAxleLeftBrakeServosNeutralPositions = 12
+        rearAxleRightBrakeServosNeutralPositions = 13
+        frontAxleLeftBrakeServosMaximumPositions = 14
+        frontAxleRightBrakeServosMaximumPositions = 15
+        rearAxleLeftBrakeServosMaximumPositions = 16
+        rearAxleRightBrakeServosMaximumPositions = 17
 
         % ABS parameters
-        absEnabled
-        absLowThres
-        absMiddleThres
-        absHighThres
-        finalPhaseLengthLift
-        finalPhaseLengthHolding
-        slopeFirstPhaseCalcBrake
-        thirdPhaseReleaseBrake
-        lastPhaseReleaseBrake
+        absEnabled = 20
+        absLowThres = 21
+        absMiddleThres = 22
+        absHighThres = 23
+        finalPhaseLengthLift = 24
+        finalPhaseLengthHolding = 25
+        slopeFirstPhaseCalcBrake = 26
+        thirdPhaseReleaseBrake = 27
+        lastPhaseReleaseBrake = 28
 
         % ESP parameters
-        espEnabled
-        espSensitivityControlAngVel
-        espSensitivityAdjSlipAngle
-        espBrakeForceFactor
-        espBrakeForceDist
-        espAngularVelContPCoeff
-        espAngularVelContDCoeff
-        espDriftAngleContrPCoeff
-        espDriftAngleContrDCoeff
-        espThresValAngularVelToSlipAngleContrl
+        espEnabled = 40
+        espSensitivityControlAngVel = 41
+        espSensitivityAdjSlipAngle = 42
+        espBrakeForceFactor = 43
+        espBrakeForceDist = 44
+        espAngularVelContPCoeff = 45
+        espAngularVelContDCoeff = 46
+        espDriftAngleContrPCoeff = 47
+        espDriftAngleContrDCoeff = 48
+        espThresValAngularVelToSlipAngleContrl = 49
 
+        % Vehicle params
+        dynamicWheelRollRadius = 50
+        wheelbase = 51
+        vehicleMass = 52
+        distanceFrontAxleCoG = 53
+        distanceRearAxleCoG = 54
+        frontAxleTurnStiffness = 55
+        rearAxleTurnStiffness = 56
     end
     
     methods
-        function this = saveToFile(this, filename)
-            Logging.log('This must be implemented first!');
-            % 'this' holds current Car object
+        % Constructor
+        function this = Car()
+            this.params = zeros(1, 60); % 60 can be increased
         end
         
+        % Get Param
+        function val = getParam(this, id)
+            val = this.params(id);
+        end
+        
+        % Set Param
+        function this = setParam(this, id, val)
+            this.params(id) = val;
+        end
+        
+        % Save Car object to file
+        function this = saveToFile(this, filename)
+            % TODO: Fixme!
+            save('filename.mat', this.params);
+        end
+        
+        % Load Car object from file
         function this = loadFromFile(this, filename)
-            Logging.log('This must be implemented first!');
-            % 'this' holds current Car object
+            % TODO: Fixme!
+            this.params = load('filename.mat');
         end
 
     end

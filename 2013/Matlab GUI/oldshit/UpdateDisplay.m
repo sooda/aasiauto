@@ -1,8 +1,8 @@
-function UpdateDisplay(hObject,eventdata,hfigure,handles)
+function UpdateDisplay(hObject, eventdata, hfigure, handles)
     % Timer timer1 callback, called each time timer iterates.
     % Gets surface Z data, adds noise, and writes it back to surface object.
 
-     [keyIsDown ctime keysAreDown] = KbCheck();
+     [~, ~, keysAreDown] = KbCheck();
      handles2 = guidata(hfigure);
 
      cardata = getappdata(handles.figure1, 'Car_Data');
@@ -320,14 +320,14 @@ function UpdateDisplay(hObject,eventdata,hfigure,handles)
         drv_throttle = uint8(rev * 2.55);
     end
 
-    stopasync(appdata.serial);
+    stopasync(appdata.serial); % why?
 
     if(sound_horn)   
         fwrite(appdata.serial, [255 65 drv_throttle drv_dir drv_brake drv_clutch drv_drvdir 255 68], 'async');  
     else
         fwrite(appdata.serial, [255 65 drv_throttle drv_dir drv_brake drv_clutch drv_drvdir], 'async');
     end
-    readasync(appdata.serial);
+    readasync(appdata.serial);  % what?
     %Save car data
     setappdata(handles.figure1, 'Car_Data',cardata);
     setappdata(handles.figure1, 'App_Data',appdata);

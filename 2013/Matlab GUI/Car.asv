@@ -1,0 +1,74 @@
+classdef Car < handle
+    properties
+        
+        params
+        
+        dynamicWheelRollRadius          = 0
+        wheelbase                       = 1
+        vehicleMass                     = 2
+        distanceFrontAxleCoG            = 3
+        distanceRearAxleCoG             = 4
+        frontAxleTurnStiffness          = 5
+        rearAxleTurnStiffness           = 6
+
+        % Servo calibration
+        frontAxleLeftBrakeServosNeutralPositions    = 7
+        frontAxleRightBrakeServosNeutralPositions   = 8
+        rearAxleLeftBrakeServosNeutralPositions     = 9
+        rearAxleRightBrakeServosNeutralPositions    = 10
+        frontAxleLeftBrakeServosMaximumPositions    = 11
+        frontAxleRightBrakeServosMaximumPositions   = 12
+        rearAxleLeftBrakeServosMaximumPositions
+        rearAxleRightBrakeServosMaximumPositions
+
+        % ABS parameters
+        absEnabled
+        absLowThres
+        absMiddleThres
+        absHighThres
+        finalPhaseLengthLift
+        finalPhaseLengthHolding
+        slopeFirstPhaseCalcBrake
+        thirdPhaseReleaseBrake
+        lastPhaseReleaseBrake
+
+        % ESP parameters
+        espEnabled
+        espSensitivityControlAngVel
+        espSensitivityAdjSlipAngle
+        espBrakeForceFactor
+        espBrakeForceDist
+        espAngularVelContPCoeff
+        espAngularVelContDCoeff
+        espDriftAngleContrPCoeff
+        espDriftAngleContrDCoeff
+        espThresValAngularVelToSlipAngleContrl
+
+    end
+    
+    methods
+        function this = Car()
+            this.params = zeros(1, 100);
+        end
+        
+        function val = getParam(this, id)
+            val = this.params(id);
+        end
+        
+        function this = setParam(this, id, val)
+            this.params(id) = val;
+        end
+        
+        function this = saveToFile(this, filename)
+            Logging.log('This must be implemented first!');
+            % 'this' holds current Car object
+        end
+        
+        function this = loadFromFile(this, filename)
+            Logging.log('This must be implemented first!');
+            % 'this' holds current Car object
+        end
+
+    end
+end
+    

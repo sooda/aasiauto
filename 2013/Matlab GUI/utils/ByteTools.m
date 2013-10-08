@@ -11,7 +11,7 @@ classdef ByteTools
             value = str2double(value) * scale;
             
             highbyte = bitshift(value, -8);
-            lowbyte = bitand(1001,255);
+            lowbyte = bitand(value, 255);
 
         end
 

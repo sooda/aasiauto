@@ -19,8 +19,6 @@ classdef Communication < handle
         % Class constructor
         function this = Communication()
             this.status = this.STATUSCODE.Disconnected;
-            %timer('Executionmode','fixedRate','Period', 1, ...
-            %    'TimerFcn', {@this.connectionTimer_triggered}, inf);
         end
         
         % Opens serial connection to car
@@ -102,16 +100,33 @@ classdef Communication < handle
             stop(this.connectionTimer);
         end % / check_initialized
         
+        % Read all bytes (BytesAvailable).
+        function val = getBytes(this)
+            if (this.serial_data.BytesAvailable && ...
+                    this.status == this.STATUSCODE.Initialized)
+                val = fread(this.serial_data, this.serial_data.BytesAvailable, 'async');
+            else
+                val = -1;
+            end
+        end
+        
         % Read byte from the serial communication with car.
         function val = getByte(this)
             if (this.serial_data.BytesAvailable && ...
                     this.status == this.STATUSCODE.Initialized)
-                val = fread(this.serial_data, 1);
+                val = fread(this.serial_data, 1, 'async');
             else
                 val = -1;
             end
         end
 
+        % Write bytes
+        function this = writeBytes(this, bytes)
+            if (this.status == this.STATUSCODE.Initialized)
+                fwrite(this.serial_data, bytes, 'async');
+            end
+        end
+        
     end % /methods
 
 end % /classdef Communication
