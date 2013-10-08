@@ -53,7 +53,7 @@ function RCCarGUI_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for RCCarGUI
 RCCarGUI_Init(hObject, eventdata, handles, varargin);
-savedrivedatacheckbox_Callback(handles.savedrivedatacheckbox, eventdata, handles)
+
 
 % --- Outputs from this function are returned to the command line.
 function varargout = RCCarGUI_OutputFcn(hObject, eventdata, handles) 
@@ -391,7 +391,8 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
 
     % Destroy timer
     %delete(handles.timer)
-    %delete(handles.timer2)
+    %delete(handles.timer2
+    )
 
     %Clear the serial object
     appdata = getappdata(handles.figure1, 'App_Data');
