@@ -1,3 +1,5 @@
+
+
 // Brakecontroller
 
 #include <Wire.h>
@@ -9,6 +11,7 @@
 
 #define DEBUGTIMER TCCR4B
 #define RUNNINGTIME TCNT4
+#define NUMBER_OF_TASKS 8
 
 // ****************************** Common Variables ******************************** //
 
@@ -26,20 +29,9 @@ unsigned char _param_buff[3];
 int parameterCycle = 0;
 
 boolean DbgMainRunning = false;
-
-struct DebugData {
-    uint16_t RunningOverloads;
-    uint16_t Teensy;
-    uint16_t MainComm;
-    uint16_t ParamSend;
-    uint16_t ReadGyro;
-    uint16_t ReadAcc;
-    uint16_t UpdBrakes;
-    uint16_t UpdBrakeLights;
-    uint16_t DataSend;
-};
-
-DebugData DbgTime = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+uint16_t dbgData[NUMBER_OF_TASKS];
+uint8_t taskNo;
+uint16_t overflows = 0;
 // ****************************************************************************** //
 
 // ***************************** Measurement Variables ****************************** //
@@ -213,18 +205,18 @@ double v_char2 = 0.9;
 // **************************************************************************************** //
 
 void setup(){
-  
+
   //set pins as outputs
   pinMode(13, OUTPUT); //Built in led
   pinMode(24, OUTPUT); //Blue led
   pinMode(22, OUTPUT); //Brakelights
   pinMode(23, OUTPUT); //Brakelights
-  
+
   // Serial ports
-  Serial.begin(38400);
+  Serial2.begin(38400);
   Serial1.begin(38400); // main controller
   Serial3.begin(38400); // wheel speed controller
-  
+
   // INITIALIZE I2C
   Wire.begin();
   delay(1000);
@@ -234,40 +226,40 @@ void setup(){
   pinMode(12, OUTPUT); // front right
   pinMode(5, OUTPUT); // rear left
   pinMode(2, OUTPUT); // rear right
-  
+
   // INITIALIZE ACCELEROMETER
   adxl.powerOn();
-  
+
   //set activity/ inactivity thresholds (0-255)
   adxl.setActivityThreshold(75); //62.5mg per increment
   adxl.setInactivityThreshold(75); //62.5mg per increment
   adxl.setTimeInactivity(10); // how many seconds of no activity is inactive?
- 
+
   //look of activity movement on this axes - 1 == on; 0 == off 
   adxl.setActivityX(1);
   adxl.setActivityY(1);
   adxl.setActivityZ(1);
- 
+
   //look of inactivity movement on this axes - 1 == on; 0 == off
   adxl.setInactivityX(1);
   adxl.setInactivityY(1);
   adxl.setInactivityZ(1);
- 
+
   //look of tap movement on this axes - 1 == on; 0 == off
   adxl.setTapDetectionOnX(0);
   adxl.setTapDetectionOnY(0);
   adxl.setTapDetectionOnZ(1);
- 
+
   //set values for what is a tap, and what is a double tap (0-255)
   adxl.setTapThreshold(50); //62.5mg per increment
   adxl.setTapDuration(15); //625μs per increment
   adxl.setDoubleTapLatency(80); //1.25ms per increment
   adxl.setDoubleTapWindow(200); //1.25ms per increment
- 
+
   //set values for what is considered freefall (0-255)
   adxl.setFreeFallThreshold(7); //(5 - 9) recommended - 62.5mg per increment
   adxl.setFreeFallDuration(45); //(20 - 70) recommended - 5ms per increment
- 
+
   //setting all interupts to take place on int pin 1
   //I had issues with int pin 2, was unable to reset it
   adxl.setInterruptMapping( ADXL345_INT_SINGLE_TAP_BIT,   ADXL345_INT1_PIN );
@@ -275,24 +267,24 @@ void setup(){
   adxl.setInterruptMapping( ADXL345_INT_FREE_FALL_BIT,    ADXL345_INT1_PIN );
   adxl.setInterruptMapping( ADXL345_INT_ACTIVITY_BIT,     ADXL345_INT1_PIN );
   adxl.setInterruptMapping( ADXL345_INT_INACTIVITY_BIT,   ADXL345_INT1_PIN );
- 
+
   //register interupt actions - 1 == on; 0 == off  
   adxl.setInterrupt( ADXL345_INT_SINGLE_TAP_BIT, 1);
   adxl.setInterrupt( ADXL345_INT_DOUBLE_TAP_BIT, 1);
   adxl.setInterrupt( ADXL345_INT_FREE_FALL_BIT,  1);
   adxl.setInterrupt( ADXL345_INT_ACTIVITY_BIT,   1);
   adxl.setInterrupt( ADXL345_INT_INACTIVITY_BIT, 1);
-  
+
   // Set range
   adxl.setRangeSetting(16);
-  
+
   // INITIALIZE GYRO
   gyro.init(ITG3200_ADDR_AD0_HIGH); 
   gyro.zeroCalibrate(2500, 2);
 
   // INITIALIZE CLOCK SYCLE
   cli();//stop interrupts
-  
+
   // Timer/Counter 0 initialization
   // Clock source: System Clock
   // Clock value: 250,000 kHz
@@ -307,7 +299,7 @@ void setup(){
   OCR0B=0x00;
   //Enable timer compare interrupt
   TIMSK0 |= (1 << OCIE0A);
-  
+
   //Settings for Timer 1 to give out PWM
   TCCR1A=(1<<COM1A1) | (0<<COM1A0) | (1<<COM1B1) | (0<<COM1B0) | (0<<COM1C1) | (0<<COM1C0) | (0<<WGM11) | (0<<WGM10);
   TCCR1B=(0<<ICNC1) | (0<<ICES1) | (1<<WGM13) | (0<<WGM12) | (0<<CS12) | (1<<CS11) | (0<<CS10);
@@ -334,10 +326,12 @@ void setup(){
   OCR3BL=0xDC;
   OCR3CH=0x00;
   OCR3CL=0x00;
-  
+
   //Settings for loop timer
   DEBUGTIMER = (1 << CS42) | (1 << CS40);
-  
+  //DEBUGTIMER = (1 << CS42);
+  for(uint8_t i = 0; i < NUMBER_OF_TASKS; ++i)
+    dbgData[i] = 0;
   sei();//allow interrupts
 }//end setup
 
@@ -345,10 +339,11 @@ ISR(TIMER0_COMPA_vect){
   if (program_phase == 10){
     program_phase = 1;
     if(DbgMainRunning)
-        DbgTime.RunningOverloads++;
+      overflows++;
     //raise the flag for running the main program
     main_program_flag = true;
-  } else {
+  } 
+  else {
     program_phase += 1;
   }
 }
@@ -361,7 +356,7 @@ void read_gyro()
     gyro.readGyroRawCal(&gyro_x,&gyro_y,&gyro_z);
     break;
   }
-  
+
   x_gyro_highbyte = gyro_x >> 8;
   x_gyro_lowbyte = (unsigned char)char(gyro_x);
   y_gyro_highbyte = gyro_y >> 8;
@@ -407,20 +402,20 @@ void update_brakeLigths()
 void update_brakes()
 { 
 
-    double flw_ws = (int)flw_pulsecount * 1.227; 
-    double frw_ws = (int)frw_pulsecount * 1.227; //2 * PI * ((frw_pulsecount / (double)ENCODER_RESOLUTION) / 0.01); 
-    double rlw_ws = (int)rlw_pulsecount * 1.227; //2 * PI * ((rlw_pulsecount / (double)ENCODER_RESOLUTION) / 0.01);
-    double rrw_ws = (int)rrw_pulsecount * 1.227; //2 * PI * ((rrw_pulsecount / (double)ENCODER_RESOLUTION) / 0.01);
-  
-    double flw_a = (1.227 * ((int)flw_pulsecount - flw_ws_prev)) / 0.01;
-    double frw_a = (1.227 * ((int)frw_pulsecount - frw_ws_prev)) / 0.01;
-    double rlw_a = (1.227 * ((int)rlw_pulsecount - rlw_ws_prev)) / 0.01;
-    double rrw_a = (1.227 * ((int)rrw_pulsecount - rrw_ws_prev)) / 0.01;
-    
-    flw_ws_prev = (int)flw_pulsecount;
-    frw_ws_prev = (int)frw_pulsecount;
-    rlw_ws_prev = (int)rlw_pulsecount;
-    rrw_ws_prev = (int)rrw_pulsecount;
+  double flw_ws = (int)flw_pulsecount * 1.227; 
+  double frw_ws = (int)frw_pulsecount * 1.227; //2 * PI * ((frw_pulsecount / (double)ENCODER_RESOLUTION) / 0.01); 
+  double rlw_ws = (int)rlw_pulsecount * 1.227; //2 * PI * ((rlw_pulsecount / (double)ENCODER_RESOLUTION) / 0.01);
+  double rrw_ws = (int)rrw_pulsecount * 1.227; //2 * PI * ((rrw_pulsecount / (double)ENCODER_RESOLUTION) / 0.01);
+
+  double flw_a = (1.227 * ((int)flw_pulsecount - flw_ws_prev)) / 0.01;
+  double frw_a = (1.227 * ((int)frw_pulsecount - frw_ws_prev)) / 0.01;
+  double rlw_a = (1.227 * ((int)rlw_pulsecount - rlw_ws_prev)) / 0.01;
+  double rrw_a = (1.227 * ((int)rrw_pulsecount - rrw_ws_prev)) / 0.01;
+
+  flw_ws_prev = (int)flw_pulsecount;
+  frw_ws_prev = (int)frw_pulsecount;
+  rlw_ws_prev = (int)rlw_pulsecount;
+  rrw_ws_prev = (int)rrw_pulsecount;
 
   if(esp_on)
   { 
@@ -430,62 +425,62 @@ void update_brakes()
     int rr_brake_power = ((int)drv_brake_pwr / esp_brake_div) * esp_brake_multi;
     byte esp_active = 0;
     double v = get_speed(flw_ws, frw_ws, rlw_ws, rrw_ws);
-    
+
     double w_calculated = drv_steering * ( v / ((esp_wheelbase/100000.0) * (1 + (v * v)/v_char2))); // TODO drv_steering to rad
     double w_measured =  gyro_z / gyro.scalefactor[2];    
 
     int16_t acc_y = (((int)_adxl_buff[3]) << 8) | _adxl_buff[2]; // TODO: acc negative?
     double acc_y_rescaled = (acc_y * (32/1024)) * 9.81;
-    
+
     if(acc_y_rescaled > 0.1 || acc_y_rescaled < -0.1)
       esp_b_timer++;
     else
       esp_b_timer = 0;
-    
+
     // estimate side slip
     double v_lateral = (v * w_measured + acc_y_rescaled) * (esp_b_timer / 1000);
     double B_estimated = v_lateral / v; // this is not degrees nor rads its tan(side-slip)
     double B_calculated = drv_steering * ((esp_B_l2lC1C2-(esp_B_l1C1m * v * v)) / (esp_B_l2C1C2 - (v*v*esp_B_ml1C1_l2C2)));
-    
+
     flw_prev_braked = false;
     frw_prev_braked = false;
     rlw_prev_braked = false;
     rrw_prev_braked = false;
-    
+
     if(B_estimated > (esp_ss_start_threshold / 1000))// use side slip if estimated side slip > 12 degrees
     {
       double b_error = B_calculated - B_estimated;
-      
+
       if((abs(B_estimated)) >= (abs(B_calculated) * (1 / (esp_b_sensitivity / 255)))) // oversteer
       {
-  	if(B_estimated > 0) //brake front left wheel
-          {
-            int brake_power = fl_brake_power + ((esp_b_P * 10 / 255) * abs(b_error) + (esp_b_D * 10 / 255) * (abs(b_error) - b_prev_error));
-            fl_brake_power = brake_power >= 255 ? 255 : brake_power;
-            flw_prev_braked = true;
-          }
-  	else  // brake front right wheel
-          {
-            int brake_power = fr_brake_power + ((esp_b_P * 10 / 255) * abs(b_error) + (esp_b_D * 10 / 255) * (abs(b_error) - b_prev_error));
-            fr_brake_power = brake_power >= 255 ? 255 : brake_power;
-            frw_prev_braked = true;
-          }	
+        if(B_estimated > 0) //brake front left wheel
+        {
+          int brake_power = fl_brake_power + ((esp_b_P * 10 / 255) * abs(b_error) + (esp_b_D * 10 / 255) * (abs(b_error) - b_prev_error));
+          fl_brake_power = brake_power >= 255 ? 255 : brake_power;
+          flw_prev_braked = true;
+        }
+        else  // brake front right wheel
+        {
+          int brake_power = fr_brake_power + ((esp_b_P * 10 / 255) * abs(b_error) + (esp_b_D * 10 / 255) * (abs(b_error) - b_prev_error));
+          fr_brake_power = brake_power >= 255 ? 255 : brake_power;
+          frw_prev_braked = true;
+        }	
         esp_active = 1;
       }
       else if (abs(B_estimated) < abs(B_calculated) * (esp_b_sensitivity / 255)) // understeer
       {
-  	if(w_measured < 0) // brake rear right wheel
-          {
-            int brake_power = rr_brake_power + ((esp_b_P * 10 / 255) * abs(b_error) + (esp_b_D * 10 / 255) * (abs(b_error) - b_prev_error));
-            rr_brake_power = brake_power >= 255 ? 255 : brake_power;
-            rlw_prev_braked = true;
-          }
-  	else // brake rear left wheel
-  	{
-            int brake_power = rl_brake_power + ((esp_b_P * 10 / 255) * abs(b_error) + (esp_b_D * 10 / 255) * (abs(b_error) - b_prev_error));
-            rl_brake_power = brake_power >= 255 ? 255 : brake_power;
-            rrw_prev_braked = true;
-          }
+        if(w_measured < 0) // brake rear right wheel
+        {
+          int brake_power = rr_brake_power + ((esp_b_P * 10 / 255) * abs(b_error) + (esp_b_D * 10 / 255) * (abs(b_error) - b_prev_error));
+          rr_brake_power = brake_power >= 255 ? 255 : brake_power;
+          rlw_prev_braked = true;
+        }
+        else // brake rear left wheel
+        {
+          int brake_power = rl_brake_power + ((esp_b_P * 10 / 255) * abs(b_error) + (esp_b_D * 10 / 255) * (abs(b_error) - b_prev_error));
+          rl_brake_power = brake_power >= 255 ? 255 : brake_power;
+          rrw_prev_braked = true;
+        }
         esp_active = 1;
       }
       b_prev_error = b_error;
@@ -495,39 +490,39 @@ void update_brakes()
       double w_error = w_calculated - w_measured;      
       if((abs(w_measured)) >= (abs(w_calculated) * (1 / (esp_w_sensitivity / 255)))) // oversteer
       {
-  	if(w_measured > 0) //brake front left wheel
-          {
-            int brake_power = fl_brake_power + ((esp_w_P * 10 / 255) * abs(w_error) + (esp_w_D * 10 / 255) * (abs(w_error) - w_prev_error));
-            fl_brake_power = brake_power >= 255 ? 255 : brake_power;
-            flw_prev_braked = true;
-          }
-  	else  // brake front right wheel
-          {
-            int brake_power = fr_brake_power + ((esp_w_P * 10 / 255) * abs(w_error) + (esp_w_D * 10 / 255) * (abs(w_error) - w_prev_error));
-            fr_brake_power = brake_power >= 255 ? 255 : brake_power;
-            frw_prev_braked = true;
-          }	
+        if(w_measured > 0) //brake front left wheel
+        {
+          int brake_power = fl_brake_power + ((esp_w_P * 10 / 255) * abs(w_error) + (esp_w_D * 10 / 255) * (abs(w_error) - w_prev_error));
+          fl_brake_power = brake_power >= 255 ? 255 : brake_power;
+          flw_prev_braked = true;
+        }
+        else  // brake front right wheel
+        {
+          int brake_power = fr_brake_power + ((esp_w_P * 10 / 255) * abs(w_error) + (esp_w_D * 10 / 255) * (abs(w_error) - w_prev_error));
+          fr_brake_power = brake_power >= 255 ? 255 : brake_power;
+          frw_prev_braked = true;
+        }	
         esp_active = 1;
       }
       else if (abs(w_measured) < abs(w_calculated) * (esp_w_sensitivity / 255)) // understeer
       {
-  	if(w_measured < 0) // brake rear right wheel
-          {
-            int brake_power = rr_brake_power + ((esp_w_P * 10 / 255) * abs(w_error) + (esp_w_D * 10 / 255) * (abs(w_error) - w_prev_error));
-            rr_brake_power = brake_power >= 255 ? 255 : brake_power;
-            rlw_prev_braked = true;
-          }
-  	else // brake rear left wheel
-  	{
-            int brake_power = rl_brake_power + ((esp_w_P * 10 / 255) * abs(w_error) + (esp_w_D * 10 / 255) * (abs(w_error) - w_prev_error));
-            rl_brake_power = brake_power >= 255 ? 255 : brake_power;
-            rrw_prev_braked = true;
-          }
+        if(w_measured < 0) // brake rear right wheel
+        {
+          int brake_power = rr_brake_power + ((esp_w_P * 10 / 255) * abs(w_error) + (esp_w_D * 10 / 255) * (abs(w_error) - w_prev_error));
+          rr_brake_power = brake_power >= 255 ? 255 : brake_power;
+          rlw_prev_braked = true;
+        }
+        else // brake rear left wheel
+        {
+          int brake_power = rl_brake_power + ((esp_w_P * 10 / 255) * abs(w_error) + (esp_w_D * 10 / 255) * (abs(w_error) - w_prev_error));
+          rl_brake_power = brake_power >= 255 ? 255 : brake_power;
+          rrw_prev_braked = true;
+        }
         esp_active = 1;
       }     
       w_prev_error = w_error;
     }
-    
+
     if(esp_active)
     {
       OCR1B = get_braking_force(fl_brake_power, flw_a, &flw_phase, &flw_max_brake_pwr, &flw_counter, &flw_abs_brake_pwr, fl_zero_pos, fl_max_pos, fl_brake_scale, fl_brake_leftHand);
@@ -578,7 +573,7 @@ int get_braking_force(int brake_pwr, double a, unsigned char *phase, uint16_t *m
     {
       ret = *abs_brake_pwr;
       (*counter)++;
-      
+
       if((abs(a) > ((int)abs_high_threshold * 50 / 255)))
       {
         *counter = 0;
@@ -595,7 +590,7 @@ int get_braking_force(int brake_pwr, double a, unsigned char *phase, uint16_t *m
       (*counter)++;
       *abs_brake_pwr = *abs_brake_pwr + (*counter * phase3_gain) < max_brake ? *abs_brake_pwr + (*counter * phase3_gain) : max_brake;
       ret = *abs_brake_pwr;
-      
+
       // simplified
       if(a < (-1 * ((int)abs_start_threshold * 50 / 255)))
       {
@@ -609,50 +604,50 @@ int get_braking_force(int brake_pwr, double a, unsigned char *phase, uint16_t *m
         *counter = 0;
         *phase = 1;
       }
-      
+
       // advanced
       /*
       if(a < ((int)abs_high_threshold * 50 / 255))
-      {
-        *counter = 0;
-        *phase = 4;
-      }
-      */
+       {
+       *counter = 0;
+       *phase = 4;
+       }
+       
     }
-    /*else if(*phase == 4) // advanced
-    {
-      ret = *abs_brake_pwr;
-      if(a < ((int)abs_middle_threshold * 50 / 255))
-      {
-        *counter = 0;
-        *phase = 5;
-      }
-    }
-    else if(*phase == 5)
-    {
-      (*counter)++;
-      if(*counter < phase5_gain_timer_threshold)
-      {
-        *abs_brake_pwr = *abs_brake_pwr + (*counter * phase5_gain) < max_brake ? *abs_brake_pwr + (*counter * phase5_gain) : max_brake;
-      }
-      else if (*counter >= phase5_gain_timer_threshold && *counter < phase5_hold_timer_threshold)
-      {
-        // hold
-      }
-      else
-      {
-        *counter = 0;
-      }
-      
-      ret = *abs_brake_pwr;
-      
-      if(a < (-1 * ((int)abs_start_threshold * 50 / 255)))
-      {
-        *max_brake_pwr = *abs_brake_pwr;
-        *counter = 0;
-        *phase = 1;
-      }
-    }*/
+    else if(*phase == 4) // advanced
+     {
+     ret = *abs_brake_pwr;
+     if(a < ((int)abs_middle_threshold * 50 / 255))
+     {
+     *counter = 0;
+     *phase = 5;
+     }
+     }
+     else if(*phase == 5)
+     {
+     (*counter)++;
+     if(*counter < phase5_gain_timer_threshold)
+     {
+     *abs_brake_pwr = *abs_brake_pwr + (*counter * phase5_gain) < max_brake ? *abs_brake_pwr + (*counter * phase5_gain) : max_brake;
+     }
+     else if (*counter >= phase5_gain_timer_threshold && *counter < phase5_hold_timer_threshold)
+     {
+     // hold
+     }*/
+     else
+     {
+     *counter = 0;
+     }
+     
+     ret = *abs_brake_pwr;
+     
+     if(a < (-1 * ((int)abs_start_threshold * 50 / 255)))
+     {
+     *max_brake_pwr = *abs_brake_pwr;
+     *counter = 0;
+     *phase = 1;
+     }
+     }
   }
   else
   {
@@ -668,30 +663,32 @@ int get_braking_force(int brake_pwr, double a, unsigned char *phase, uint16_t *m
 
 void main_program(){
   DbgMainRunning = true;
+  taskNo = 0;
   RUNNINGTIME = 0;
   //Put down the flag not to run the function again
   main_program_flag = false;
-  
+
   //Shut the blue led to see that the program is running
   PORTA ^= B00000100; //(D2)
   PORTB ^= B10000000;
-  
+
   read_serial3(); // Teensy
-  DbgTime.Teensy = TIM16_ReadRUNNINGTIME();
+  dbgData[taskNo++] = TIM16_ReadRUNNINGTIME(); 
   read_serial1(); // Main Controller
-  DbgTime.MainComm = TIM16_ReadRUNNINGTIME() - DbgTime.Teensy;
+  dbgData[taskNo++] = TIM16_ReadRUNNINGTIME();
   send_parameters();
-  DbgTime.ParamSend = TIM16_ReadRUNNINGTIME() - DbgTime.MainComm;
+  dbgData[taskNo++] = TIM16_ReadRUNNINGTIME();
   read_gyro();
-  DbgTime.ReadGyro = TIM16_ReadRUNNINGTIME() - DbgTime.ParamSend;
+  dbgData[taskNo++] = TIM16_ReadRUNNINGTIME();
   read_accelerometer();
-  DbgTime.ReadAcc = TIM16_ReadRUNNINGTIME() - DbgTime.ReadGyro;
+  dbgData[taskNo++] = TIM16_ReadRUNNINGTIME();
   update_brakes();
-  DbgTime.UpdBrakes = TIM16_ReadRUNNINGTIME() - DbgTime.ReadAcc;
+  dbgData[taskNo++] = TIM16_ReadRUNNINGTIME();
   update_brakeLigths();
-  DbgTime.UpdBrakeLights = TIM16_ReadRUNNINGTIME() - DbgTime.UpdBrakes;
+  dbgData[taskNo++] = TIM16_ReadRUNNINGTIME();
   send_data();
-  DbgTime.DataSend = TIM16_ReadRUNNINGTIME() - DbgTime.UpdBrakeLights;
+  dbgData[taskNo] = TIM16_ReadRUNNINGTIME();
+  sendDebugData();
   DbgMainRunning = false;
 }
 
@@ -703,39 +700,50 @@ void loop(){
 
 uint16_t TIM16_ReadRUNNINGTIME( void )
 {
-    uint8_t sreg;
-    uint16_t i;
-    sreg = SREG;
-    cli();
-    i = RUNNINGTIME;
-    SREG = sreg;
-    return i;
+  uint8_t sreg;
+  uint16_t i;
+  sreg = SREG;
+  cli();
+  i = RUNNINGTIME;
+  SREG = sreg;
+  sei();
+  return i;
 }
 
 // ---------------------------- COMMUNICATION ---------------------------- //
 
+void sendDebugData(void) {
+  Serial2.print("brakeCtrl: ");
+  Serial2.print(overflows);
+  Serial2.print(" ");
+  for(uint8_t i = 0; i <=taskNo; ++i) {
+    Serial2.print(dbgData[i]);
+    Serial2.print(" ");
+  }
+  Serial2.println(TIM16_ReadRUNNINGTIME());
+}
 //Function for sending the data to the computer
 void send_data(){
   if(parameterCycle == 0)
   {
-  Serial1.write(0xFF); //Start command
-  Serial1.write(0x20); //Message ID  
-  sendByteUart1(flw_pulsecount);
-  sendByteUart1(frw_pulsecount);
-  sendByteUart1(rlw_pulsecount);
-  sendByteUart1(rrw_pulsecount);
-  sendByteUart1(_adxl_buff[1]);
-  sendByteUart1(_adxl_buff[0]);
-  sendByteUart1(_adxl_buff[3]);
-  sendByteUart1(_adxl_buff[2]);
-  sendByteUart1(_adxl_buff[5]);
-  sendByteUart1(_adxl_buff[4]);
-  sendByteUart1(x_gyro_highbyte);
-  sendByteUart1(x_gyro_lowbyte);
-  sendByteUart1(y_gyro_highbyte);
-  sendByteUart1(y_gyro_lowbyte);
-  sendByteUart1(z_gyro_highbyte);
-  sendByteUart1(z_gyro_lowbyte);
+    Serial1.write(0xFF); //Start command
+    Serial1.write(0x20); //Message ID  
+    sendByteUart1(flw_pulsecount);
+    sendByteUart1(frw_pulsecount);
+    sendByteUart1(rlw_pulsecount);
+    sendByteUart1(rrw_pulsecount);
+    sendByteUart1(_adxl_buff[1]);
+    sendByteUart1(_adxl_buff[0]);
+    sendByteUart1(_adxl_buff[3]);
+    sendByteUart1(_adxl_buff[2]);
+    sendByteUart1(_adxl_buff[5]);
+    sendByteUart1(_adxl_buff[4]);
+    sendByteUart1(x_gyro_highbyte);
+    sendByteUart1(x_gyro_lowbyte);
+    sendByteUart1(y_gyro_highbyte);
+    sendByteUart1(y_gyro_lowbyte);
+    sendByteUart1(z_gyro_highbyte);
+    sendByteUart1(z_gyro_lowbyte);
   }
 }
 
@@ -745,13 +753,14 @@ void read_serial3()
   {
     unsigned char j = Serial3.read();   
     serial3_reading_byte_num++; //Count which byte we're reading
-    
+
     if (j == 0xFF){ //Check if it's maybe a new message
       j = Serial3.read(); //Pick the next byte to see what is following
       if (j != zero){ //If it's a new message
         serial3_cur_msgId = j;
         serial3_reading_byte_num = 0; //Reset the counter, not to place the current byte (msg_id) in any variable
-      } else { //If it was FF + 00, meaning a data byte FF
+      } 
+      else { //If it was FF + 00, meaning a data byte FF
         j = 0xFF;
       } 
     }   
@@ -766,17 +775,18 @@ void read_serial1()
   {
     unsigned char j = (char)Serial1.read();   
     serial1_reading_byte_num++; //Count which byte we're reading
-    
+
     if (j == 0xFF){ //Check if it's maybe a new message
       j = Serial1.read(); //Pick the next byte to see what is following
       if (j != zero){ //If it's a new message
         serial1_cur_msgId = j;
         serial1_reading_byte_num = 0; //Reset the counter, not to place the current byte (msg_id) in any variable
-      } else { //If it was FF + 00, meaning a data byte FF
+      } 
+      else { //If it was FF + 00, meaning a data byte FF
         j = 0xFF;
       } 
     }
-    
+
     if(serial1_reading_byte_num != 0)
       read_serial1_byte(j);
   }
@@ -829,7 +839,7 @@ void read_serial1_byte(unsigned char c)
   else if(serial1_cur_msgId == 0x32) // message from pc
   {
     _param_buff[serial1_reading_byte_num -1] = c;
-    
+
     if(serial1_reading_byte_num == 3)
     {
       save_parameter();
@@ -839,136 +849,136 @@ void read_serial1_byte(unsigned char c)
   }
   else if(serial1_cur_msgId == 0x33) // message from pc, send parameters
   {
-      parameterCycle = 1;
-      serial1_reading_byte_num = 0;
-      serial1_cur_msgId = 0;
+    parameterCycle = 1;
+    serial1_reading_byte_num = 0;
+    serial1_cur_msgId = 0;
   }
 }
 
 void save_parameter()
 {
   byte update_dyn_values = false;
-  
+
   switch((int)_param_buff[0])
   {
-    case 10: // Brake Distribution parameters
-      fl_zero_pos = ((((int)_param_buff[1]) << 8) | _param_buff[2]);
-      fl_brake_scale = fl_max_pos - fl_zero_pos;
-      break;
-    case 11: // Brake Distribution parameters
-      fr_zero_pos = ((((int)_param_buff[1]) << 8) | _param_buff[2]);
-      fr_brake_scale = fr_max_pos - fr_zero_pos;
-      break;
-    case 12:
-      rl_zero_pos = (((int)_param_buff[1]) << 8) | _param_buff[2];
-      rl_brake_scale = rl_max_pos - rl_zero_pos;
-      break;
-    case 13:
-      rr_zero_pos = (((int)_param_buff[1]) << 8) | _param_buff[2];
-      rr_brake_scale = rr_max_pos - rr_zero_pos;
-      break;
-    case 14:
-      fl_max_pos = (((int)_param_buff[1]) << 8) | _param_buff[2];
-      fl_brake_scale = fl_max_pos - fl_zero_pos;
-      break;
-    case 15:
-      fr_max_pos = (((int)_param_buff[1]) << 8) | _param_buff[2];
-      fr_brake_scale = fr_max_pos - fr_zero_pos;
-      break;
-    case 16:
-      rl_max_pos = (((int)_param_buff[1]) << 8) | _param_buff[2];
-      rl_brake_scale = rl_max_pos - rl_zero_pos;
-      break;
-    case 17:
-      rr_max_pos = (((int)_param_buff[1]) << 8) | _param_buff[2];
-      rr_brake_scale = rr_max_pos - rr_zero_pos;
-      break;
-    case 20: // ABS Parameters
-      abs_on = (byte)_param_buff[1];
-      break;
-    case 21:
-      abs_start_threshold = _param_buff[1];
-      break;
-    case 22:
-      abs_middle_threshold = _param_buff[1];
-      break;
-    case 23:
-      abs_high_threshold = _param_buff[1];
-      break;
-    case 24:
-      phase5_gain_timer_threshold = _param_buff[1];
-      break;
-    case 25:
-      phase5_hold_timer_threshold = _param_buff[1];
-      break;
-    case 26:
-      phase1_gain = _param_buff[1];
-      break;
-    case 27:
-      phase3_gain = _param_buff[1];
-      break;
-    case 28:
-      phase5_gain = _param_buff[1];
-      break;
-    case 40:
-      esp_on = (byte)_param_buff[1];
-      break;
-    case 41:
-      esp_w_sensitivity = _param_buff[1];
-      break;
-    case 42:
-      esp_b_sensitivity = _param_buff[1];
-      break;
-    case 43:
-      esp_brake_multi = _param_buff[1];
-      break;
-    case 44:
-      esp_brake_div = _param_buff[1];
-      break;
-    case 45:
-      esp_w_P = _param_buff[1];
-      break;
-    case 46:
-      esp_w_D = _param_buff[1];
-      break;
-    case 47:
-      esp_b_P = _param_buff[1];
-      break;
-    case 48:
-      esp_b_D = _param_buff[1];
-      break;
-    case 49:
-      esp_ss_start_threshold = _param_buff[1];
-      break;
-    case 50:
-      d_r = _param_buff[1];
-      break;
-    case 51:
-      esp_wheelbase = (((int)_param_buff[1]) << 8) | _param_buff[2];
-      update_dyn_values = true;
-      break;
-    case 52:
-      esp_m = (((int)_param_buff[1]) << 8) | _param_buff[2];
-      update_dyn_values = true;
-      break;
-    case 53:
-      esp_l1 = (((int)_param_buff[1]) << 8) | _param_buff[2];
-      update_dyn_values = true;
-      break;
-    case 54:
-      esp_l2 = (((int)_param_buff[1]) << 8) | _param_buff[2];
-      update_dyn_values = true;
-      break;
-    case 55:
-      esp_C1 = (((int)_param_buff[1]) << 8) | _param_buff[2];
-      update_dyn_values = true;
-      break;
-    case 56:
-      esp_C2 = (((int)_param_buff[1]) << 8) | _param_buff[2];
-      update_dyn_values = true;
-      break;
+  case 10: // Brake Distribution parameters
+    fl_zero_pos = ((((int)_param_buff[1]) << 8) | _param_buff[2]);
+    fl_brake_scale = fl_max_pos - fl_zero_pos;
+    break;
+  case 11: // Brake Distribution parameters
+    fr_zero_pos = ((((int)_param_buff[1]) << 8) | _param_buff[2]);
+    fr_brake_scale = fr_max_pos - fr_zero_pos;
+    break;
+  case 12:
+    rl_zero_pos = (((int)_param_buff[1]) << 8) | _param_buff[2];
+    rl_brake_scale = rl_max_pos - rl_zero_pos;
+    break;
+  case 13:
+    rr_zero_pos = (((int)_param_buff[1]) << 8) | _param_buff[2];
+    rr_brake_scale = rr_max_pos - rr_zero_pos;
+    break;
+  case 14:
+    fl_max_pos = (((int)_param_buff[1]) << 8) | _param_buff[2];
+    fl_brake_scale = fl_max_pos - fl_zero_pos;
+    break;
+  case 15:
+    fr_max_pos = (((int)_param_buff[1]) << 8) | _param_buff[2];
+    fr_brake_scale = fr_max_pos - fr_zero_pos;
+    break;
+  case 16:
+    rl_max_pos = (((int)_param_buff[1]) << 8) | _param_buff[2];
+    rl_brake_scale = rl_max_pos - rl_zero_pos;
+    break;
+  case 17:
+    rr_max_pos = (((int)_param_buff[1]) << 8) | _param_buff[2];
+    rr_brake_scale = rr_max_pos - rr_zero_pos;
+    break;
+  case 20: // ABS Parameters
+    abs_on = (byte)_param_buff[1];
+    break;
+  case 21:
+    abs_start_threshold = _param_buff[1];
+    break;
+  case 22:
+    abs_middle_threshold = _param_buff[1];
+    break;
+  case 23:
+    abs_high_threshold = _param_buff[1];
+    break;
+  case 24:
+    phase5_gain_timer_threshold = _param_buff[1];
+    break;
+  case 25:
+    phase5_hold_timer_threshold = _param_buff[1];
+    break;
+  case 26:
+    phase1_gain = _param_buff[1];
+    break;
+  case 27:
+    phase3_gain = _param_buff[1];
+    break;
+  case 28:
+    phase5_gain = _param_buff[1];
+    break;
+  case 40:
+    esp_on = (byte)_param_buff[1];
+    break;
+  case 41:
+    esp_w_sensitivity = _param_buff[1];
+    break;
+  case 42:
+    esp_b_sensitivity = _param_buff[1];
+    break;
+  case 43:
+    esp_brake_multi = _param_buff[1];
+    break;
+  case 44:
+    esp_brake_div = _param_buff[1];
+    break;
+  case 45:
+    esp_w_P = _param_buff[1];
+    break;
+  case 46:
+    esp_w_D = _param_buff[1];
+    break;
+  case 47:
+    esp_b_P = _param_buff[1];
+    break;
+  case 48:
+    esp_b_D = _param_buff[1];
+    break;
+  case 49:
+    esp_ss_start_threshold = _param_buff[1];
+    break;
+  case 50:
+    d_r = _param_buff[1];
+    break;
+  case 51:
+    esp_wheelbase = (((int)_param_buff[1]) << 8) | _param_buff[2];
+    update_dyn_values = true;
+    break;
+  case 52:
+    esp_m = (((int)_param_buff[1]) << 8) | _param_buff[2];
+    update_dyn_values = true;
+    break;
+  case 53:
+    esp_l1 = (((int)_param_buff[1]) << 8) | _param_buff[2];
+    update_dyn_values = true;
+    break;
+  case 54:
+    esp_l2 = (((int)_param_buff[1]) << 8) | _param_buff[2];
+    update_dyn_values = true;
+    break;
+  case 55:
+    esp_C1 = (((int)_param_buff[1]) << 8) | _param_buff[2];
+    update_dyn_values = true;
+    break;
+  case 56:
+    esp_C2 = (((int)_param_buff[1]) << 8) | _param_buff[2];
+    update_dyn_values = true;
+    break;
   }
-  
+
   if(update_dyn_values) // precalculated values
   {
     double l1 = esp_l1/1000.0;
@@ -989,57 +999,71 @@ void send_parameters()
   {
     send_parameter2(10, fl_zero_pos);
     send_parameter2(11, fr_zero_pos);
-  }else if(parameterCycle == 2){
+  }
+  else if(parameterCycle == 2){
     send_parameter2(12, rl_zero_pos);
     send_parameter2(13, rr_zero_pos);
-  }else if(parameterCycle == 3){
+  }
+  else if(parameterCycle == 3){
     send_parameter2(14, fl_max_pos);
     send_parameter2(15, fr_zero_pos);
-  }else if(parameterCycle == 4){
+  }
+  else if(parameterCycle == 4){
     send_parameter2(16, rl_max_pos);
     send_parameter2(17, rr_max_pos);
-  }else if(parameterCycle == 5)
+  }
+  else if(parameterCycle == 5)
   {
     send_parameter(20, (char)abs_on);
     send_parameter(21, abs_start_threshold);
-  }else if(parameterCycle == 6){
+  }
+  else if(parameterCycle == 6){
     send_parameter(22, abs_middle_threshold);
     send_parameter(23, abs_high_threshold);
-  }else if(parameterCycle == 7){
+  }
+  else if(parameterCycle == 7){
     send_parameter(24, phase5_gain_timer_threshold);
     send_parameter(25, phase5_hold_timer_threshold);
-  }else if(parameterCycle == 8){
+  }
+  else if(parameterCycle == 8){
     send_parameter(26, phase1_gain);
     send_parameter(27, phase3_gain);
     send_parameter(28, phase5_gain);
-  }else if(parameterCycle == 9)
+  }
+  else if(parameterCycle == 9)
   {
     send_parameter(40, (char)esp_on);
     send_parameter(41, esp_w_sensitivity);
     send_parameter(42, esp_b_sensitivity); 
-  }else if(parameterCycle == 10){
+  }
+  else if(parameterCycle == 10){
     send_parameter(43, esp_brake_multi); 
     send_parameter(44, esp_brake_div); 
-  }else if(parameterCycle == 11){
+  }
+  else if(parameterCycle == 11){
     send_parameter(45, esp_w_P);
     send_parameter(46, esp_w_D);
-  }else if(parameterCycle == 12){
+  }
+  else if(parameterCycle == 12){
     send_parameter(47, esp_b_P);
     send_parameter(48, esp_b_D);
     send_parameter(49, esp_ss_start_threshold);
-  }else if (parameterCycle == 13){
+  }
+  else if (parameterCycle == 13){
     send_parameter(50, d_r);
     send_parameter2(51, esp_wheelbase);
-  }else if(parameterCycle == 14){
+  }
+  else if(parameterCycle == 14){
     send_parameter2(52, esp_m);
     send_parameter2(53, esp_l1);
     send_parameter2(54, esp_l2);
-  }else if(parameterCycle == 15){
+  }
+  else if(parameterCycle == 15){
     send_parameter2(55, esp_C1);
     send_parameter2(56, esp_C2);    
     parameterCycle = 0;
   }
-  
+
   if(parameterCycle > 0)
     parameterCycle++;
 }
@@ -1067,10 +1091,13 @@ void sendByteUart1 (unsigned char byteToSend){
   if (byteToSend == 0xFF){
     Serial1.write(0xFF);
     Serial1.write(zero);
-  } else {
+  } 
+  else {
     Serial1.write(byteToSend);
   }
 }
+
+
 
 
 
