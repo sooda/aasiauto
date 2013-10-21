@@ -3,7 +3,7 @@ classdef Car < handle
         % Values are stored here
         params
     end
-    properties (Access = public)
+    properties (Constant)
         
         % Servo param id's
         frontAxleLeftBrakeServosNeutralPositions = 10
@@ -60,20 +60,22 @@ classdef Car < handle
         end
         
         % Set Param
-        function this = setParam(this, id, val)
+        function setParam(this, id, val)
             this.params(id) = val;
         end
         
         % Save Car object to file
-        function this = saveToFile(this, filename)
-            % TODO: Fixme!
-            save('filename.mat', this.params);
+        function saveToFile(this, filename)
+            temp = this.params;
+            save(filename, 'temp');
+%            clear temp;
         end
         
         % Load Car object from file
-        function this = loadFromFile(this, filename)
-            % TODO: Fixme!
-            this.params = load('filename.mat');
+        function loadFromFile(this, filename)
+            load(filename, 'temp');
+            this.params = temp;
+%            clear temp;
         end
 
     end
