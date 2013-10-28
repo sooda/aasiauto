@@ -7,9 +7,10 @@
 \usepackage{graphicx}
 \usepackage{amssymb,amsmath}
 \usepackage{url}
+\usepackage[finnish]{babel}
 \usepackage{lastpage}
 
-\title{A13-10 Radio-ohjattavan pienoismallin ohjausjärjestelmän ja käyttöliittymän kehittäminen}
+\title{Väliraportti: A13-10 Radio-ohjattavan pienoismallin ohjausjärjestelmän ja käyttöliittymän kehittäminen}
 
 \author{
 Toni Liski, Konsta Hölttä, Lasse Kortetjärvi
@@ -31,7 +32,9 @@ Toni Liski, Konsta Hölttä, Lasse Kortetjärvi
 \begin{frame}{Tilanne tällä hetkellä}
 \begin{itemize}
 \item RC-autoon suunniteltu uusi voimansiirto
-\item Aiheuttaa sen että luultavasti ei päästä tänä syksynä ajamaan
+\item Vanha voimansiirto oli lähtökohtaisesti pielessä
+\item Nykyisellään ajettavissa tuurilla pari metriä
+\item Seurauksena ei luultavasti päästä tänä syksynä ajamaan
 \item Projekti lähtenyt vähän hitaasti liikkeelle
 \end{itemize}
 \end{frame}
@@ -43,6 +46,9 @@ Toni Liski, Konsta Hölttä, Lasse Kortetjärvi
 \begin{itemize}
 \item Mittauksia nykyisestä ohjelmistosta tehty
 \item ABS-järjestelmän toimimattomuuden syynä hidas mekaniikka (jarruservot)
+\item Servon päivitystahti 20 ms
+\item Digiservoja/OpenServo? Jotain muuta?
+\item Vaijerien venyminen, palautusjouset, ...
 \end{itemize}
 \end{frame}
 
@@ -51,7 +57,8 @@ Toni Liski, Konsta Hölttä, Lasse Kortetjärvi
 \begin{frame}{Käyttöliittymä}
 \begin{itemize}
 \item Käyttöliittymäkoodia jaettu modulaarisemmaksi
-\item 
+\item Protokollamäärittelyt joustavampia
+\item Jatkokehitys helpompaa
 \end{itemize}
 \end{frame}
 
@@ -60,7 +67,12 @@ Toni Liski, Konsta Hölttä, Lasse Kortetjärvi
 \begin{frame}{Mikrokontrollerit}
 
 \begin{itemize}
-\item 
+\item Auto ei kulje, ei kiirettä
+\item Simuloidaan ajon sijaan Matlabilla
+\item Alustariippumaton ohjauskoodi
+\item Laiteläheiset toimilaitekoodit
+\item Simulaatiokoodi toimilaitteille
+\item Matlabille tarvitaan käyttöliittymän lisäksi simulaatiota
 \end{itemize}
 
 \end{frame}
