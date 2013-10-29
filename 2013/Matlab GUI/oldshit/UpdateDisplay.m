@@ -5,16 +5,17 @@ function UpdateDisplay(hObject, eventdata, hfigure, handles)
      [~, ~, keysAreDown] = KbCheck();
      handles2 = guidata(hfigure);
 
-     cardata = getappdata(handles.figure1, 'Car_Data');
-     appdata = getappdata(handles.figure1, 'App_Data');
+     c = Car.getInstance;
+%     cardata = getappdata(handles.figure1, 'Car_Data');
+%     appdata = getappdata(handles.figure1, 'App_Data');
 
      %appdata.read_value_counter = appdata.read_value_counter + 1;
 
      %Get last element from each dataset
-     thro = cardata.throttle(size(cardata.throttle,1));
-     dir = cardata.wheeldirection(size(cardata.wheeldirection,1));
-     brake = cardata.brake(size(cardata.brake,1));
-     rev = cardata.reverse(size(cardata.reverse,1));
+     thro = c.cardata.throttle(size(c.cardata.throttle,1));
+     dir = c.cardata.wheeldirection(size(c.cardata.wheeldirection,1));
+     brake = c.cardata.brake(size(c.cardata.brake,1));
+     rev = c.cardata.reverse(size(c.cardata.reverse,1));
      sound_horn = 0;
 
 
@@ -108,18 +109,18 @@ function UpdateDisplay(hObject, eventdata, hfigure, handles)
          sound_horn = 1;
      end
 
-     temp_read_value_counter = appdata.read_value_counter;
-     appdata.read_value_counter = temp_read_value_counter + 1;
+     temp_read_value_counter = c.appdata.read_value_counter;
+     c.appdata.read_value_counter = temp_read_value_counter + 1;
 
-     if appdata.read_value_counter == 5
-       appdata.read_value_counter = 1;
+     if c.appdata.read_value_counter == 5
+       c.appdata.read_value_counter = 1;
         %READ DATA FROM CAR
-       if appdata.serial.BytesAvailable
-          datastr = fread(appdata.serial,appdata.serial.BytesAvailable); 
+       if c.appdata.serial.BytesAvailable
+          datastr = fread(c.appdata.serial, c.appdata.serial.BytesAvailable); 
 
-         if appdata.storedserialdata ~= 999 %Add stored data to beginning
-             datastr = [appdata.storedserialdata; datastr];
-             appdata.storedserialdata = 999;
+         if c.appdata.storedserialdata ~= 999 %Add stored data to beginning
+             datastr = [c.appdata.storedserialdata; datastr];
+             c.appdata.storedserialdata = 999;
          end
 
          length = size(datastr,1);
@@ -136,7 +137,7 @@ function UpdateDisplay(hObject, eventdata, hfigure, handles)
                  if i+1 <= length %Can read next byte
 
                      if datastr(i+1) == 48 %If its a new message for computer
-                         appdata.serialcurrentbytenum = 1;
+                         c.appdata.serialcurrentbytenum = 1;
                          i = i+2;
                          readcurrentdata = 0;
                      elseif datastr(i+1) ~= 0 %Wrong message ID
@@ -148,10 +149,10 @@ function UpdateDisplay(hObject, eventdata, hfigure, handles)
 
                  else
 
-                     if appdata.storedserialdata == 999 %Add store 255
-                        appdata.storedserialdata = 255;
+                     if c.appdata.storedserialdata == 999 %Add store 255
+                        c.appdata.storedserialdata = 255;
                      else
-                        appdata.storedserialdata = [appdata.storedserialdata; 255];
+                        c.appdata.storedserialdata = [c.appdata.storedserialdata; 255];
                      end
                      %'break'
                      break;
@@ -161,148 +162,148 @@ function UpdateDisplay(hObject, eventdata, hfigure, handles)
               if readcurrentdata %We are not in the beginning of a message
 
                  current_byte = datastr(i);
-                 switch appdata.serialcurrentbytenum
+                 switch c.appdata.serialcurrentbytenum
 
                  case 1 %Wheelspeeds 
-                 cardata.wheelspeeds = [cardata.wheelspeeds; [0 0 0 0]]; 
-                 wheel_length = size(cardata.wheelspeeds,1);
+                 c.cardata.wheelspeeds = [c.cardata.wheelspeeds; [0 0 0 0]]; 
+                 wheel_length = size(c.cardata.wheelspeeds,1);
                  %Speed [km/h] = 3.6 * pi * wheeldiameter[m] * relevations/seconds
                  wheelSpeed = 1.4137 *((current_byte/512)/0.01); %km/h % 1.4137 *((current_byte/512)/0.01);          
-                 cardata.wheelspeeds(wheel_length, 1) = wheelSpeed;
+                 c.cardata.wheelspeeds(wheel_length, 1) = wheelSpeed;
 
                  case 2  %Wheelspeeds
-                 wheel_length = size(cardata.wheelspeeds,1);
+                 wheel_length = size(c.cardata.wheelspeeds,1);
                  wheelSpeed = 1.4137 *((current_byte/512)/0.01); %km/h  % 1.4137 *((current_byte/512)/0.01);
-                 cardata.wheelspeeds(wheel_length, 2) = wheelSpeed;
+                 c.cardata.wheelspeeds(wheel_length, 2) = wheelSpeed;
 
                  case 3 %Wheelspeeds
-                 wheel_length = size(cardata.wheelspeeds,1);
+                 wheel_length = size(c.cardata.wheelspeeds,1);
                  %current_byte
                  wheelSpeed = 1.4137 *((current_byte/512)/0.01); %km/h  % 1.4137 *((current_byte/512)/0.01);
                  %wheelSpeed = ((current_byte/512)/0.01)
 
-                 cardata.wheelspeeds(wheel_length, 3) = wheelSpeed;
+                 c.cardata.wheelspeeds(wheel_length, 3) = wheelSpeed;
 
                  case 4 %Wheelspeeds
-                 wheel_length = size(cardata.wheelspeeds,1);
+                 wheel_length = size(c.cardata.wheelspeeds,1);
                  wheelSpeed = 1.4137 *((current_byte/512)/0.01); %km/h  % 1.4137 *((current_byte/512)/0.01);
-                 cardata.wheelspeeds(wheel_length, 4) = wheelSpeed;   
+                 c.cardata.wheelspeeds(wheel_length, 4) = wheelSpeed;   
 
                  %ACCELERATION   
                  case 5 %X-acceleration high byte 
-                     appdata.temp_high_byte = current_byte;
+                     c.appdata.temp_high_byte = current_byte;
                  case 6 %X-acceleration low byte          
-                     value = calcHighLowByteValue(appdata.temp_high_byte, current_byte);
-                     cardata.acceleration = [cardata.acceleration; [0 0 0]]; % add new row
-                     acc_length = size(cardata.acceleration,1);
-                     cardata.acceleration(acc_length,1) = value * cardata.acc_scaling;
-                     if(abs(cardata.acceleration(acc_length,1)) < 0.4)
-                        cardata.acceleration(acc_length,1) = 0;
+                     value = calcHighLowByteValue(c.appdata.temp_high_byte, current_byte);
+                     c.cardata.acceleration = [c.cardata.acceleration; [0 0 0]]; % add new row
+                     acc_length = size(c.cardata.acceleration,1);
+                     c.cardata.acceleration(acc_length,1) = value * c.cardata.acc_scaling;
+                     if(abs(c.cardata.acceleration(acc_length,1)) < 0.4)
+                        c.cardata.acceleration(acc_length,1) = 0;
                      end
 
 
                  case 7%Y High
-                     appdata.temp_high_byte = current_byte;
+                     c.appdata.temp_high_byte = current_byte;
                  case 8%Y Low
-                     value = calcHighLowByteValue(appdata.temp_high_byte, current_byte);
-                     acc_length = size(cardata.acceleration,1);
-                     cardata.acceleration(acc_length,2) = value * cardata.acc_scaling;
-                     if(abs(cardata.acceleration(acc_length,2)) < 0.4)
-                        cardata.acceleration(acc_length,2) = 0;
+                     value = calcHighLowByteValue(c.appdata.temp_high_byte, current_byte);
+                     acc_length = size(c.cardata.acceleration,1);
+                     c.cardata.acceleration(acc_length,2) = value * c.cardata.acc_scaling;
+                     if(abs(c.cardata.acceleration(acc_length,2)) < 0.4)
+                        c.cardata.acceleration(acc_length,2) = 0;
                      end
                  case 9%Z high
-                     appdata.temp_high_byte = current_byte;
+                     c.appdata.temp_high_byte = current_byte;
                  case 10%Z low
-                     value = calcHighLowByteValue(appdata.temp_high_byte, current_byte);
-                     acc_length = size(cardata.acceleration,1);
-                     cardata.acceleration(acc_length,3) = value * cardata.acc_scaling; 
-                     if(abs(cardata.acceleration(acc_length,3)) < 0.4)
-                        cardata.acceleration(acc_length,3) = 0;
+                     value = calcHighLowByteValue(c.appdata.temp_high_byte, current_byte);
+                     acc_length = size(c.cardata.acceleration,1);
+                     c.cardata.acceleration(acc_length,3) = value * c.cardata.acc_scaling; 
+                     if(abs(c.cardata.acceleration(acc_length,3)) < 0.4)
+                        c.cardata.acceleration(acc_length,3) = 0;
                      end      
-                     %cardata.acceleration(acc_length,:)
+                     %c.cardata.acceleration(acc_length,:)
                  %GYRO
                  case 11 %X-gyro high byte 
-                     appdata.temp_high_byte = current_byte;
+                     c.appdata.temp_high_byte = current_byte;
                  case 12    
-                     value = calcHighLowByteValue(appdata.temp_high_byte, current_byte);
-                     cardata.gyro = [cardata.gyro; [0 0 0]]; % add new row
-                     gyro_length = size(cardata.gyro,1);
-                     cardata.gyro(gyro_length,1) = value / 14.38;
+                     value = calcHighLowByteValue(c.appdata.temp_high_byte, current_byte);
+                     c.cardata.gyro = [c.cardata.gyro; [0 0 0]]; % add new row
+                     gyro_length = size(c.cardata.gyro,1);
+                     c.cardata.gyro(gyro_length,1) = value / 14.38;
                  case 13 %Y-gyro high byte 
-                     appdata.temp_high_byte = current_byte;
+                     c.appdata.temp_high_byte = current_byte;
                  case 14    
-                     value = calcHighLowByteValue(appdata.temp_high_byte, current_byte);
-                     gyro_length = size(cardata.gyro,1);
-                     cardata.gyro(gyro_length,2) = value / 14.38;
+                     value = calcHighLowByteValue(c.appdata.temp_high_byte, current_byte);
+                     gyro_length = size(c.cardata.gyro,1);
+                     c.cardata.gyro(gyro_length,2) = value / 14.38;
                  case 15 %X-gyro high byte 
-                     appdata.temp_high_byte = current_byte;
+                     c.appdata.temp_high_byte = current_byte;
                  case 16    
-                     value = calcHighLowByteValue(appdata.temp_high_byte, current_byte);
-                     gyro_length = size(cardata.gyro,1);
-                     cardata.gyro(gyro_length,3) = value / 14.38;
+                     value = calcHighLowByteValue(c.appdata.temp_high_byte, current_byte);
+                     gyro_length = size(c.cardata.gyro,1);
+                     c.cardata.gyro(gyro_length,3) = value / 14.38;
 
-                     %cardata.gyro(gyro_length,:)  
+                     %c.cardata.gyro(gyro_length,:)  
                  %Remaining values
                  case 17
-                     cardata.wheeldirection = [cardata.wheeldirection ; current_byte];
+                     c.cardata.wheeldirection = [c.cardata.wheeldirection ; current_byte];
                  case 18
-                     cardata.motorBatteryVoltage = [cardata.motorBatteryVoltage; current_byte]; 
+                     c.cardata.motorBatteryVoltage = [c.cardata.motorBatteryVoltage; current_byte]; 
                  case 19 % Last byte in message
-                     cardata.controllerBatteryVoltage = [cardata.controllerBatteryVoltage; current_byte]; 
+                     c.cardata.controllerBatteryVoltage = [c.cardata.controllerBatteryVoltage; current_byte]; 
 
                      %Update Timer
-                    timeLength = size(cardata.timepassed,1);
+                    timeLength = size(c.cardata.timepassed,1);
                     if(timeLength>1)
-                        cardata.timepassed = [cardata.timepassed; cardata.timepassed(timeLength) + handles2.timer.InstantPeriod];
+                        c.cardata.timepassed = [c.cardata.timepassed; c.cardata.timepassed(timeLength) + handles2.timer.InstantPeriod];
                     else
-                        cardata.timepassed = [cardata.timepassed; 0];  
+                        c.cardata.timepassed = [c.cardata.timepassed; 0];  
                     end
 
                     %Car Total velocity
-                    velLen = size(cardata.wheelspeeds,1);
-                    totalvelocity = sum(cardata.wheelspeeds(velLen,3:4))/2;%For the seminar presentation: Only use rear wheel data
-                    cardata.totalvelocity = [cardata.totalvelocity; totalvelocity];
+                    velLen = size(c.cardata.wheelspeeds,1);
+                    totalvelocity = sum(c.cardata.wheelspeeds(velLen,3:4))/2;%For the seminar presentation: Only use rear wheel data
+                    c.cardata.totalvelocity = [c.cardata.totalvelocity; totalvelocity];
 
                     %Calculate car position
-                    accLength = size(cardata.acceleration,1);
-                    %cardata.acceleration(accLength,:);
+                    accLength = size(c.cardata.acceleration,1);
+                    %c.cardata.acceleration(accLength,:);
 
                     if(timeLength > 1)
-                        deltaPos = calcPosFromAcc(cardata.acceleration((accLength-1):accLength,:),0.5);%cardata.timepassed(timeLength));          
+                        deltaPos = calcPosFromAcc(c.cardata.acceleration((accLength-1):accLength,:),0.5);%c.cardata.timepassed(timeLength));          
                     else
                         deltaPos = [0 0 0];
                     end
 
-                    posLength = size(cardata.position,1);
-                    cardata.position = [cardata.position; cardata.position(posLength,:) + deltaPos];
+                    posLength = size(c.cardata.position,1);
+                    c.cardata.position = [c.cardata.position; c.cardata.position(posLength,:) + deltaPos];
 
 
                  otherwise             
                      Logging.log('Read exceeds normal message length.');
                     % 'Read exceeds normal message length.'
-                    % strcat('Current byte is: ', num2str(appdata.serialcurrentbytenum))
+                    % strcat('Current byte is: ', num2str(c.appdata.serialcurrentbytenum))
                  end
 
                   i = i + 1 + jump; 
-                  appdata.serialcurrentbytenum = appdata.serialcurrentbytenum + 1;
+                  c.appdata.serialcurrentbytenum = c.appdata.serialcurrentbytenum + 1;
                   jump = 0;
               end
          end  
        end
 
-       % Update Cardata only when it's read
-       set(handles2.carpath,'YData',cardata.position(:,2));
-       set(handles2.carpath,'XData',cardata.position(:,1));
+       % Update c.cardata only when it's read
+       set(handles2.carpath,'YData',c.cardata.position(:,2));
+       set(handles2.carpath,'XData',c.cardata.position(:,1));
 
-       set(handles2.carspeed,'YData',cardata.totalvelocity);
-       set(handles2.carspeed,'XData',cardata.timepassed);
+       set(handles2.carspeed,'YData',c.cardata.totalvelocity);
+       set(handles2.carspeed,'XData',c.cardata.timepassed);
      end
 
     %Save steering data
-    cardata.throttle = [cardata.throttle; thro];
-    cardata.brake = [cardata.brake; brake];
-    cardata.wheeldirection = [cardata.wheeldirection; dir];
-    cardata.reverse = [cardata.reverse; rev];
+    c.cardata.throttle = [c.cardata.throttle; thro];
+    c.cardata.brake = [c.cardata.brake; brake];
+    c.cardata.wheeldirection = [c.cardata.wheeldirection; dir];
+    c.cardata.reverse = [c.cardata.reverse; rev];
 
     thro = thro * 0.2;
     rev = rev * 0.2;
@@ -320,17 +321,17 @@ function UpdateDisplay(hObject, eventdata, hfigure, handles)
         drv_throttle = uint8(rev * 2.55);
     end
 
-    stopasync(appdata.serial); % why?
+    stopasync(c.appdata.serial); % why?
 
     if(sound_horn)   
-        fwrite(appdata.serial, [255 65 drv_throttle drv_dir drv_brake drv_clutch drv_drvdir 255 68], 'async');  
+        fwrite(c.appdata.serial, [255 65 drv_throttle drv_dir drv_brake drv_clutch drv_drvdir 255 68], 'async');  
     else
-        fwrite(appdata.serial, [255 65 drv_throttle drv_dir drv_brake drv_clutch drv_drvdir], 'async');
+        fwrite(c.appdata.serial, [255 65 drv_throttle drv_dir drv_brake drv_clutch drv_drvdir], 'async');
     end
-    readasync(appdata.serial);  % what?
+    readasync(c.appdata.serial);  % what?
     %Save car data
-    setappdata(handles.figure1, 'Car_Data',cardata);
-    setappdata(handles.figure1, 'App_Data',appdata);
+%    setappdata(handles.figure1, 'Car_Data',c.cardata);
+%    setappdata(handles.figure1, 'App_Data',c.appdata);
 
     %Update command plots
 

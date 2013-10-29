@@ -1,21 +1,22 @@
 function getCarConfs(hObject, eventdata, handles)
-    appdata = getappdata(handles.figure1, 'App_Data');
-
-    if appdata.serial.BytesAvailable %Clear car buffer
-        fread(appdata.serial,appdata.serial.BytesAvailable);
+    %c.appdata = getc.appdata(handles.figure1, 'App_Data');
+    c = Car.getInstance;
+    
+    if c.appdata.serial.BytesAvailable %Clear car buffer
+        fread(c.appdata.serial,c.appdata.serial.BytesAvailable);
     end
 
     %Request car parameters
-    %stopasync(appdata.serial);
-    readasync(appdata.serial);
+    %stopasync(c.appdata.serial);
+    readasync(c.appdata.serial);
     %pause(0.1);
 
-    fwrite(appdata.serial, [255 67 255 0], 'async');
-    %readasync(appdata.serial);
-    %  fwrite(appdata.serial, 255);
-    %  fwrite(appdata.serial, 67);
-    %  fwrite(appdata.serial, 255);
-    %  fwrite(appdata.serial, 0);
+    fwrite(c.appdata.serial, [255 67 255 0], 'async');
+    %readasync(c.appdata.serial);
+    %  fwrite(c.appdata.serial, 255);
+    %  fwrite(c.appdata.serial, 67);
+    %  fwrite(c.appdata.serial, 255);
+    %  fwrite(c.appdata.serial, 0);
 
     D = 0; %The struct where the loaded data is stored.
     ver_matrix = zeros(34,1); %Verification matrix used to check that all parameters were updated
@@ -31,16 +32,16 @@ function getCarConfs(hObject, eventdata, handles)
         counter = counter + 1;
         reading_byte_num = reading_byte_num + 1;
 
-        if appdata.serial.BytesAvailable
-          datavalue = fread(appdata.serial,1); 
+        if c.appdata.serial.BytesAvailable
+          datavalue = fread(c.appdata.serial,1); 
           %datavalue
              if datavalue == 255 %Check if it's maybe a new message
-                  datavalue = fread(appdata.serial,1); %Pick the next byte to see what is following
+                  datavalue = fread(c.appdata.serial,1); %Pick the next byte to see what is following
                   %datavalue
 
                   if datavalue ~= 0 %If it's a new message
                      current_Message_Id = datavalue;        
-                     curremt_Parameter_Id = fread(appdata.serial,1);
+                     curremt_Parameter_Id = fread(c.appdata.serial,1);
                      %curremt_Parameter_Id
                      reading_byte_num = 0; %Reset the counter
 

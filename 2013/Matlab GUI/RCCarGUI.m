@@ -110,15 +110,17 @@ function startmandrivebtn_Callback(hObject, eventdata, handles)
 
 
 % Only start timer if it is not running
-appdata = getappdata(handles.figure1, 'App_Data');
+%appdata = getappdata(handles.figure1, 'App_Data');
+c = Car.getInstance;
 
-if appdata.connected
+if c.appdata.connected
    
-    appdata.manualdrive = 1;
-    setappdata(handles.figure1, 'App_Data', appdata);
+    c.appdata.manualdrive = 1;
+%    setappdata(handles.figure1, 'App_Data', appdata);
     ListenChar(2); %Start listening fror keyboard inputs
     stop(handles.timer2); %Stop the "initialize" timer
-    fread(appdata.serial,appdata.serial.BytesAvailable); % Clear car message buffer
+% TODO! Serial is not here anymore
+    fread(c.appdata.serial, appdata.serial.BytesAvailable); % Clear car message buffer
     start(handles.timer);
     %set(handles.textFieldSaveDataTo,'Enable', 'off');
     %set(handles.savedrivedatacheckbox,'Enable', 'off');
@@ -136,13 +138,14 @@ function endmandrivebtn_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Only stop timer if it is running
-appdata = getappdata(handles.figure1, 'App_Data');
+%appdata = getappdata(handles.figure1, 'App_Data');
+c = Car.getInstance;
 
-if (appdata.manualdrive)
+if (c.appdata.manualdrive)
     
-    appdata = getappdata(handles.figure1, 'App_Data');
-    appdata.manualdrive = 0;
-    setappdata(handles.figure1, 'App_Data', appdata);
+%    appdata = getappdata(handles.figure1, 'App_Data');
+    c.appdata.manualdrive = 0;
+%    setappdata(handles.figure1, 'App_Data', appdata);
     
     ListenChar(0); %Stop listening for keyboard inputs
     stop(handles.timer);
@@ -150,44 +153,34 @@ if (appdata.manualdrive)
 
     %Save Data
     if(get(handles.savedrivedatacheckbox, 'Value'))
-        carData = getappdata(handles.figure1, 'Car_Data');
+%        carData = getappdata(handles.figure1, 'Car_Data');
+        carData = c.cardata;
+        
         t = fix(clock);
         tim = strcat(num2str(t(6)),num2str(t(5)),num2str(t(4)),num2str(t(3)),num2str(t(2)),num2str(t(1)));
         filename = '\dSession';
-        nameAndDir = strcat(appdata.save_drive_directory,filename,tim,'.mat');
+        nameAndDir = strcat(c.appdata.save_drive_directory, filename, tim, '.mat');
         save(nameAndDir, 'carData')
         Logging.log('Data saved to selected directory.');
     end
     
     %Reset Car Data
-    cardata = getappdata(handles.figure1, 'Car_Data');
-    cardata.throttle = 0;
-    cardata.velocity = 0;
-    cardata.reverse = 0;
-    cardata.wheeldirection = 0;
-    cardata.brake = 0;
-    cardata.position = [0 0 0]; %X Y Z
-    cardata.gyro = [0 0 0]; %X Y Z
-    cardata.wheelspeeds = [0 0 0 0]; %Left front, Right front, Left back, Right back
-    cardata.totalvelocity = 0;
-    cardata.acceleration = [0.0 0.0 0.0]; %X, Y, Z
-    cardata.timepassed = 0;
-    cardata.motorBatteryVoltage = 0;
-    cardata.controllerBatteryVoltage = 0;
+%    cardata = getappdata(handles.figure1, 'Car_Data');
+    c.cardata.throttle = 0;
+    c.cardata.velocity = 0;
+    c.cardata.reverse = 0;
+    c.cardata.wheeldirection = 0;
+    c.cardata.brake = 0;
+    c.cardata.position = [0 0 0]; %X Y Z
+    c.cardata.gyro = [0 0 0]; %X Y Z
+    c.cardata.wheelspeeds = [0 0 0 0]; %Left front, Right front, Left back, Right back
+    c.cardata.totalvelocity = 0;
+    c.cardata.acceleration = [0.0 0.0 0.0]; %X, Y, Z
+    c.cardata.timepassed = 0;
+    c.cardata.motorBatteryVoltage = 0;
+    c.cardata.controllerBatteryVoltage = 0;
     
-    setappdata(handles.figure1, 'Car_Data',cardata);
-end
-
-%This function checks if the car is initialized and ready to start a drive session
-%In other words: if sensordata from the car is received then it is ready
-function check_initialized(hObject,eventdata,hfigure,handles)
-
-appdata = getappdata(handles.figure1, 'App_Data');
-
-if appdata.serial.BytesAvailable && ~appdata.initialized 
-    appdata.initialized = 1;
-    Logging.log('Initialized and ready for drive session.');
-    setappdata(handles.figure1, 'App_Data', appdata);
+%    setappdata(handles.figure1, 'Car_Data',cardata);
 end
 
 %This is the main loop that runs when the car is in manual drive
@@ -207,19 +200,20 @@ function connecttocarbtn_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 %TODO error handling
-appdata = getappdata(handles.figure1, 'App_Data');
+%appdata = getappdata(handles.figure1, 'App_Data');
+c = Car.getInstance;
 
-if(strcmp(appdata.selectedcomport, '--'))
+if(strcmp(c.appdata.selectedcomport, '--'))
     Logging.log('Please select a serial port.')
 
 else
     try 
-        appdata.serial = serial(appdata.selectedcomport);
-        appdata.serial.BaudRate = 38400;
-        appdata.serial.Terminator = 'LF';
-        fopen (appdata.serial);
-        appdata.connected = 1;
-        setappdata(handles.figure1,'App_Data',appdata);
+        c.appdata.serial = serial(c.appdata.selectedcomport);
+        c.appdata.serial.BaudRate = 38400;
+        c.appdata.serial.Terminator = 'LF';
+        fopen (c.appdata.serial);
+        c.appdata.connected = 1;
+        setappdata(handles.figure1,'App_Data',c.appdata);
         Logging.log('Connected, please wait for car initialization...')
 
         start(handles.timer2); %Timer to check for Iniatilzation
@@ -240,18 +234,19 @@ function disconnectfromcarbtn_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-appdata = getappdata(handles.figure1, 'App_Data');
+%appdata = getappdata(handles.figure1, 'App_Data');
+c = Car.getInstance;
 
-if(appdata.manualdrive)
+if(c.appdata.manualdrive)
     endmandrivebtn_Callback(233.0072, eventdata, handles);
 end
 
-if(appdata.connected)
-    fclose(appdata.serial);
-    delete(appdata.serial);
-    appdata.connected = 0;
-    appdata.initialized = 0;
-    setappdata(handles.figure1, 'App_Data', appdata);
+if(c.appdata.connected)
+    fclose(c.appdata.serial);
+    delete(c.appdata.serial);
+    c.appdata.connected = 0;
+    c.appdata.initialized = 0;
+    setappdata(handles.figure1, 'App_Data', c.appdata);
     Logging.log('Disconnected.'); 
 end
 
@@ -263,10 +258,13 @@ function portConnectpop_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns portConnectpop contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from portConnectpop
-appdata = getappdata(handles.figure1, 'App_Data');
+
+%appdata = getappdata(handles.figure1, 'App_Data');
+c = Car.getInstance;
+
 instrumentinfo = instrhwinfo('serial');
-appdata.availablecomports = instrumentinfo.AvailableSerialPorts;
-setappdata(handles.figure1, 'App_Data',appdata); %save availablecomports
+c.appdata.availablecomports = instrumentinfo.AvailableSerialPorts;
+setappdata(handles.figure1, 'App_Data',c.appdata); %save availablecomports
 
 values = get(hObject,'String');
 selectedValue = get(hObject,'Value');
@@ -275,8 +273,8 @@ selectedValue = get(hObject,'Value');
 %only refreshes on program startup. May be changed in future versions of
 %matlab.
 
-appdata.selectedcomport = values{selectedValue};
-setappdata(handles.figure1, 'App_Data', appdata);
+c.appdata.selectedcomport = values{selectedValue};
+setappdata(handles.figure1, 'App_Data', c.appdata);
 
 
 % TODO: TO BE DELETED!
@@ -304,24 +302,25 @@ function textFieldSaveDataTo_ButtonDownFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if(get(handles.savedrivedatacheckbox,'value'))
-    appdata = getappdata(handles.figure1, 'App_Data');
+%    appdata = getappdata(handles.figure1, 'App_Data');
+    c = Car.getInstance;
     currentvalue = get(hObject,'String');
 
     %Choose save directory
-    if(appdata.save_drive_directory==0)
-     appdata.save_drive_directory = uigetdir(strcat(pwd,'\Drive Sessions'),'Select save directory');
+    if(c.appdata.save_drive_directory==0)
+     c.appdata.save_drive_directory = uigetdir(strcat(pwd,'\Drive Sessions'),'Select save directory');
     else
-     appdata.save_drive_directory = uigetdir(appdata.save_drive_directory,'Select save directory');
+     c.appdata.save_drive_directory = uigetdir(c.appdata.save_drive_directory,'Select save directory');
     end
 
     %Display save directory
-    if (appdata.save_drive_directory == 0)
+    if (c.appdata.save_drive_directory == 0)
       set(hObject,'String',currentvalue);
     else
-     set(hObject,'String',appdata.save_drive_directory);
+     set(hObject,'String',c.appdata.save_drive_directory);
     end
     %Save save directory
-    setappdata(handles.figure1, 'App_Data', appdata);
+%    setappdata(handles.figure1, 'App_Data', appdata);
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -343,12 +342,13 @@ function savedrivedatacheckbox_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
     % Hint: get(hObject,'Value') returns toggle state of savedrivedatacheckbox
-    appdata = getappdata(handles.figure1, 'App_Data');
+    %appdata = getappdata(handles.figure1, 'App_Data');
+    c = Car.getInstance;
 
     if get(hObject,'Value')
         set(handles.textFieldSaveDataTo,'Enable', 'inactive');
 
-        if strcmp(appdata.save_drive_directory, '')
+        if strcmp(c.appdata.save_drive_directory, '')
             textFieldSaveDataTo_ButtonDownFcn(handles.textFieldSaveDataTo, eventdata, handles);
         end
     else
@@ -361,20 +361,21 @@ function textFieldReadDataFrom_ButtonDownFcn(hObject, eventdata, handles)
     % hObject    handle to textFieldReadDataFrom (see GCBO)
     % eventdata  reserved - to be defined in a future version of MATLAB
     % handles    structure with handles and user data (see GUIDATA)
-    appdata = getappdata(handles.figure1, 'App_Data');
+    %appdata = getappdata(handles.figure1, 'App_Data');
     currentvalue = get(hObject,'String');
-
+    c = Car.getInstance;
+    
     %Choose save directory
-    [appdata.readComFile, appdata.readComDirectory] = uigetfile('*.mat','MAT-files (*.mat)','Select a file');
+    [c.appdata.readComFile, c.appdata.readComDirectory] = uigetfile('*.mat','MAT-files (*.mat)','Select a file');
 
     %Display save directory
-    if (appdata.readComFile == 0)
+    if (c.appdata.readComFile == 0)
      set(hObject,'String',currentvalue);
     else
-     set(hObject,'String',strcat(appdata.readComDirectory,appdata.readComFile));
+     set(hObject,'String',strcat(c.appdata.readComDirectory,c.appdata.readComFile));
     end
     %Save save directory
-    setappdata(handles.figure1, 'App_Data', appdata);
+%    setappdata(handles.figure1, 'App_Data', appdata);
 
 % --- Executes when user attempts to close figure1.
 function figure1_CloseRequestFcn(hObject, eventdata, handles)
@@ -382,11 +383,12 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-    appdata = getappdata(handles.figure1, 'App_Data');
+    %appdata = getappdata(handles.figure1, 'App_Data');
+    c = Car.getInstance;
 
-    if (appdata.connected)
+    if (c.appdata.connected)
      disconnectfromcarbtn_Callback(233.0051, eventdata, handles)
-        appdata.connected = 0;
+        c.appdata.connected = 0;
     end
 
     % Destroy timer
@@ -394,8 +396,8 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
     %delete(handles.timer2)
 
     %Clear the serial object
-    appdata = getappdata(handles.figure1, 'App_Data');
-    clear appdata.serial
+%    appdata = getappdata(handles.figure1, 'App_Data');
+    clear c.appdata.serial
     
     % Hint: delete(hObject) closes the figure
     delete(hObject);
@@ -406,13 +408,14 @@ function saveConfiguration_ClickedCallback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-appdata = getappdata(handles.figure1, 'App_Data');
+%appdata = getappdata(handles.figure1, 'App_Data');
+c = Car.getInstance;
 
 [filename, pathname, ~] = uiputfile('*.mat', 'Save car setup parameters as');
 
  %Save data
  if ~isequal(pathname,0) && ~isequal(filename,0)
-   appdata.save_parameters_directory = pathname;
+   c.appdata.save_parameters_directory = pathname;
    
    nameAndDir = strcat(pathname,filename);
 
@@ -420,7 +423,7 @@ appdata = getappdata(handles.figure1, 'App_Data');
    save(nameAndDir, 'carParametersData');
  
    %Save appdata
-   setappdata(handles.figure1, 'App_Data', appdata);
+%   setappdata(handles.figure1, 'App_Data', c.appdata);
     
    Logging.log('Car parameters data saved.');
  end   

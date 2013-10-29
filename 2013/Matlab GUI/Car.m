@@ -3,6 +3,11 @@ classdef Car < handle
         % Values are stored here
         params
     end
+    properties (Access = public)
+        % Application data
+        appdata
+        cardata
+    end
     properties (Constant)
         
         % Servo param id's
@@ -48,6 +53,20 @@ classdef Car < handle
         rearAxleTurnStiffness = 56
     end
     
+    methods (Static = true)
+        %% Setter and getter for Car instance
+        function val = getInstance(appdatavalue)
+            persistent current;
+            if nargin >= 1
+                current = appdatavalue;
+            end
+            if isempty(current)
+                current = Car;
+            end
+            val = current;
+        end
+    end
+    
     methods
         % Constructor
         function this = Car()
@@ -66,16 +85,23 @@ classdef Car < handle
         
         % Save Car object to file
         function saveToFile(this, filename)
-            temp = this.params;
-            save(filename, 'temp');
-%            clear temp;
+            this.appdata
+            params = this.params;
+            appdata = this.appdata;
+            save([ filename '_params.mat' ], 'params');
+            save([ filename '_appdata.mat' ], 'appdata');
+            clear appdata;
+            clear params;
         end
         
         % Load Car object from file
         function loadFromFile(this, filename)
-            load(filename, 'temp');
-            this.params = temp;
-%            clear temp;
+            load([ filename '_params.mat' ], 'params');
+            load([ filename '_appdata.mat' ], 'appdata');
+            this.params = params;
+            this.appdata = appdata;
+            clear appdata;
+            clear params;
         end
 
     end

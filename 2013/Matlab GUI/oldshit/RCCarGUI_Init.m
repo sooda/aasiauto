@@ -69,6 +69,8 @@ function RCCarGUI_Init(hObject, eventdata, handles, varargin)
     set(handles.carSetupPanel,'Position',pan1pos)
     set(handles.carSetupPanel,'Visible','off')
 
+    % Get instance of Car to set appdata and cardata
+    c = Car.getInstance;
 
     %applicationdata initialize
     %Application data refers to the data used by the GUI
@@ -93,7 +95,8 @@ function RCCarGUI_Init(hObject, eventdata, handles, varargin)
     appdata.messagelength = 21; %message from car
     appdata.initialized = 0;
     appdata.read_value_counter = 0;
-    setappdata(hObject,'App_Data',appdata); %Save the data
+%    setappdata(hObject,'App_Data',appdata); %Save the data
+    c.appdata = appdata;
 
     %Cardata initialize
     %Cardata refers to the data we get from the cars sensors
@@ -112,7 +115,8 @@ function RCCarGUI_Init(hObject, eventdata, handles, varargin)
     cardata.motorBatteryVoltage = 0;
     cardata.controllerBatteryVoltage = 0;
     cardata.acc_scaling = 32.0/1024.0*9.81; %the conversion factor from raw data to m/s^2
-    setappdata(hObject,'Car_Data',cardata); %Save the data
+%    setappdata(hObject,'Car_Data',cardata); %Save the data
+    c.cardata = cardata;
 
     %Route Map plot setup
     handles.carpath = plot(handles.carpathDisplay,1);
@@ -161,4 +165,23 @@ function RCCarGUI_Init(hObject, eventdata, handles, varargin)
     % Update handles structure
     guidata(hObject, handles);
     
+end
+
+
+%This function checks if the car is initialized and ready to start a drive session
+%In other words: if sensordata from the car is received then it is ready
+function check_initialized(hObject,eventdata,hfigure,handles)
+
+%appdata = getappdata(handles.figure1, 'App_Data');
+c = Car.getInstance;
+
+% TODO! serial is not here!
+if c.appdata.serial.BytesAvailable && ~c.appdata.initialized 
+    c.appdata.initialized = 1;
+    Logging.log('Initialized and ready for drive session.');
+%    setappdata(handles.figure1, 'App_Data', appdata);
+else
+%    Logging.log('.');
+end
+
 end
