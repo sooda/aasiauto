@@ -57,7 +57,6 @@
 <board>
 <plain>
 <wire x1="0" y1="0" x2="20.32" y2="0" width="0" layer="20"/>
-<wire x1="20.32" y1="0" x2="20.32" y2="16.5" width="0" layer="20"/>
 <wire x1="20.32" y1="16.5" x2="0" y2="16.5" width="0" layer="20"/>
 <wire x1="0" y1="16.5" x2="0" y2="0" width="0" layer="20"/>
 </plain>
@@ -1498,7 +1497,7 @@ design rules under a new name.</description>
 <attribute name="OC_FARNELL" value="unknown" x="31.88" y="24.53" size="1.778" layer="27" rot="R90" display="off"/>
 </element>
 <element name="RSENS_A" library="resistor" package="R1206" value="" x="8.45" y="4.06" rot="MR180"/>
-<element name="RSENS_B" library="resistor" package="R1206" value="" x="12.94" y="2.61" rot="MR90"/>
+<element name="RSENS_B" library="resistor" package="R1206" value="" x="8.39" y="11.54" rot="MR0"/>
 <element name="RIN_A" library="resistor" package="R0805" value="" x="7.96" y="3.63"/>
 <element name="RIN_B" library="resistor" package="R0805" value="" x="8.01" y="11.23"/>
 <element name="C1" library="resistor" package="C0805" value="" x="5.07" y="7.59" rot="MR270"/>
@@ -1510,16 +1509,12 @@ design rules under a new name.</description>
 <contactref element="C1" pad="1"/>
 <contactref element="C2" pad="1"/>
 <contactref element="X1" pad="2"/>
-<polygon width="0.3048" layer="16">
-<vertex x="-0.2" y="10"/>
-<vertex x="-0.2" y="16.8"/>
-<vertex x="20.6" y="16.8"/>
-<vertex x="20.6" y="10.8"/>
-<vertex x="8.2" y="10.8"/>
-<vertex x="8.2" y="8.2"/>
-<vertex x="-0.2" y="8.2"/>
-</polygon>
-<wire x1="7.27" y1="8.51" x2="9.3884" y2="8.455" width="0" layer="19" extent="16-16"/>
+<wire x1="2.34015625" y1="8.87005" x2="4.63995" y2="8.87005" width="1.016" layer="16"/>
+<wire x1="4.63995" y1="8.87005" x2="5.07" y2="8.44" width="1.016" layer="16"/>
+<wire x1="5.07" y1="8.44" x2="7.2" y2="8.44" width="1.016" layer="16"/>
+<wire x1="7.2" y1="8.44" x2="7.27" y2="8.51" width="1.016" layer="16"/>
+<wire x1="7.27" y1="8.51" x2="9.3334" y2="8.51" width="1.016" layer="16"/>
+<wire x1="9.3334" y1="8.51" x2="9.3884" y2="8.455" width="1.016" layer="16"/>
 </signal>
 <signal name="GND">
 <contactref element="U1" pad="2"/>
@@ -1528,22 +1523,20 @@ design rules under a new name.</description>
 <contactref element="C1" pad="2"/>
 <contactref element="C2" pad="2"/>
 <contactref element="X1" pad="3"/>
-<polygon width="0.3048" layer="16">
-<vertex x="-0.2" y="16.6"/>
-<vertex x="20.6" y="16.6"/>
-<vertex x="20.6" y="11.4"/>
-<vertex x="13.4" y="11.4"/>
-<vertex x="13.4" y="4.2"/>
-<vertex x="20.6" y="4.2"/>
-<vertex x="20.6" y="-0.4"/>
-<vertex x="-0.4" y="-0.4"/>
-<vertex x="-0.4" y="16.6"/>
-</polygon>
 <polygon width="0.3048" layer="1">
 <vertex x="-0.2" y="16.6"/>
 <vertex x="20.6" y="16.6"/>
 <vertex x="20.6" y="-0.2"/>
 <vertex x="-0.2" y="-0.2"/>
+</polygon>
+<polygon width="0.3048" layer="16">
+<vertex x="-0.2" y="16.4"/>
+<vertex x="20.4" y="16.4"/>
+<vertex x="20.4" y="16.2"/>
+<vertex x="20.4" y="0"/>
+<vertex x="0" y="0"/>
+<vertex x="0" y="0.2"/>
+<vertex x="-0.2" y="0.2"/>
 </polygon>
 </signal>
 <signal name="N$1">
@@ -1567,9 +1560,7 @@ design rules under a new name.</description>
 <signal name="N$4">
 <contactref element="U1" pad="4"/>
 <contactref element="RSENS_B" pad="2"/>
-<wire x1="9.3884" y1="9.725" x2="11.6" y2="9.725" width="0.3048" layer="16"/>
-<wire x1="11.6" y1="9.725" x2="11.6" y2="5.372" width="0.3048" layer="16"/>
-<wire x1="11.6" y1="5.372" x2="12.94" y2="4.032" width="0.3048" layer="16"/>
+<wire x1="6.968" y1="11.54" x2="9.3884" y2="9.725" width="0" layer="19" extent="16-16"/>
 </signal>
 <signal name="N$6">
 <contactref element="RIN_A" pad="2"/>
