@@ -8,20 +8,20 @@
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
-<layer number="17" name="Pads" color="2" fill="1" visible="no" active="no"/>
-<layer number="18" name="Vias" color="2" fill="1" visible="no" active="no"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="no"/>
-<layer number="20" name="Dimension" color="15" fill="1" visible="no" active="no"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="no" active="no"/>
-<layer number="28" name="bValues" color="7" fill="1" visible="no" active="no"/>
+<layer number="1" name="Top" color="4" fill="1" visible="yes" active="no"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="no"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="no"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="no"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="no"/>
+<layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="no"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="no"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="no"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="no"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="no"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="no"/>
@@ -30,8 +30,8 @@
 <layer number="34" name="bFinish" color="6" fill="6" visible="no" active="no"/>
 <layer number="35" name="tGlue" color="7" fill="4" visible="no" active="no"/>
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="no"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="no" active="no"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="no" active="no"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="no"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="no"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="no" active="no"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="no" active="no"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="no" active="no"/>
@@ -39,12 +39,12 @@
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="no"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="no"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="no"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="no"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="no"/>
-<layer number="48" name="Document" color="7" fill="1" visible="no" active="no"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="no" active="no"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="no"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="no"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="no"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="no"/>
+<layer number="48" name="Document" color="7" fill="1" visible="yes" active="no"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="no"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="no"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="no"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="93" name="Pins" color="2" fill="1" visible="no" active="yes"/>
@@ -276,69 +276,6 @@
 <attribute name="MPN" value="22-23-2041" constant="no"/>
 <attribute name="OC_FARNELL" value="1462920" constant="no"/>
 <attribute name="OC_NEWARK" value="38C0355" constant="no"/>
-</technology>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
-<library name="con-phoenix-254">
-<description>&lt;b&gt;Phoenix Connectors&lt;/b&gt;&lt;p&gt;
-Grid 2.54 mm&lt;p&gt;
-&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
-<packages>
-<package name="2POL254">
-<description>&lt;b&gt;PHOENIX CONNECTOR&lt;/b&gt;</description>
-<wire x1="-2.67" y1="-1.45" x2="2.67" y2="-1.45" width="0.254" layer="21"/>
-<wire x1="2.67" y1="-1.45" x2="2.67" y2="1.45" width="0.254" layer="21"/>
-<wire x1="2.67" y1="1.45" x2="-2.67" y2="1.45" width="0.254" layer="21"/>
-<wire x1="-2.67" y1="1.45" x2="-2.67" y2="-1.45" width="0.254" layer="21"/>
-<wire x1="-2.56" y1="1.1" x2="2.56" y2="1.1" width="0.1524" layer="21"/>
-<wire x1="-1.905" y1="-0.508" x2="-0.762" y2="0.635" width="0.1524" layer="51"/>
-<wire x1="0.508" y1="-0.254" x2="2.032" y2="0.127" width="0.1524" layer="51"/>
-<circle x="-1.27" y="0" radius="0.889" width="0.1524" layer="51"/>
-<circle x="1.27" y="0" radius="0.889" width="0.1524" layer="51"/>
-<pad name="1" x="-1.27" y="0" drill="1.2" shape="long" rot="R90"/>
-<pad name="2" x="1.27" y="0" drill="1.2" shape="long" rot="R90"/>
-<text x="-2.794" y="1.778" size="1.27" layer="25">&gt;NAME</text>
-<text x="-2.794" y="-3.048" size="1.27" layer="27">&gt;VALUE</text>
-</package>
-</packages>
-<symbols>
-<symbol name="SKB">
-<wire x1="2.032" y1="0.762" x2="0.508" y2="-0.762" width="0.254" layer="94"/>
-<circle x="1.27" y="0" radius="1.27" width="0.254" layer="94"/>
-<text x="3.556" y="-0.635" size="1.778" layer="95">&gt;NAME</text>
-<pin name="1" x="-2.54" y="0" visible="pad" length="short" direction="pas"/>
-</symbol>
-<symbol name="SKBV">
-<wire x1="2.032" y1="0.762" x2="0.508" y2="-0.762" width="0.254" layer="94"/>
-<circle x="1.27" y="0" radius="1.27" width="0.254" layer="94"/>
-<text x="3.556" y="-0.635" size="1.778" layer="95">&gt;NAME</text>
-<text x="-1.016" y="-3.302" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="1" x="-2.54" y="0" visible="pad" length="short" direction="pas"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="MPT2" prefix="X" uservalue="yes">
-<description>&lt;b&gt;PHOENIX CONNECTOR&lt;/b&gt;</description>
-<gates>
-<gate name="-1" symbol="SKB" x="0" y="0" addlevel="always"/>
-<gate name="-2" symbol="SKBV" x="0" y="-5.08" addlevel="always"/>
-</gates>
-<devices>
-<device name="" package="2POL254">
-<connects>
-<connect gate="-1" pin="1" pad="1"/>
-<connect gate="-2" pin="1" pad="2"/>
-</connects>
-<technologies>
-<technology name="">
-<attribute name="MF" value="" constant="no"/>
-<attribute name="MPN" value="" constant="no"/>
-<attribute name="OC_FARNELL" value="unknown" constant="no"/>
-<attribute name="OC_NEWARK" value="unknown" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -7665,6 +7602,137 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 </deviceset>
 </devicesets>
 </library>
+<library name="con-ptr500">
+<description>&lt;b&gt;PTR Connectors&lt;/b&gt;&lt;p&gt;
+Aug. 2004 / PTR Meßtechnik:&lt;br&gt;
+Die Bezeichnung der Serie AK505 wurde geändert.&lt;br&gt;
+Es handelt sich hierbei um AK500 in horizontaler Ausführung.&lt;p&gt;
+&lt;TABLE BORDER=0 CELLSPACING=1 CELLPADDING=2&gt;
+  &lt;TR&gt;
+    &lt;TD ALIGN=LEFT&gt;
+      &lt;FONT SIZE=4 FACE=ARIAL&gt;&lt;B&gt;Alte Bezeichnung&lt;/B&gt;&lt;/FONT&gt;
+    &lt;/TD&gt;
+    &lt;TD ALIGN=LEFT&gt;
+      &lt;FONT SIZE=4 FACE=ARIAL&gt;&lt;B&gt;Neue Bezeichnung&lt;/B&gt;&lt;/FONT&gt;
+    &lt;/TD&gt;
+  &lt;/TR&gt;
+  &lt;TR&gt;
+    &lt;TD ALIGN=LEFT&gt;
+      &lt;B&gt;
+      &lt;FONT SIZE=3 FACE=ARIAL color="#FF0000"&gt;AK505/2,grau&lt;/FONT&gt;
+      &lt;/B&gt;
+    &lt;/TD&gt;
+    &lt;TD ALIGN=LEFT&gt;
+      &lt;B&gt;
+      &lt;FONT SIZE=3 FACE=ARIAL color="#0000FF"&gt;AK500/2-5.0-H-GRAU&lt;/FONT&gt;
+      &lt;/B&gt;
+    &lt;/TD&gt;
+  &lt;/TR&gt;
+  &lt;TR&gt;
+    &lt;TD ALIGN=LEFT&gt;
+      &lt;B&gt;
+      &lt;FONT SIZE=3 FACE=ARIAL color="#FF0000"&gt;AK505/2DS,grau&lt;/FONT&gt;
+      &lt;/B&gt;
+    &lt;/TD&gt;
+    &lt;TD ALIGN=LEFT&gt;
+      &lt;B&gt;
+      &lt;FONT SIZE=3 FACE=ARIAL color="#0000FF"&gt;AK500/2DS-5.0-H-GRAU&lt;/FONT&gt;
+      &lt;/B&gt;
+    &lt;/TD&gt;
+  &lt;/TR&gt;
+  &lt;TR&gt;
+    &lt;TD ALIGN=LEFT&gt;
+      &lt;B&gt;
+      &lt;FONT SIZE=3 FACE=ARIAL color="#FF0000"&gt;AKZ505/2,grau&lt;/FONT&gt;
+      &lt;/B&gt;
+    &lt;/TD&gt;
+    &lt;TD ALIGN=LEFT&gt;
+      &lt;B&gt;
+      &lt;FONT SIZE=3 FACE=ARIAL color="#0000FF"&gt;AKZ500/2-5.08-H-GRAU&lt;/FONT&gt;
+      &lt;/B&gt;
+    &lt;/TD&gt;
+  &lt;/TABLE&gt;
+
+&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
+<packages>
+<package name="AK500/2">
+<description>&lt;b&gt;CONNECTOR&lt;/b&gt;</description>
+<wire x1="-5.08" y1="-3.556" x2="-5.08" y2="-2.159" width="0.1524" layer="21"/>
+<wire x1="5.08" y1="3.937" x2="-5.08" y2="3.937" width="0.1524" layer="21"/>
+<wire x1="5.08" y1="3.937" x2="5.08" y2="2.159" width="0.1524" layer="21"/>
+<wire x1="-5.08" y1="-3.556" x2="5.08" y2="-3.556" width="0.1524" layer="21"/>
+<wire x1="-5.08" y1="3.048" x2="-5.588" y2="3.175" width="0.1524" layer="21"/>
+<wire x1="-5.08" y1="3.048" x2="-5.08" y2="3.937" width="0.1524" layer="21"/>
+<wire x1="-5.588" y1="3.175" x2="-5.588" y2="2.032" width="0.1524" layer="21"/>
+<wire x1="-5.588" y1="2.032" x2="-5.08" y2="2.159" width="0.1524" layer="21"/>
+<wire x1="-5.08" y1="2.159" x2="-5.08" y2="3.048" width="0.1524" layer="21"/>
+<wire x1="-5.08" y1="2.159" x2="5.08" y2="2.159" width="0.1524" layer="21"/>
+<wire x1="5.08" y1="2.159" x2="5.08" y2="-2.159" width="0.1524" layer="21"/>
+<wire x1="-5.08" y1="-2.159" x2="5.08" y2="-2.159" width="0.1524" layer="21"/>
+<wire x1="-5.08" y1="-2.159" x2="-5.08" y2="2.159" width="0.1524" layer="21"/>
+<wire x1="5.08" y1="-2.159" x2="5.08" y2="-3.556" width="0.1524" layer="21"/>
+<wire x1="1.4986" y1="-1.397" x2="3.9116" y2="1.016" width="0.1524" layer="51"/>
+<wire x1="1.1176" y1="-1.016" x2="3.5306" y2="1.397" width="0.1524" layer="51"/>
+<wire x1="-3.9116" y1="-1.016" x2="-1.4986" y2="1.397" width="0.1524" layer="51"/>
+<wire x1="-3.5306" y1="-1.397" x2="-1.1176" y2="1.016" width="0.1524" layer="51"/>
+<wire x1="1.4986" y1="-1.016" x2="3.5306" y2="1.016" width="0.6096" layer="51"/>
+<wire x1="-3.5306" y1="-1.016" x2="-1.4986" y2="1.016" width="0.6096" layer="51"/>
+<wire x1="1.1176" y1="-1.016" x2="1.4986" y2="-1.397" width="0.1524" layer="51"/>
+<wire x1="3.5306" y1="1.397" x2="3.9116" y2="1.016" width="0.1524" layer="51"/>
+<wire x1="-3.9116" y1="-1.016" x2="-3.5306" y2="-1.397" width="0.1524" layer="51"/>
+<wire x1="-1.4986" y1="1.397" x2="-1.1176" y2="1.016" width="0.1524" layer="51"/>
+<circle x="2.5146" y="3.048" radius="0.508" width="0.1524" layer="21"/>
+<circle x="-2.5146" y="3.048" radius="0.508" width="0.1524" layer="21"/>
+<circle x="2.5146" y="0" radius="1.778" width="0.1524" layer="51"/>
+<circle x="-2.5146" y="0" radius="1.778" width="0.1524" layer="51"/>
+<pad name="1" x="-2.5146" y="0" drill="1.3208" shape="long" rot="R90"/>
+<pad name="2" x="2.5146" y="0" drill="1.3208" shape="long" rot="R90"/>
+<text x="-5.08" y="4.445" size="1.778" layer="25" ratio="10">&gt;NAME</text>
+<text x="-5.08" y="-5.715" size="1.778" layer="27" ratio="10">&gt;VALUE</text>
+<text x="-4.445" y="2.54" size="0.9906" layer="21" ratio="12">1</text>
+<text x="0.635" y="2.54" size="0.9906" layer="21" ratio="12">2</text>
+<rectangle x1="-0.381" y1="-1.905" x2="0.381" y2="1.905" layer="21"/>
+</package>
+</packages>
+<symbols>
+<symbol name="KL">
+<circle x="1.27" y="0" radius="1.27" width="0.254" layer="94"/>
+<text x="-1.27" y="0.889" size="1.778" layer="95" rot="R180">&gt;NAME</text>
+<pin name="KL" x="5.08" y="0" visible="off" length="short" direction="pas" rot="R180"/>
+</symbol>
+<symbol name="KLV">
+<circle x="1.27" y="0" radius="1.27" width="0.254" layer="94"/>
+<text x="-1.27" y="0.889" size="1.778" layer="95" rot="R180">&gt;NAME</text>
+<text x="-3.81" y="-3.683" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="KL" x="5.08" y="0" visible="off" length="short" direction="pas" rot="R180"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="AK500/2" prefix="X" uservalue="yes">
+<description>&lt;b&gt;CONNECTOR&lt;/b&gt;</description>
+<gates>
+<gate name="-1" symbol="KL" x="0" y="5.08" addlevel="always"/>
+<gate name="-2" symbol="KLV" x="0" y="0" addlevel="always"/>
+</gates>
+<devices>
+<device name="" package="AK500/2">
+<connects>
+<connect gate="-1" pin="KL" pad="1"/>
+<connect gate="-2" pin="KL" pad="2"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="MF" value="" constant="no"/>
+<attribute name="MPN" value="" constant="no"/>
+<attribute name="OC_FARNELL" value="unknown" constant="no"/>
+<attribute name="OC_NEWARK" value="unknown" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -7679,7 +7747,7 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <part name="P+1" library="supply1" deviceset="VCC" device=""/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="X1" library="con-molex" deviceset="22-23-2041" device=""/>
-<part name="X2" library="con-phoenix-254" deviceset="MPT2" device=""/>
+<part name="X2" library="con-ptr500" deviceset="AK500/2" device=""/>
 <part name="RIN_A" library="resistor" deviceset="R-EU_" device="R0805"/>
 <part name="RIN_B" library="resistor" deviceset="R-EU_" device="R0805"/>
 <part name="C1" library="resistor" deviceset="C-EU" device="C0805"/>
@@ -7705,8 +7773,8 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <instance part="X1" gate="-2" x="-20.32" y="68.58" rot="MR0"/>
 <instance part="X1" gate="-3" x="-17.78" y="50.8" rot="MR0"/>
 <instance part="X1" gate="-4" x="-20.32" y="66.04" rot="MR0"/>
-<instance part="X2" gate="-1" x="73.66" y="68.58"/>
-<instance part="X2" gate="-2" x="73.66" y="66.04"/>
+<instance part="X2" gate="-1" x="76.2" y="60.96" rot="R90"/>
+<instance part="X2" gate="-2" x="68.58" y="58.42" rot="R90"/>
 <instance part="RIN_A" gate="G$1" x="12.7" y="66.04"/>
 <instance part="RIN_B" gate="G$1" x="12.7" y="60.96"/>
 <instance part="C1" gate="G$1" x="93.98" y="66.04"/>
@@ -7787,15 +7855,15 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 <net name="N$1" class="0">
 <segment>
 <pinref part="U1" gate="A" pin="OUTA"/>
-<pinref part="X2" gate="-1" pin="1"/>
-<wire x1="63.5" y1="68.58" x2="71.12" y2="68.58" width="0.1524" layer="91"/>
+<pinref part="X2" gate="-1" pin="KL"/>
+<wire x1="63.5" y1="68.58" x2="76.2" y2="66.04" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$2" class="0">
 <segment>
 <pinref part="U1" gate="A" pin="OUTB"/>
-<pinref part="X2" gate="-2" pin="1"/>
-<wire x1="63.5" y1="66.04" x2="71.12" y2="66.04" width="0.1524" layer="91"/>
+<pinref part="X2" gate="-2" pin="KL"/>
+<wire x1="63.5" y1="66.04" x2="68.58" y2="63.5" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$6" class="0">
