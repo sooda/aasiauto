@@ -1,0 +1,19 @@
+Partlist
+
+Exported from servoDrv.sch at 11/7/13 10:42 AM
+
+EAGLE Version 6.5.0 Copyright (c) 1988-2013 CadSoft
+
+Assembly variant: 
+
+Part     Value          Device         Package            Library      Sheet
+
+C1       100n           C-EUC0805      C0805              resistor     1
+C2       1u             C-EUC0805      C0805              resistor     1
+D1       PTVS6V0S1UR    DIODE-SOD123   SOD123             diode        1
+D2       PTVS6V0S1UR    DIODE-SOD123   SOD123             diode        1
+RIN_A    100            R-EU_R0805     R0805              resistor     1
+RIN_B    100            R-EU_R0805     R0805              resistor     1
+U1                      SI9986DY-T1-E3 SOIC127P600X175-8N vishay_motor 1
+X1       22-23-2041     22-23-2041     22-23-2041         con-molex    1
+X2                      AK500/2        AK500/2            con-ptr500   1
