@@ -18,12 +18,9 @@ typedef struct {
     int RRight;
 } rData_t;
 
-whlData_t FLeft, FRight, RLeft, RRight;
-
 void initWheelData(void);
 
 void updateSpeeds(void);
-void updateSpeed(unsigned int*);
 
 int updateAcc(whlData_t* wheel);
 

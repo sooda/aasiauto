@@ -1,11 +1,8 @@
 #include "wheelSpeeds.h"
 #include "lsq.h"
 
-whlData_t FLeft;
-whlData_t FRight;
-whlData_t RLeft;
-whlData_t RRight;
-whlData_t* Wheels[4] = { &FLeft, &FRight, &RLeft, &RRight };
+static whlData_t FLeft, FRight, RLeft, RRight;
+static whlData_t* Wheels[4] = { &FLeft, &FRight, &RLeft, &RRight };
 
 void initWheelData(void) {
     for(unsigned char i = 0; i < 4; i++) {
@@ -20,19 +17,17 @@ void initWheelData(void) {
 
 void updateSpeeds(void) {
     for(unsigned char i = 0; i < 4; ++i) {
+        Wheels[i]->Buffer[Wheels[i]->Time] = Wheels[i]->Counter;
+        Wheels[i]->Counter = 0; 
         if(Wheels[i]->Time == (BUFSIZE -1)) {
-            Wheels[i]->Speed = 0;
-            Wheels[i]->Buffer[Wheels[i]->Time] = Wheels[i]->Counter;
-            
             Wheels[i]->Speed = avgSpeed(Wheels[i]);
             Wheels[i]->Acceleration = updateAcc(Wheels[i]);
             Wheels[i]->Time = 0;
         }
         else {
-            Wheels[i]->Buffer[Wheels[i]->Time] = Wheels[i]->Counter;
             Wheels[i]->Time++;
         }
-        Wheels[i]->Counter = 0;
+        
     }
 }
 
