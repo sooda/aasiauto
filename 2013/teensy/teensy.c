@@ -23,7 +23,7 @@ int main(void) {
     initWheelData();
     initPorts();
     initTimers();
-    initComm();
+    initUSART();
     initInterrupts();
     sei();
     for(;;) {

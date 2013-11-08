@@ -6,8 +6,8 @@ void initUSART(void) {
     UBRR1 = F_CPU/(16*BAUDRATE)-1;
     /* Enable receiver and transmitter */
     UCSR1B = (1<<RXEN1)|(1<<TXEN1);
-    /* Set frame format: 8data, 2stop bit */
-    UCSR1C = (1<<USBS1)|(3<<UCSZ10);
+    /* Set frame format: 8data, 1stop bit */
+    UCSR1C = (3<<UCSZ10);
 }
 
 unsigned char RxByteUSART(void) {

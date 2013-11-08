@@ -4,7 +4,6 @@
 void initPorts(void);
 void initTimers(void);
 void initInterrupts(void);
-void initComm(void);
 
 #endif
 
