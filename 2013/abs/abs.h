@@ -1,7 +1,7 @@
 #ifndef RCCAR_ABS_H
 #define RCCAR_ABS_H
 
-struct absData_t;
+struct otherSide;
 
 typedef struct {
     unsigned char slip;
