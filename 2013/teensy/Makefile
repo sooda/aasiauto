@@ -14,7 +14,7 @@
 MCU = at90usb1286
 
 # Target file name (without extension).
-TARGET = usart
+TARGET = teensy
 
 F_CPU = 16000000
 
@@ -42,7 +42,9 @@ SRC = $(TARGET).c
 
 # If there is more than one source file, append them above, or modify and
 # uncomment the following:
-#SRC += foo.c bar.c
+SRC += usart.c \
+wheelSpeeds.c \
+lsq.c
 
 # You can also wrap lines by appending a backslash to the end of the line:
 #SRC += baz.c \
@@ -76,6 +78,7 @@ CFLAGS = -g -O$(OPT) \
 -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums \
 -Wall -Wstrict-prototypes \
 -Wa,-adhlns=$(<:.c=.lst) \
+-DF_CPU=$(F_CPU)UL
 $(patsubst %,-I%,$(EXTRAINCDIRS))
 
 
@@ -86,8 +89,6 @@ $(patsubst %,-I%,$(EXTRAINCDIRS))
 #CFLAGS += -std=gnu89
 #CFLAGS += -std=c99
 CFLAGS += -std=gnu99
-
-
 
 # Optional assembler flags.
 #  -Wa,...:   tell GCC to pass this to the assembler.

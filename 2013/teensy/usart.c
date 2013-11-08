@@ -3,8 +3,7 @@
 
 void initUSART(void) {
     /* Set baud rate */
-    UBRRH1 = (unsigned char)(BAUDRATE>>8);
-    UBRRL1 = (unsigned char)BAUDRATE;
+    UBRR1 = F_CPU/(16*BAUDRATE)-1;
     /* Enable receiver and transmitter */
     UCSR1B = (1<<RXEN1)|(1<<TXEN1);
     /* Set frame format: 8data, 2stop bit */
