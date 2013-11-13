@@ -11,8 +11,15 @@ typedef struct {
     absData_t* otherSide;
 } absData_t;
 
+typedef struct {
+    int initialSpeed;
+    int t;
+} vehicleData_t;
+
 void setInitialSpeed(int speed);
 void calculateCurrentSpeed(int time);
+
+int getVehicleSpeed(void);
 
 unsigned char getSilp(wheel);
 
