@@ -21,10 +21,10 @@ int main(void) {
     cycleData.intFlag = 0;
     cycleData.Cnt = 0;
     initWheelData();
-    //initPorts();
-    //initTimers();
+    initPorts();
+    initTimers();
     initUSART();
-    //initInterrupts();
+    initInterrupts();
     sei();
     for(;;) {
         if(cycleData.intFlag)
