@@ -21,10 +21,10 @@ int main(void) {
     cycleData.intFlag = 0;
     cycleData.Cnt = 0;
     initWheelData();
-    initPorts();
-    initTimers();
+    //initPorts();
+    //initTimers();
     initUSART();
-    initInterrupts();
+    //initInterrupts();
     sei();
     for(;;) {
         if(cycleData.intFlag)
@@ -45,8 +45,8 @@ void prgm100Hz(void) {
     cycleData.Cnt = 0;
     rData_t speeds = getSpeeds();
     rData_t acc = getAccelerations();
-    msgData_t msg = parseMsg(speeds, acc);
-    sendData(msg);
+    //msgData_t msg = parseMsg(speeds, acc);
+    //sendData(msg);
 
 }
 // The service routine for interrupt 0 (front left)
