@@ -12,7 +12,9 @@ void initTimers(void) {
 }
 
 void initPorts(void) {
-    
+   //Enable pull-ups for encoder inputs
+   PORTD = (1 << PD1) | (1 << PD0);
+   PORTE = (1 << PE6) | (1 << PE7);
 }
 
 void initInterrupts(void) {

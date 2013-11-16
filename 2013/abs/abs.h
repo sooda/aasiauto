@@ -1,15 +1,17 @@
 #ifndef RCCAR_ABS_H
 #define RCCAR_ABS_H
 
-struct otherSide;
+typedef struct absData_t absData_t;
 
-typedef struct {
+void initAbsData(void);
+
+struct absData_t {
     unsigned char slip;
     unsigned char brakeForce;
     int whlSpeed;
     int whlAcc;
     absData_t* otherSide;
-} absData_t;
+};
 
 typedef struct {
     int initialSpeed;
@@ -21,11 +23,11 @@ void calculateCurrentSpeed(int time);
 
 int getVehicleSpeed(void);
 
-unsigned char getSilp(wheel);
+unsigned char getSilp(absData_t wheel);
 
-unsigned char isMuSplit(wheel);
+unsigned char isMuSplit(absData_t wheel);
 
-void setBrakeForce(wheel);
+void setBrakeForce(absData_t wheel);
 
 
 #endif
