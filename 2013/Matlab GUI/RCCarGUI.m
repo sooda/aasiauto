@@ -179,6 +179,7 @@ if (c.appdata.manualdrive)
     c.cardata.timepassed = 0;
     c.cardata.motorBatteryVoltage = 0;
     c.cardata.controllerBatteryVoltage = 0;
+    c.cardata.kulma = 0;
     
 %    setappdata(handles.figure1, 'Car_Data',cardata);
 end

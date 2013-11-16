@@ -268,7 +268,9 @@ function UpdateDisplay(hObject, eventdata, hfigure, handles)
                     accLength = size(c.cardata.acceleration,1);
                     %c.cardata.acceleration(accLength,:);
 
+                    timeSinceLast = 0.0;
                     if(timeLength > 1)
+                        timeSinceLast = cardata.timepassed(end) - cardata.timepassed(end-1);
                         deltaPos = calcPosFromAcc(c.cardata.acceleration((accLength-1):accLength,:),0.5);%c.cardata.timepassed(timeLength));          
                     else
                         deltaPos = [0 0 0];
@@ -278,22 +280,49 @@ function UpdateDisplay(hObject, eventdata, hfigure, handles)
                     c.cardata.position = [c.cardata.position; c.cardata.position(posLength,:) + deltaPos];
 
 
-                 otherwise             
-                     Logging.log('Read exceeds normal message length.');
-                    % 'Read exceeds normal message length.'
-                    % strcat('Current byte is: ', num2str(c.appdata.serialcurrentbytenum))
-                 end
+                    % nyplätään nopeus&suunta mukaan
+                    % deltaPos = 0.5*deltaPos;
+                
+                    if timeSinceLast > 0
+                        asd = 1;
+                        if rev > 0
+                            asd = -1;
+                        end
+                        suunta = dir/45*asd;    % auton suunta skaalataan [-45, 45] -> [-1, 1]
 
-                  i = i + 1 + jump; 
-                  c.appdata.serialcurrentbytenum = c.appdata.serialcurrentbytenum + 1;
-                  jump = 0;
-              end
-         end  
-       end
+                        paikkaDelta = timeSinceLast*totalvelocity * 4; % nopeutetaan!
+                        kaartosade = 0.2/(suunta);  % hattuvakio kaartosäteenä, mitattava maksimikaartosäde
+                        if suunta == 0
+                            kaartosade = 1000;
+                        end
+                        keha=2*pi*kaartosade;       % lasketaan kehänpituus kun kaartosäde saadaan suuntakulmasta
+                        kulmamuutos = paikkaDelta/keha; % kulma muuttuu siirtymän suhteessa kehän pituuteen
+                        cardata.kulma = cardata.kulma + kulmamuutos;    % lasketaan uusi kulma autolle
+%                       disp([paikkaDelta dir cardata.kulma kulmamuutos totalvelocity]);
+
+                        deltaPos(1) = asd*paikkaDelta*sin(cardata.kulma);   % uusi sijainti kartalla kun pakki huomioidaan
+                        deltaPos(2) = asd*paikkaDelta*cos(cardata.kulma);
+
+                        posLength = size(cardata.position,1);
+                        cardata.position = [cardata.position; cardata.position(posLength,:) + deltaPos];
+                    end
+                
+                    otherwise
+                         Logging.log('Read exceeds normal message length.');
+                        % 'Read exceeds normal message length.'
+                        % strcat('Current byte is: ', num2str(c.appdata.serialcurrentbytenum))
+                    end
+
+                    i = i + 1 + jump; 
+                    c.appdata.serialcurrentbytenum = c.appdata.serialcurrentbytenum + 1;
+                    jump = 0;
+                end
+            end  
+        end
 
        % Update c.cardata only when it's read
-       set(handles2.carpath,'YData',c.cardata.position(:,2));
        set(handles2.carpath,'XData',c.cardata.position(:,1));
+       set(handles2.carpath,'YData',c.cardata.position(:,2));
 
        set(handles2.carspeed,'YData',c.cardata.totalvelocity);
        set(handles2.carspeed,'XData',c.cardata.timepassed);
