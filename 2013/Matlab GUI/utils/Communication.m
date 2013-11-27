@@ -7,6 +7,9 @@ classdef Communication < handle
         serial_data;
         status;
         connectionTimer;
+        communicationTimer;
+        buf_in;
+        buf_out;
 
         STATUSCODE = struct('Disconnected', 0, ...
                             'Connecting', 1, ...
@@ -38,11 +41,16 @@ classdef Communication < handle
                 Logging.log('Opening car simulation...');
                 this.status = 5; % this.STATUSCODE.Simul;
                 
+                this.communicationTimer = timer('Executionmode', 'fixedRate', 'Period', 0.05, ...
+                    'TimerFcn', {@this.async_Communication_triggered});
+                start(this.communicationTimer);
             else
                 try 
                     this.serial_data = serial(comport);
                     this.serial_data.BaudRate = 38400;
                     this.serial_data.Terminator = 'LF';
+                    this.buf_in = [];
+                    this.buf_out = [];
                     fopen (this.serial_data);
 
                     Logging.log('Connected, please wait for car initialization...');
@@ -52,6 +60,10 @@ classdef Communication < handle
                         'TimerFcn', {@this.connectionTimer_triggered});
                     start(this.connectionTimer); %Timer to check for Initialization
 
+                    this.communicationTimer = timer('Executionmode', 'fixedRate', 'Period', 0.05, ...
+                        'TimerFcn', {@this.async_Communication_triggered});
+                    start(this.communicationTimer);
+                    
                 catch err
 
                     if(strcmp(err.identifier, 'MATLAB:serial:fopen:opfailed'))
@@ -66,12 +78,30 @@ classdef Communication < handle
             end
         end % /connectToCar
 
+        function val = isConnected(this)
+            val = 0;
+            if (this.status == this.STATUSCODE.Connected || ...
+                    this.status == this.STATUSCODE.Initialized || ...
+                    this.status == this.STATUSCODE.Simul)
+                val = 1;
+            end
+        end
+        
         % Disconnects serial connection
         function this = disconnectFromCar(this)
-            if (this.status ~= this.STATUSCODE.Connected)
+            stop(this.communicationTimer);
+            
+            if (this.status ~= this.STATUSCODE.Connected && ...
+                    this.status ~= this.STATUSCODE.Simul)
                 % error!
                 Logging.log('Error: Not connected.');
                 return;
+            end
+            
+            if (this.status == this.STATUSCODE.Simul)
+                this.status = this.STATUSCODE.Disconnected;
+                Logging.log('Simulation disconnected.');
+                return
             end
             
             if(this.appdata.manualdrive)
@@ -79,12 +109,11 @@ classdef Communication < handle
             end
 
             if ( this.status == this.STATUSCODE.Connected || ...
-                    this.status == this.STATUSCODE.Initialized )
-                
+                    this.status == this.STATUSCODE.Initialized)                
                 fclose(this.serial_data);
                 delete(this.serial_data);
                 this.status = this.STATUSCODE.Disconnected;
-
+                
                 Logging.log('Disconnected.'); 
             end
         end % /disconnectFromCar
@@ -101,7 +130,32 @@ classdef Communication < handle
                 Logging.log('Initialization failed.');
             end
             stop(this.connectionTimer);
-        end % / check_initialized
+        end
+        
+        % Handle asynchronic reading and writing triggered by a timer.
+        function this = async_Communication_triggered(this, varargin)
+            if (this.status == this.STATUSCODE.Initialized || ...
+                    this.status == this.STATUSCODE.Simul)
+                val = this.getBytes();
+                if (val > 0)
+                    this.buf_in = [this.buf_in val];
+                end
+                
+                if numel(this.buf_out) > 0
+                    this.writeBytes(this.buf_out);
+                    this.buf_out = [];
+                end
+            end
+        end
+        
+        function val = read(this)
+            val = this.buf_in;
+            this.buf_in = [];
+        end
+        
+        function this = write(this, val)
+            this.buf_out = [this.buf_out val];
+        end
         
         % Read all bytes (BytesAvailable).
         function val = getBytes(this)

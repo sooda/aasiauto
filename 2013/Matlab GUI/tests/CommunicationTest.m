@@ -17,9 +17,14 @@ function CommunicationTest
     disp(val);
 
 
-    val = com.getBytes();
+    val = com.read();
     disp(val);
     
-    com.writeBytes([1 2 3]);
-
+    com.write([1 2 3]);
+    
+    pause(1);
+    
+    com.disconnectFromCar();
+    stop(timerfind());
+    
 end

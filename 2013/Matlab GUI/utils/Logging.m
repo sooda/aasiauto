@@ -15,6 +15,10 @@ classdef Logging < handle
         function log(message)
             disp(message);
             
+            if ~ishandle(Logging.console)
+                return;
+            end
+            
             oldmsgs = get(Logging.console, 'String');
             msgssize = size(oldmsgs);
             if(msgssize(1) > 8)

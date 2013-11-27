@@ -1,4 +1,4 @@
-function RCCarGUI_Init(hObject, eventdata, handles, varargin)
+function RCCarGUI_Init(hObject, ~, handles, varargin)
     handles.output = hObject;
     
     % START USER CODE
@@ -97,7 +97,7 @@ function RCCarGUI_Init(hObject, eventdata, handles, varargin)
     appdata.read_value_counter = 0;
 %    setappdata(hObject,'App_Data',appdata); %Save the data
     c.appdata = appdata;
-
+    
     %Cardata initialize
     %Cardata refers to the data we get from the cars sensors
     cardata.throttle = 0;
