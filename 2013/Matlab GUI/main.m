@@ -8,7 +8,7 @@ function main
     %% Add subfolders to path
     folders =  { 'utils' , 'oldshit' , 'tests' };
 
-    for i = 1:size(folders, 2)
+    for i = 1:length(folders)
         d = fullfile(pwd, char(folders(i)), filesep);
         addpath(d);
     end

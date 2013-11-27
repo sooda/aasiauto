@@ -11,10 +11,10 @@ function UpdateDisplay(hObject, eventdata, hfigure, handles)
 
      %appdata.read_value_counter = appdata.read_value_counter + 1;
 
-     %Get last element from each dataset
+     %Get last element from each dataset (TODO: last or first??)
      thro = c.cardata.throttle(size(c.cardata.throttle,1));
      dir = c.cardata.wheeldirection(size(c.cardata.wheeldirection,1));
-     brake = c.cardata.brake(size(c.cardata.brake,1));
+     %brake = c.cardata.brake(size(c.cardata.brake,1));
      rev = c.cardata.reverse(size(c.cardata.reverse,1));
      sound_horn = 0;
 
@@ -51,17 +51,18 @@ function UpdateDisplay(hObject, eventdata, hfigure, handles)
                thro = 0;
            end
 
-            %If no brake or throttle then read reverse
-            if(keysAreDown(40))%'downarrow'
+           %If no brake or throttle then read reverse
+           if(keysAreDown(40))%'downarrow'
                 thro = 0;
-                %if carspeed < 2? --> enable TODOOOOOO
+                % if carspeed < 2? --> enable TODOOOOOO ---> check this in
+                % microcontrols!
                 rev = rev+5-rev/20;
-            else
+           else
                 rev = rev-25;
                 if (rev < 0)
                     rev = 0;
                 end
-            end  
+           end  
 
          end
      end  
@@ -127,8 +128,7 @@ function UpdateDisplay(hObject, eventdata, hfigure, handles)
 
          i = 1;
          jump = 0; %used if 255 + 0, meaning a data byte 255
-         while i <= length
-
+         while (i <= length)
 
              readcurrentdata = 1;
              %'Check if its maybe a new message'
@@ -280,10 +280,69 @@ function UpdateDisplay(hObject, eventdata, hfigure, handles)
                     c.cardata.position = [c.cardata.position; c.cardata.position(posLength,:) + deltaPos];
 
 
-                    % nyplätään nopeus&suunta mukaan
-                    % deltaPos = 0.5*deltaPos;
+                    % Use Kalman filter to predict position using velocity,
+                    % acceleration and theta angle
                 
-                    if timeSinceLast > 0
+                    % initialize first
+                    if (~isfield(c.appdata,'kalmanfilter'))
+                        s.dt = timeSinceLast;
+                        s.A = calcA(nan); % initialize with theta 0
+                        
+                        % Define a process noise (stdev) as the car operates:
+                        s.Q = 2^2*eye(6,6); % variance, hence stdev^2
+                        s.Q(5,5) = 0.2^2;
+                        s.Q(6,6) = 0.2^2;
+
+                        % Define system to measure velocity, acceleration and theta
+                        s.H = [
+                            0 0 1 0 0 0
+                            0 0 0 1 0 0
+                            0 0 0 0 0 1
+                        ];
+
+                        % Define a measurement error (stdev):
+                        s.R = [2^2  0   0 % variance, hence stdev^2
+                               0   2^2  0
+                               0    0  0.05^2];
+
+                        % Do not define any system input (control) functions:
+                        s.B = 0;
+                        s.u = 0;
+
+                        % Do not specify an initial state:
+                        s.x = nan;
+                        s.P = nan;
+                        c.appdata.kalmanfilter = s;
+                        
+                    end
+                    
+                    if (timeSinceLast > 0)
+                        s = c.appdata.kalmanfilter;
+                        s.dt = timeSinceLast;
+                        
+                        % set measured data
+                        s(end).z = [
+                           c.cardata.totalvelocity(end)
+                           c.cardata.acceleration(end)
+                           degtorad(dir) % direction angle between [-45, 45] deg
+                        ];
+
+                        s(end+1) = kalmanfilter(s(end)); % perform a Kalman filter iteration
+
+                        % update dynamics matrix A with new measure and
+                        % state
+                        s(end).A = calcA(s(end));
+                        
+                        % update car position
+                        asd = [s(2:end).x];
+                        pos(1) = asd(1,end);
+                        pos(2) = asd(2,end);
+                        c.cardata.position = [c.cardata.position; pos];
+                        c.appdata.kalmanfilter = s;
+                    end
+                    
+                    % disabloidaan...
+                    if 0 == 1
                         asd = 1;
                         if rev > 0
                             asd = -1;
@@ -297,28 +356,28 @@ function UpdateDisplay(hObject, eventdata, hfigure, handles)
                         end
                         keha=2*pi*kaartosade;       % lasketaan kehänpituus kun kaartosäde saadaan suuntakulmasta
                         kulmamuutos = paikkaDelta/keha; % kulma muuttuu siirtymän suhteessa kehän pituuteen
-                        cardata.kulma = cardata.kulma + kulmamuutos;    % lasketaan uusi kulma autolle
+                        c.cardata.kulma = c.cardata.kulma + kulmamuutos;    % lasketaan uusi kulma autolle
 %                       disp([paikkaDelta dir cardata.kulma kulmamuutos totalvelocity]);
 
-                        deltaPos(1) = asd*paikkaDelta*sin(cardata.kulma);   % uusi sijainti kartalla kun pakki huomioidaan
-                        deltaPos(2) = asd*paikkaDelta*cos(cardata.kulma);
+                        deltaPos(1) = asd*paikkaDelta*sin(c.cardata.kulma);   % uusi sijainti kartalla kun pakki huomioidaan
+                        deltaPos(2) = asd*paikkaDelta*cos(c.cardata.kulma);
 
-                        posLength = size(cardata.position,1);
-                        cardata.position = [cardata.position; cardata.position(posLength,:) + deltaPos];
+                        posLength = size(c.cardata.position,1);
+                        c.cardata.position = [c.cardata.position; c.cardata.position(posLength,:) + deltaPos];
                     end
                 
                     otherwise
                          Logging.log('Read exceeds normal message length.');
                         % 'Read exceeds normal message length.'
                         % strcat('Current byte is: ', num2str(c.appdata.serialcurrentbytenum))
-                    end
+                 end
 
-                    i = i + 1 + jump; 
-                    c.appdata.serialcurrentbytenum = c.appdata.serialcurrentbytenum + 1;
-                    jump = 0;
-                end
-            end  
-        end
+                 i = i + 1 + jump; 
+                 c.appdata.serialcurrentbytenum = c.appdata.serialcurrentbytenum + 1;
+                 jump = 0;
+              end
+         end  
+       end
 
        % Update c.cardata only when it's read
        set(handles2.carpath,'XData',c.cardata.position(:,1));
@@ -326,7 +385,7 @@ function UpdateDisplay(hObject, eventdata, hfigure, handles)
 
        set(handles2.carspeed,'YData',c.cardata.totalvelocity);
        set(handles2.carspeed,'XData',c.cardata.timepassed);
-     end
+    end
 
     %Save steering data
     c.cardata.throttle = [c.cardata.throttle; thro];

@@ -1,4 +1,4 @@
-classdef Protocol < value
+classdef Protocol %< value
     properties (Constant)
 
     end

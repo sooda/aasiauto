@@ -22,7 +22,7 @@ Model {
       Name		      "theta"
     }
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.21"
+    ComputedModelVersion    "1.41"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -45,7 +45,7 @@ Model {
       $ObjectID		      2
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [213.0, 385.0, 816.0, 538.0]
+      Location		      [139.0, 240.0, 942.0, 720.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		3
@@ -69,9 +69,9 @@ Model {
 	IsActive		[1]
 	ViewObjType		"SimulinkTopLevel"
 	LoadSaveID		"0"
-	Extents			[573.0, 364.0]
+	Extents			[699.0, 546.0]
 	ZoomFactor		[1.0]
-	Offset			[0.0, 0.0]
+	Offset			[0.0, -9.0]
       }
     }
   }
@@ -79,11 +79,11 @@ Model {
   Creator		  "Toni"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "Toni"
+  LastModifiedBy	  "tliski"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Nov 16 12:54:46 2013"
-  RTWModifiedTimeStamp	  306507284
-  ModelVersionFormat	  "1.%<AutoIncrement:21>"
+  LastModifiedDate	  "Wed Nov 27 15:10:59 2013"
+  RTWModifiedTimeStamp	  307465859
+  ModelVersionFormat	  "1.%<AutoIncrement:41>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -192,7 +192,7 @@ Model {
 	  $ObjectID		  8
 	  Version		  "1.13.1"
 	  StartTime		  "0.0"
-	  StopTime		  "50"
+	  StopTime		  "100"
 	  AbsTol		  "auto"
 	  FixedStep		  "auto"
 	  InitialStep		  "auto"
@@ -804,6 +804,17 @@ Model {
       PreserveConstantTs      off
     }
     Block {
+      BlockType		      DiscretePulseGenerator
+      PulseType		      "Sample based"
+      TimeSource	      "Use simulation time"
+      Amplitude		      "1"
+      Period		      "2"
+      PulseWidth	      "1"
+      PhaseDelay	      "0"
+      SampleTime	      "1"
+      VectorParams1D	      on
+    }
+    Block {
       BlockType		      Outport
       Port		      "1"
       OutMin		      "[]"
@@ -820,10 +831,39 @@ Model {
       OutputWhenDisabled      "held"
       InitialOutput	      "[]"
     }
+    Block {
+      BlockType		      Sin
+      SineType		      "Time based"
+      TimeSource	      "Use simulation time"
+      Amplitude		      "1"
+      Bias		      "0"
+      Frequency		      "1"
+      Phase		      "0"
+      Samples		      "10"
+      Offset		      "0"
+      SampleTime	      "-1"
+      VectorParams1D	      on
+    }
+    Block {
+      BlockType		      Sum
+      IconShape		      "rectangular"
+      Inputs		      "++"
+      CollapseMode	      "All dimensions"
+      CollapseDim	      "1"
+      InputSameDT	      on
+      AccumDataTypeStr	      "Inherit: Inherit via internal rule"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Same as first input"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      SampleTime	      "-1"
+    }
   }
   System {
     Name		    "model"
-    Location		    [213, 385, 1029, 923]
+    Location		    [139, 240, 1081, 960]
     Open		    on
     ModelBrowserVisibility  on
     ModelBrowserWidth	    200
@@ -837,14 +877,34 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "8"
+    SIDHighWatermark	    "21"
     Block {
       BlockType		      Constant
       Name		      "Constant"
       SID		      "7"
       Position		      [50, 115, 80, 145]
       ZOrder		      7
-      Value		      "3.1"
+      Value		      "4"
+    }
+    Block {
+      BlockType		      Constant
+      Name		      "Constant1"
+      SID		      "9"
+      Position		      [285, 465, 315, 495]
+      ZOrder		      9
+      Value		      "-1"
+    }
+    Block {
+      BlockType		      DiscretePulseGenerator
+      Name		      "Pulse\nGenerator"
+      SID		      "13"
+      Ports		      [0, 1]
+      Position		      [50, 399, 80, 431]
+      ZOrder		      13
+      PulseType		      "Time based"
+      Amplitude		      "-1"
+      Period		      "5"
+      PulseWidth	      "50"
     }
     Block {
       BlockType		      Reference
@@ -857,7 +917,7 @@ Model {
       SourceBlock	      "simulink/Sources/Ramp"
       SourceType	      "Ramp"
       ContentPreviewEnabled   off
-      slope		      "1"
+      slope		      "0.1"
       start		      "0"
       X0		      "0"
       VectorParams1D	      on
@@ -867,22 +927,61 @@ Model {
       Name		      "Ramp1"
       SID		      "8"
       Ports		      [0, 1]
-      Position		      [50, 210, 80, 240]
+      Position		      [50, 345, 80, 375]
       ZOrder		      8
       LibraryVersion	      "1.285"
       SourceBlock	      "simulink/Sources/Ramp"
       SourceType	      "Ramp"
       ContentPreviewEnabled   off
-      slope		      "3.1/100"
+      slope		      "2/100"
       start		      "0"
       X0		      "0"
       VectorParams1D	      on
     }
     Block {
+      BlockType		      Sin
+      Name		      "Sine Wave"
+      SID		      "12"
+      Ports		      [0, 1]
+      Position		      [50, 290, 80, 320]
+      ZOrder		      12
+      Bias		      "1"
+      Frequency		      "5"
+      SampleTime	      "0"
+    }
+    Block {
+      BlockType		      Sum
+      Name		      "Sum"
+      SID		      "20"
+      Ports		      [2, 1]
+      Position		      [245, 240, 265, 260]
+      ZOrder		      20
+      ShowName		      off
+      IconShape		      "round"
+      Inputs		      "|++"
+      InputSameDT	      off
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
+      BlockType		      Sum
+      Name		      "Sum1"
+      SID		      "21"
+      Ports		      [2, 1]
+      Position		      [310, 385, 330, 405]
+      ZOrder		      21
+      ShowName		      off
+      IconShape		      "round"
+      Inputs		      "|++"
+      InputSameDT	      off
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      SaturateOnIntegerOverflow	off
+    }
+    Block {
       BlockType		      Outport
       Name		      "velocity"
       SID		      "3"
-      Position		      [190, 63, 220, 77]
+      Position		      [595, 93, 625, 107]
       ZOrder		      3
       IconDisplay	      "Port number"
     }
@@ -890,7 +989,7 @@ Model {
       BlockType		      Outport
       Name		      "acceleration"
       SID		      "5"
-      Position		      [190, 113, 220, 127]
+      Position		      [595, 213, 625, 227]
       ZOrder		      5
       Port		      "2"
       IconDisplay	      "Port number"
@@ -899,23 +998,46 @@ Model {
       BlockType		      Outport
       Name		      "theta"
       SID		      "6"
-      Position		      [190, 158, 220, 172]
+      Position		      [530, 388, 560, 402]
       ZOrder		      6
       Port		      "3"
       IconDisplay	      "Port number"
     }
     Line {
-      ZOrder		      9
-      SrcBlock		      "Constant"
+      ZOrder		      40
+      SrcBlock		      "Sine Wave"
       SrcPort		      1
-      Points		      [50, 0; 0, 35]
+      Points		      [170, 0]
+      DstBlock		      "Sum"
+      DstPort		      2
+    }
+    Line {
+      ZOrder		      49
+      SrcBlock		      "Sum1"
+      SrcPort		      1
       DstBlock		      "theta"
       DstPort		      1
     }
     Line {
-      ZOrder		      19
-      SrcBlock		      "Ramp"
+      ZOrder		      51
+      SrcBlock		      "Constant1"
       SrcPort		      1
+      DstBlock		      "Sum1"
+      DstPort		      2
+    }
+    Line {
+      ZOrder		      52
+      SrcBlock		      "Ramp1"
+      SrcPort		      1
+      Points		      [39, 0; 0, 35]
+      DstBlock		      "Sum1"
+      DstPort		      1
+    }
+    Line {
+      ZOrder		      53
+      SrcBlock		      "Constant"
+      SrcPort		      1
+      Points		      [252, 0; 0, -30]
       DstBlock		      "velocity"
       DstPort		      1
     }

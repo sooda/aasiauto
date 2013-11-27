@@ -12,7 +12,8 @@ classdef Communication < handle
                             'Connecting', 1, ...
                             'Connected', 2, ...
                             'Initialized', 3, ...
-                            'Error', 4);
+                            'Error', 4, ...
+                            'Simul', 5);
     end
     
     methods
@@ -33,10 +34,12 @@ classdef Communication < handle
             if(strcmp(comport, '--'))
                 Logging.log('Please select a serial port.');
 
+            elseif (strcmp(comport, 'Simul'))
+                Logging.log('Opening car simulation...');
+                this.status = 5; % this.STATUSCODE.Simul;
+                
             else
                 try 
-                    this.status = this.STATUSCODE.Connecting;
-
                     this.serial_data = serial(comport);
                     this.serial_data.BaudRate = 38400;
                     this.serial_data.Terminator = 'LF';
@@ -45,7 +48,7 @@ classdef Communication < handle
                     Logging.log('Connected, please wait for car initialization...');
                     this.status = this.STATUSCODE.Connecting;
 
-                    this.connectionTimer = timer('Executionmode', 'fixedRate', 'Period', 0.05, ...
+                    this.connectionTimer = timer('Executionmode', 'fixedRate', 'Period', 0.5, ...
                         'TimerFcn', {@this.connectionTimer_triggered});
                     start(this.connectionTimer); %Timer to check for Initialization
 
@@ -102,9 +105,12 @@ classdef Communication < handle
         
         % Read all bytes (BytesAvailable).
         function val = getBytes(this)
-            if (this.serial_data.BytesAvailable && ...
+            if (this.status == 5) %this.STATUSCODE.Simul)
+                Logging.log('Reading data from simulation:');
+                val = -1;
+            elseif (this.serial_data.BytesAvailable && ...
                     this.status == this.STATUSCODE.Initialized)
-                val = fread(this.serial_data, this.serial_data.BytesAvailable, 'async');
+                val = fread(this.serial_data, this.serial_data.BytesAvailable);
             else
                 val = -1;
             end
@@ -114,7 +120,7 @@ classdef Communication < handle
         function val = getByte(this)
             if (this.serial_data.BytesAvailable && ...
                     this.status == this.STATUSCODE.Initialized)
-                val = fread(this.serial_data, 1, 'async');
+                val = fread(this.serial_data, 1);
             else
                 val = -1;
             end
@@ -122,8 +128,11 @@ classdef Communication < handle
 
         % Write bytes
         function this = writeBytes(this, bytes)
-            if (this.status == this.STATUSCODE.Initialized)
-                fwrite(this.serial_data, bytes, 'async');
+            if (this.status == 5) %this.STATUSCODE.Simul)
+                Logging.log('Write data to simulation:');
+                Logging.log(bytes);
+            elseif (this.status == this.STATUSCODE.Initialized)
+                fwrite(this.serial_data, bytes);
             end
         end
         
