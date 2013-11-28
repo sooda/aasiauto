@@ -7,9 +7,6 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
     handles.timer = timer('Executionmode','fixedRate','Period', 0.02,...
         'TimerFcn', {@update_display,hObject,handles});
 
-    handles.timer2 = timer('Executionmode','fixedRate','Period', 0.05,...
-        'TimerFcn', {@check_initialized,hObject,handles});
-
     %set(handles.timer,'Period',1);
 
     % Set the colors indicating a selected/unselected tab
@@ -70,7 +67,7 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
     set(handles.carSetupPanel,'Visible','off')
 
     % Get instance of Car to set appdata and cardata
-    c = Car.getInstance;
+    c = Car.getInstance();
 
     %applicationdata initialize
     %Application data refers to the data used by the GUI
@@ -166,23 +163,4 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
     % Update handles structure
     guidata(hObject, handles);
     
-end
-
-
-%This function checks if the car is initialized and ready to start a drive session
-%In other words: if sensordata from the car is received then it is ready
-function check_initialized(hObject,eventdata,hfigure,handles)
-
-%appdata = getappdata(handles.figure1, 'App_Data');
-c = Car.getInstance;
-
-% TODO! serial is not here!
-if c.appdata.serial.BytesAvailable && ~c.appdata.initialized 
-    c.appdata.initialized = 1;
-    Logging.log('Initialized and ready for drive session.');
-%    setappdata(handles.figure1, 'App_Data', appdata);
-else
-%    Logging.log('.');
-end
-
 end

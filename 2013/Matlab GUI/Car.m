@@ -60,7 +60,7 @@ classdef Car < handle
             if nargin >= 1
                 current = appdatavalue;
             end
-            if isempty(current)
+            if (isempty(current) || ~isvalid(current))
                 current = Car;
             end
             val = current;

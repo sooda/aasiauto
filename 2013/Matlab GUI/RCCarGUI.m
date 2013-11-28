@@ -22,7 +22,7 @@ function varargout = RCCarGUI(varargin)
 
 % Edit the above text to modify the response to help RCCarGUI
 
-% Last Modified by GUIDE v2.5 08-Oct-2013 16:26:30
+% Last Modified by GUIDE v2.5 28-Nov-2013 16:24:48
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -42,6 +42,7 @@ else
     gui_mainfcn(gui_State, varargin{:});
 end
 % End initialization code - DO NOT EDIT
+end
 
 % --- Executes just before RCCarGUI is made visible.
 function RCCarGUI_OpeningFcn(hObject, eventdata, handles, varargin)
@@ -54,6 +55,7 @@ function RCCarGUI_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for RCCarGUI
 RCCarGUI_Init(hObject, eventdata, handles, varargin);
 savedrivedatacheckbox_Callback(handles.savedrivedatacheckbox, eventdata, handles)
+end
 
 % --- Outputs from this function are returned to the command line.
 function varargout = RCCarGUI_OutputFcn(hObject, eventdata, handles) 
@@ -64,6 +66,7 @@ function varargout = RCCarGUI_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
+end
 
 % Text object 1 callback (tab 1)
 function t1bd(hObject,eventdata,handles)
@@ -73,6 +76,7 @@ set(handles.a1,'Color',handles.selectedTabColor)
 set(handles.a2,'Color',handles.unselectedTabColor)
 set(handles.monitoringPanel,'Visible','on')
 set(handles.carSetupPanel,'Visible','off')
+end
 
 % Text object 2 callback (tab 2)
 function t2bd(hObject,eventdata,handles)
@@ -82,6 +86,7 @@ set(handles.a2,'Color',handles.selectedTabColor)
 set(handles.a1,'Color',handles.unselectedTabColor)
 set(handles.carSetupPanel,'Visible','on')
 set(handles.monitoringPanel,'Visible','off')
+end
 
 % Axes object 1 callback (tab 1)
 function a1bd(hObject,eventdata,handles)
@@ -91,6 +96,7 @@ set(handles.t1,'BackgroundColor',handles.selectedTabColor)
 set(handles.t2,'BackgroundColor',handles.unselectedTabColor)
 set(handles.monitoringPanel,'Visible','on')
 set(handles.carSetupPanel,'Visible','off')
+end
 
 % Axes object 2 callback (tab 2)
 function a2bd(hObject,eventdata,handles)
@@ -101,13 +107,13 @@ set(handles.t1,'BackgroundColor',handles.unselectedTabColor)
 set(handles.carSetupPanel,'Visible','on')
 set(handles.monitoringPanel,'Visible','off')
 
+end
 
 % --- Executes on START MANUAL DRIVE button press.
 function startmandrivebtn_Callback(hObject, eventdata, handles)
 % hObject    handle to startmandrivebtn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 
 % Only start timer if it is not running
 %appdata = getappdata(handles.figure1, 'App_Data');
@@ -116,9 +122,8 @@ c = Car.getInstance;
 if c.appdata.connected
    
     c.appdata.manualdrive = 1;
-%    setappdata(handles.figure1, 'App_Data', appdata);
     ListenChar(2); %Start listening fror keyboard inputs
-    stop(handles.timer2); %Stop the "initialize" timer
+%    stop(handles.timer2); %Stop the "initialize" timer
 % TODO! Serial is not here anymore
     fread(c.appdata.serial, appdata.serial.BytesAvailable); % Clear car message buffer
     start(handles.timer);
@@ -129,7 +134,7 @@ if c.appdata.connected
 else
     Logging.log('You are not connected to the car.')
 end
-
+end
 
 % --- Executes on END MANUAL DRIVE button press.
 function endmandrivebtn_Callback(hObject, eventdata, handles)
@@ -179,11 +184,10 @@ if (c.appdata.manualdrive)
     c.cardata.timepassed = 0;
     c.cardata.motorBatteryVoltage = 0;
     c.cardata.controllerBatteryVoltage = 0;
-    c.cardata.kulma = 0;
     
 %    setappdata(handles.figure1, 'Car_Data',cardata);
 end
-
+end
 %This is the main loop that runs when the car is in manual drive
 %The function handles the following:
 % -Read keyboard input
@@ -192,7 +196,7 @@ end
 % -Update car monitoring plots in the GUI
 function update_display(hObject,eventdata,hfigure,handles)
     UpdateDispay(hObject, eventdata, hfigure, handles);
-
+end
     
 % --- Executes on button press in Connect To Car.
 function connecttocarbtn_Callback(hObject, eventdata, handles)
@@ -200,33 +204,17 @@ function connecttocarbtn_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-%TODO error handling
-%appdata = getappdata(handles.figure1, 'App_Data');
 c = Car.getInstance;
 
 if(strcmp(c.appdata.selectedcomport, '--'))
     Logging.log('Please select a serial port.')
 
 else
-    try 
-        c.appdata.serial = serial(c.appdata.selectedcomport);
-        c.appdata.serial.BaudRate = 38400;
-        c.appdata.serial.Terminator = 'LF';
-        fopen (c.appdata.serial);
-        c.appdata.connected = 1;
-        setappdata(handles.figure1,'App_Data',c.appdata);
-        Logging.log('Connected, please wait for car initialization...')
+    c.appdata.com = Communication();
+    c.appdata.com.connectToCar(c.appdata.selectedcomport);
 
-        start(handles.timer2); %Timer to check for Iniatilzation
-    catch err
-
-        if(strcmp(err.identifier,'MATLAB:serial:fopen:opfailed'))
-            Logging.log('Failed to connect to selected port.')
-        else
-            Logging.log('Undefined error occured, check matlab command window.')
-            rethrow(err);
-        end
-    end
+    c.appdata.connected = c.appdata.com.isConnected(); % TODO: replace this!
+end
 end
 
 % --- Executes on button press in Disconnect From Car.
@@ -237,18 +225,15 @@ function disconnectfromcarbtn_Callback(hObject, eventdata, handles)
 
 %appdata = getappdata(handles.figure1, 'App_Data');
 c = Car.getInstance;
-
-if(c.appdata.manualdrive)
-    endmandrivebtn_Callback(233.0072, eventdata, handles);
+if (~isfield(c.appdata, 'com')) % ~c.appdata.connected || 
+    Logging.log('Not connected.');
+    return;
 end
+c.appdata.com.disconnectFromCar();
 
-if(c.appdata.connected)
-    fclose(c.appdata.serial);
-    delete(c.appdata.serial);
-    c.appdata.connected = 0;
-    c.appdata.initialized = 0;
-    setappdata(handles.figure1, 'App_Data', c.appdata);
-    Logging.log('Disconnected.'); 
+% Make sure that all serial connections are closed
+delete(instrfindall('Type', 'serial'));
+
 end
 
 % --- Executes on selection change in portConnectpop.
@@ -260,40 +245,20 @@ function portConnectpop_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns portConnectpop contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from portConnectpop
 
-%appdata = getappdata(handles.figure1, 'App_Data');
 c = Car.getInstance;
 
 instrumentinfo = instrhwinfo('serial');
 c.appdata.availablecomports = instrumentinfo.AvailableSerialPorts;
-setappdata(handles.figure1, 'App_Data',c.appdata); %save availablecomports
 
 values = get(hObject,'String');
 selectedValue = get(hObject,'Value');
 
-%Validation of serial port not currently possible since matlab instrhwinfo
-%only refreshes on program startup. May be changed in future versions of
-%matlab.
+% Validation of serial port not currently possible since matlab instrhwinfo
+% only refreshes on program startup. May be changed in future versions of
+% matlab.
 
 c.appdata.selectedcomport = values{selectedValue};
-setappdata(handles.figure1, 'App_Data', c.appdata);
-
-
-% TODO: TO BE DELETED!
-function console_callBack(hObject, eventdata, handles, message)
-% hObject    handle to console (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of console as text
-%        str2double(get(hObject,'String')) returns contents of console as a double
-
-oldmsgs = get(handles.console,'String');
-msgssize = size(oldmsgs);
-if(msgssize(1)>8)
-    oldmsgs = oldmsgs(2:9); %delete first row
 end
-set(handles.console,'String',[oldmsgs;{message}]);
-set(handles.console2,'String',[oldmsgs;{message}]);
 
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
 % --- Otherwise, executes on mouse press in 5 pixel border or over textFieldSaveDataTo.
@@ -323,6 +288,7 @@ if(get(handles.savedrivedatacheckbox,'value'))
     %Save save directory
 %    setappdata(handles.figure1, 'App_Data', appdata);
 end
+end
 
 % --- Executes during object creation, after setting all properties.
 function textFieldSaveDataTo_CreateFcn(hObject, eventdata, handles)
@@ -335,7 +301,7 @@ function textFieldSaveDataTo_CreateFcn(hObject, eventdata, handles)
 set(hObject,'String',pwd);
 Generic_callback(hObject, eventdata, handles);
 
-
+end
 % --- Executes on button press in savedrivedatacheckbox.
 function savedrivedatacheckbox_Callback(hObject, eventdata, handles)
 % hObject    handle to savedrivedatacheckbox (see GCBO)
@@ -355,7 +321,7 @@ function savedrivedatacheckbox_Callback(hObject, eventdata, handles)
     else
         set(handles.textFieldSaveDataTo,'Enable', 'off');
     end
-
+end
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
 % --- Otherwise, executes on mouse press in 5 pixel border or over textFieldReadDataFrom.
 function textFieldReadDataFrom_ButtonDownFcn(hObject, eventdata, handles)
@@ -377,7 +343,7 @@ function textFieldReadDataFrom_ButtonDownFcn(hObject, eventdata, handles)
     end
     %Save save directory
 %    setappdata(handles.figure1, 'App_Data', appdata);
-
+end
 % --- Executes when user attempts to close figure1.
 function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
@@ -388,21 +354,20 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
     c = Car.getInstance;
 
     if (c.appdata.connected)
-     disconnectfromcarbtn_Callback(233.0051, eventdata, handles)
+        c.appdata.com.disconnectFromCar();
         c.appdata.connected = 0;
     end
 
-    % Destroy timer
-    %delete(handles.timer)
-    %delete(handles.timer2)
+    % Destroy timers
+    delete(timerfindall);
 
-    %Clear the serial object
-%    appdata = getappdata(handles.figure1, 'App_Data');
-    clear c.appdata.serial
+    % Clean up
+    delete(c);
+    clear c
     
     % Hint: delete(hObject) closes the figure
     delete(hObject);
-
+end
 % --------------------------------------------------------------------
 function saveConfiguration_ClickedCallback(hObject, eventdata, handles)
 % hObject    handle to saveConfiguration (see GCBO)
@@ -428,7 +393,7 @@ c = Car.getInstance;
     
    Logging.log('Car parameters data saved.');
  end   
-
+end
 % --------------------------------------------------------------------
 function openConfiguration_ClickedCallback(hObject, eventdata, handles)
 % hObject    handle to openConfiguration (see GCBO)
@@ -448,7 +413,7 @@ function openConfiguration_ClickedCallback(hObject, eventdata, handles)
     
    Logging.log('Car parameters data loaded.');
  end
-
+end
 % Resets the parameters
 function resetToDefault_ClickedCallback(hObject, eventdata, handles)
 % hObject    handle to resetToDefault (see GCBO)
@@ -466,11 +431,12 @@ if strcmp(response, 'Reset parameters')
    
    Logging.log('Default car data parameters loaded.');
 end
+end
 
 %Request and save the current car parameters
 function getCarConfParamBtn_Callback(hObject, eventdata, handles)
 getCarConfs(hObject, eventdata, handles);
-
+end
 
 %Save car parameters to car
 function setCarConfParamBtn_Callback(hObject, eventdata, handles)
@@ -478,7 +444,7 @@ function setCarConfParamBtn_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 setCarConfs(hObject, eventdata, handles);
-
+end
 
 % --------------------------------------------------------------------
 function aboutGUI_ClickedCallback(hObject, eventdata, handles)
@@ -488,7 +454,7 @@ function aboutGUI_ClickedCallback(hObject, eventdata, handles)
 
 msgbox('Author: Valter Sandström                                                 E-mail: valter.sandstrom@aalto.fi                                26.11.2012',...
     'About this GUI...');
-
+end
 
 % --------------------------------------------------------------------
 
@@ -500,9 +466,11 @@ function Generic_callback(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white'); %Autogenerated code
 end
+end
 
 % --- Executes during object creation, after setting all properties.
 function Empty_callback(hObject, eventdata, handles)
 % hObject    handle to ButtonPressDisplay (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+end

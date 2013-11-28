@@ -3,7 +3,6 @@
 classdef Communication < handle
     
     properties
-        appdata;
         serial_data;
         status;
         connectionTimer;
@@ -34,6 +33,11 @@ classdef Communication < handle
                 return;
             end
             
+            this.connectionTimer = timer('Executionmode', 'fixedRate', 'Period', 0.5, ...
+                'TimerFcn', {@this.connectionTimer_triggered});
+            this.communicationTimer = timer('Executionmode', 'fixedRate', 'Period', 0.05, ...
+                'TimerFcn', {@this.async_Communication_triggered});
+
             if(strcmp(comport, '--'))
                 Logging.log('Please select a serial port.');
 
@@ -41,8 +45,6 @@ classdef Communication < handle
                 Logging.log('Opening car simulation...');
                 this.status = 5; % this.STATUSCODE.Simul;
                 
-                this.communicationTimer = timer('Executionmode', 'fixedRate', 'Period', 0.05, ...
-                    'TimerFcn', {@this.async_Communication_triggered});
                 start(this.communicationTimer);
             else
                 try 
@@ -56,12 +58,7 @@ classdef Communication < handle
                     Logging.log('Connected, please wait for car initialization...');
                     this.status = this.STATUSCODE.Connecting;
 
-                    this.connectionTimer = timer('Executionmode', 'fixedRate', 'Period', 0.5, ...
-                        'TimerFcn', {@this.connectionTimer_triggered});
                     start(this.connectionTimer); %Timer to check for Initialization
-
-                    this.communicationTimer = timer('Executionmode', 'fixedRate', 'Period', 0.05, ...
-                        'TimerFcn', {@this.async_Communication_triggered});
                     start(this.communicationTimer);
                     
                 catch err
@@ -89,10 +86,19 @@ classdef Communication < handle
         
         % Disconnects serial connection
         function this = disconnectFromCar(this)
-            stop(this.communicationTimer);
+            if (isvalid(this.communicationTimer))
+                stop(this.communicationTimer);
+                delete(this.communicationTimer);
+            end
+            if (isvalid(this.connectionTimer))
+                stop(this.connectionTimer);
+                delete(this.connectionTimer);
+            end
             
-            if (this.status ~= this.STATUSCODE.Connected && ...
-                    this.status ~= this.STATUSCODE.Simul)
+            % delete also all the rest timers
+            delete(timerfindall());
+            
+            if (~this.isConnected() && this.status ~= this.STATUSCODE.Connecting)
                 % error!
                 Logging.log('Error: Not connected.');
                 return;
@@ -104,18 +110,20 @@ classdef Communication < handle
                 return
             end
             
-            if(this.appdata.manualdrive)
-                endmandrivebtn_Callback(233.0072, eventdata, handles); % wtf?
+            c = Car.getInstance();
+            
+            c.appdata.connected = 0;
+            
+            if(c.appdata.manualdrive)
+                endmandrivebtn_Callback(0,0,0);
             end
 
-            if ( this.status == this.STATUSCODE.Connected || ...
-                    this.status == this.STATUSCODE.Initialized)                
-                fclose(this.serial_data);
-                delete(this.serial_data);
-                this.status = this.STATUSCODE.Disconnected;
+            fclose(this.serial_data);
+            delete(this.serial_data);
+            this.status = this.STATUSCODE.Disconnected;
                 
-                Logging.log('Disconnected.'); 
-            end
+            Logging.log('Disconnected.');
+
         end % /disconnectFromCar
         
         %This function checks if the car is initialized and ready to start a drive session
@@ -125,17 +133,25 @@ classdef Communication < handle
                     this.status ~= this.STATUSCODE.Initialized)
                 this.status = this.STATUSCODE.Initialized;
                 Logging.log('Initialized and ready for drive session.');
+                stop(this.connectionTimer);
+                c = Car.getInstance;
+                c.appdata.connected = 1;
             else
-                this.status = this.STATUSCODE.Disconnected;
-                Logging.log('Initialization failed.');
+            %    this.status = this.STATUSCODE.Disconnected;
+            %    Logging.log('Initialization failed.');
             end
-            stop(this.connectionTimer);
+            
         end
         
         % Handle asynchronic reading and writing triggered by a timer.
         function this = async_Communication_triggered(this, varargin)
-            if (this.status == this.STATUSCODE.Initialized || ...
-                    this.status == this.STATUSCODE.Simul)
+            if (this.status == this.STATUSCODE.Simul)
+                if (exist('controller','file')) % file or builtin or class..
+                    buf = controller(this.buf_out);
+                    this.buf_out = [];
+                    this.buf_in = [this.buf_in buf];
+                end
+            elseif (this.status == this.STATUSCODE.Initialized)
                 val = this.getBytes();
                 if (val > 0)
                     this.buf_in = [this.buf_in val];
@@ -147,7 +163,7 @@ classdef Communication < handle
                 end
             end
         end
-        
+         
         function val = read(this)
             val = this.buf_in;
             this.buf_in = [];
@@ -160,7 +176,7 @@ classdef Communication < handle
         % Read all bytes (BytesAvailable).
         function val = getBytes(this)
             if (this.status == 5) %this.STATUSCODE.Simul)
-                Logging.log('Reading data from simulation:');
+                Logging.log('Reading data from simulation (async)...');
                 val = -1;
             elseif (this.serial_data.BytesAvailable && ...
                     this.status == this.STATUSCODE.Initialized)

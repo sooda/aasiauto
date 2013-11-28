@@ -42,6 +42,14 @@ classdef ByteTools
             value = double(typecast(uint16(bin2dec(strcat(high, low))), 'int16'));
 
         end
+        
+        function num = buf2num(buf)
+            num = double(typecast(buf, 'int16'));
+        end
     
+        function buf = num2buf(num)
+            buf = typecast(uint16(num), 'uint8');
+        end
+        
     end
 end
