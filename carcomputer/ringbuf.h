@@ -30,7 +30,7 @@ static inline uint8_t uartbuf_empty(uint8_t buf) {
 }
 
 static inline uint8_t uartbuf_full(uint8_t buf) {
-	return uartbuf_size(buf) < SZMASK;
+	return uartbuf_size(buf) == SZMASK;
 }
 
 // le uart side, byte at a time
