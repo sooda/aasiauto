@@ -21,9 +21,9 @@ for main_i=1:5
 	fakeblk_sz = 3;
 	while numel(buf) > 0
 		b = buf;
-	    if numel(buf) > fakeblk_sz
+        if numel(buf) > fakeblk_sz
 			b = buf(1:fakeblk_sz);
-		end
+        end
 		% parse_buffer does some action
 		cache = parse_buffer([cache b]);
 		buf = buf(fakeblk_sz+1:end);

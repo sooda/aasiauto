@@ -1,2 +1,3 @@
 function num = buf2num(buf)
-num = double(typecast(buf, 'int16'));
+    num = double(typecast(buf, 'int16'));
+end

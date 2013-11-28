@@ -3,15 +3,16 @@
 function parse_item(nums)
 sz = nums(1);
 type = nums(2);
-if type == 1
-	disp('pong');
-elseif type == 3
-	disp('speed:')
-	disp(nums(3:6))
-elseif type == 4
-	disp('err:')
-	disp(nums(3))
-else
-	disp('bad message')
-	disp(nums)
+switch type
+    case 1
+        disp('pong');
+    case 3
+        disp('speed:')
+        disp(nums(3:6))
+    case 4
+    	disp('err:')
+        disp(nums(3))
+    otherwise
+        disp('bad message')
+        disp(nums)
 end
