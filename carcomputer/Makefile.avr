@@ -1,0 +1,5 @@
+all: test
+
+test: main_avr.c core.c encoders.c comm_avr.c msgs.c comm.c ringbuf.c
+	gcc -Wall -Wextra $^ -o $@
+
