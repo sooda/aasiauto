@@ -16,6 +16,7 @@ void initAbsData(void) {
     setAbsCutOffSpeed(3);
     setAbsMinAcc(2);
     setAbsMaxAcc(10);
+    absParams.muSplitThreshold = 10;
 }
 
 void setCurrentSpeed(int deltaTime) {
@@ -52,7 +53,7 @@ unsigned char getSlip(absData_t* wheel) {
 }
 
 unsigned char isMuSplit(absData_t* wheel) {
-    if (abs(wheel->forceReq-wheel->otherSide->forceReq) > 10)
+    if (abs(wheel->forceReq-wheel->otherSide->forceReq) > absParams.muSplitThreshold)
         return 1;
     else
         return 0;
