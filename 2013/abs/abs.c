@@ -1,5 +1,6 @@
 #include "abs.h"
 #include "tyredata.h"
+#include "vehicle.h"
 #include <stdlib.h>
 
 static absData_t FLdata, FRdata, RLdata, RRdata;
@@ -7,23 +8,31 @@ static vehicleData_t vehicle;
 static absParams_t absParams;
 
 void initAbsData(void) {
+    absParams_t defaultValues = {
+        .slipTolerance = 10,
+        .enabled = 1,
+        .cutOffSpeed = 4,
+        .minAcc = 2,
+        .maxAcc = 8,
+        .muSplitThreshold = 10
+    };
     FLdata.otherSide = &FRdata;
     FRdata.otherSide = &FLdata;
     RLdata.otherSide = &RRdata;
     RRdata.otherSide = &RLdata;
-    enableAbs();
-    setAbsSlipTolerance(10);
-    setAbsCutOffSpeed(3);
-    setAbsMinAcc(2);
-    setAbsMaxAcc(10);
-    absParams.muSplitThreshold = 10;
+    setAbsParam(defaultValues.slipTolerance, SLIPTOLERANCE);
+    setAbsParam(defaultValues.enabled, ENABLED);
+    setAbsParam(defaultValues.cutOffSpeed, CUTOFFSPEED);
+    setAbsParam(defaultValues.minAcc, MINACC);
+    setAbsParam(defaultValues.maxAcc, MAXACC);
+    setAbsParam(defaultValues.muSplitThreshold, MUSPLITTHRESHOLD);
 }
 
 void setCurrentSpeed(int deltaTime) {
     if(RRdata.brakeForce == 0 && RLdata.brakeForce == 0)
         vehicle.currentSpeed = (RRdata.speed + RLdata.speed) >> 2;
     else
-        vehicle.currentSpeed += getAcc()*time;
+        vehicle.currentSpeed += getAcc()*deltaTime;
 }
 
 int getVehicleSpeed(void) {
@@ -61,39 +70,68 @@ unsigned char isMuSplit(absData_t* wheel) {
 
 unsigned char setBrakeForce(absData_t* wheel, unsigned char driverReq) {
     if (!absParams.enabled || getVehicleSpeed() < absParams.cutOffSpeed)
-        return driverReq;
+        wheel->brakeForce = driverReq;
     calculateBrakeForceReq(wheel);
     if(driverReq < wheel->forceReq)
-        return driverReq;
+        wheel->brakeForce = driverReq;
     else {
         if((isMuSplit(wheel)) && (wheel->forceReq > wheel->otherSide->forceReq))
-            return wheel->otherSide->forceReq;
+            wheel->brakeForce = wheel->otherSide->forceReq;
         else
-            return wheel->forceReq;
+            wheel->brakeForce = wheel->forceReq;
+    }
+    return wheel->brakeForce;
+}
+
+void setAbsParam(unsigned char newValue, absParam param) {
+    switch(param) {
+        case SLIPTOLERANCE:
+            absParams.slipTolerance = newValue;
+            break;
+        case ENABLED:
+            absParams.enabled = newValue;
+            break;
+        case CUTOFFSPEED:
+            absParams.cutOffSpeed = newValue;
+            break;
+        case MINACC:
+            absParams.minAcc = newValue;
+            break;
+        case MAXACC:
+            absParams.maxAcc = newValue;
+            break;
+        case MUSPLITTHRESHOLD:
+            absParams.muSplitThreshold = newValue;
+            break;
+        default:
+            break;
     }
 }
 
-void enableAbs(void) {
-    absParams.enabled = 1;
-}
+unsigned char getAbsParam(absParam param) {
+    switch(param) {
+        case SLIPTOLERANCE:
+            return absParams.slipTolerance;
+            break;
+        case ENABLED:
+            return absParams.enabled;
+            break;
+        case CUTOFFSPEED:
+            return absParams.cutOffSpeed;
+            break;
+        case MINACC:
+            return absParams.minAcc;
+            break;
+        case MAXACC:
+            return absParams.maxAcc;
+            break;
+        case MUSPLITTHRESHOLD:
+            return absParams.muSplitThreshold;
+            break;
+        default:
+            return -1;
+            break;
+    }
 
-void disableAbs(void) {
-    absParams.enabled = 0;
-}
-
-void setAbsSlipTolerance(unsigned char tolerance) {
-    absParams.slipTolerance = tolerance;
-}
-
-void setAbsCutOffSpeed(unsigned char speed) {
-    absParams.cutOffSpeed = speed;
-}
-
-void setAbsMinAcc(unsigned char acc) {
-    absParams.minAcc = acc;
-}
-
-void setAbsMaxAcc(unsigned char acc) {
-    absParams.maxAcc = acc;
 }
 

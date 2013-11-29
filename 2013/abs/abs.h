@@ -3,10 +3,21 @@
 
 typedef struct absData_t absData_t;
 
+typedef enum{
+    SLIPTOLERANCE,
+    ENABLED,
+    CUTOFFSPEED,
+    MINACC,
+    MAXACC,
+    MUSPLITTHRESHOLD,
+    ABSPARAM_MAX
+}absParam; 
+
 //Datatype for holding wheel information for abs algorithm
 struct absData_t {
     unsigned char slip;
     unsigned char forceReq;
+    unsigned char brakeForce;
     int speed;
     int acc;
     absData_t* otherSide;
@@ -54,16 +65,10 @@ unsigned char isMuSplit(absData_t* wheel);
 //return brake force in percents (0 is no brakeforce and 100 is full force)
 unsigned char setBrakeForce(absData_t* wheel, unsigned char driverReq);
 
-//enable or disable abs braking
-void enableAbs(void);
-void disableAbs(void);
+//set one or all abs parameters,
+//new values in absParams_t, what is set is defined with absParam
+void setAbsParam(unsigned char newValue, absParam param);
 
-//set different abs parameters
-//slip tolerance = how much slip can differ from optimal
-//abs cut-off speed = below this speed abs is not enabled
-//min and max acc = acceleration thresholds for wheel acceleration
-void setAbsSlipTolerance(unsigned char tolerance);
-void setAbsCutOffSpeed(unsigned char speed);
-void setAbsMinAcc(unsigned char acc);
-void setAbsMaxAcc(unsigned char acc);
+//gets pointer to abs parameters
+unsigned char getAbsParam(absParam param);
 #endif
