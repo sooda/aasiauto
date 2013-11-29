@@ -35,7 +35,7 @@ classdef Communication < handle
             
             this.connectionTimer = timer('Executionmode', 'fixedRate', 'Period', 0.5, ...
                 'TimerFcn', {@this.connectionTimer_triggered});
-            this.communicationTimer = timer('Executionmode', 'fixedRate', 'Period', 0.05, ...
+            this.communicationTimer = timer('Executionmode', 'fixedRate', 'Period', 0.01, ...
                 'TimerFcn', {@this.async_Communication_triggered});
 
             if(strcmp(comport, '--'))
@@ -153,8 +153,9 @@ classdef Communication < handle
                 end
             elseif (this.status == this.STATUSCODE.Initialized)
                 val = this.getBytes();
-                if (val > 0)
+                if (numel(val) > 0 && val ~= -1)
                     this.buf_in = [this.buf_in val];
+                    this.buf_in = Protocol.parse_buffer(this.buf_in); % parse buffer asynchronously here!
                 end
                 
                 if numel(this.buf_out) > 0
@@ -170,32 +171,25 @@ classdef Communication < handle
         end
         
         function this = write(this, val)
+            val = ByteTools.num2buf(uint16(val));
             this.buf_out = [this.buf_out val];
         end
         
         % Read all bytes (BytesAvailable).
         function val = getBytes(this)
-            if (this.status == 5) %this.STATUSCODE.Simul)
+            if (this.status == this.STATUSCODE.Simul)
                 Logging.log('Reading data from simulation (async)...');
                 val = -1;
-            elseif (this.serial_data.BytesAvailable && ...
-                    this.status == this.STATUSCODE.Initialized)
-                val = fread(this.serial_data, this.serial_data.BytesAvailable);
+            elseif (this.status == this.STATUSCODE.Initialized)
+                val = [];
+                while (this.serial_data.BytesAvailable)
+                    val = [val; fread(this.serial_data, this.serial_data.BytesAvailable)];
+                end
             else
                 val = -1;
             end
         end
         
-        % Read byte from the serial communication with car.
-        function val = getByte(this)
-            if (this.serial_data.BytesAvailable && ...
-                    this.status == this.STATUSCODE.Initialized)
-                val = fread(this.serial_data, 1);
-            else
-                val = -1;
-            end
-        end
-
         % Write bytes
         function this = writeBytes(this, bytes)
             if (this.status == 5) %this.STATUSCODE.Simul)

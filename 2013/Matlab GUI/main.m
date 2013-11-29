@@ -6,7 +6,7 @@ function main
     clear;
 
     %% Add subfolders to path
-    folders =  { 'utils' , 'oldshit' , 'tests' };
+    folders =  { 'utils' , 'oldshit' , 'tests', 'demo' };
 
     for i = 1:length(folders)
         d = fullfile(pwd, char(folders(i)), filesep);
@@ -15,6 +15,7 @@ function main
 
     %% Run the main program
     RCCarGUI
-    %CommunicationTest()
+    %CommunicationTest
+    %demomode
 
 end

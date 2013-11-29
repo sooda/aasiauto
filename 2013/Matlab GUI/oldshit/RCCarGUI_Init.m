@@ -114,6 +114,7 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
     cardata.controllerBatteryVoltage = 0;
     cardata.acc_scaling = 32.0/1024.0*9.81; %the conversion factor from raw data to m/s^2
 %    setappdata(hObject,'Car_Data',cardata); %Save the data
+    cardata.last_measurements = [];
     c.cardata = cardata;
 
     %Route Map plot setup
@@ -156,9 +157,11 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
     title('Throttle')
 
     %Load and set the default values for the car parameters data
-    carParametersData = load('default_car_parameters.mat');
-    setCarParametersData(handles,carParametersData.carParametersData); 
-    set(handles.savedrivedatacheckbox,'Value',1)
+    if exist('default_car_parameters.mat', 'file')
+        carParametersData = load('default_car_parameters.mat');
+        setCarParametersData(handles,carParametersData.carParametersData); 
+        set(handles.savedrivedatacheckbox,'Value',1)
+    end
 
     % Update handles structure
     guidata(hObject, handles);

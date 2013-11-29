@@ -22,7 +22,7 @@ function varargout = RCCarGUI(varargin)
 
 % Edit the above text to modify the response to help RCCarGUI
 
-% Last Modified by GUIDE v2.5 28-Nov-2013 16:24:48
+% Last Modified by GUIDE v2.5 29-Nov-2013 14:59:37
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -117,6 +117,12 @@ function startmandrivebtn_Callback(hObject, eventdata, handles)
 
 % Only start timer if it is not running
 %appdata = getappdata(handles.figure1, 'App_Data');
+
+if (~exist('ListenChar', 'file'))
+    Logging.log('You need PsychToolBox to be installed in order to command Matlab with keyboard! Stop.');
+    return;
+end
+
 c = Car.getInstance;
 
 if c.appdata.connected
@@ -473,4 +479,12 @@ function Empty_callback(hObject, eventdata, handles)
 % hObject    handle to ButtonPressDisplay (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+end
+
+% --- Executes on button press in DemoBtn.
+function DemoBtn_Callback(hObject, eventdata, handles)
+% hObject    handle to DemoBtn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+demomode;
 end
