@@ -1,0 +1,84 @@
+\documentclass[first=orange,second=purple,logo=elec]{aaltoslides}
+%\documentclass{aaltoslides} % DEFAULT
+%\documentclass[first=purple,second=lgreen,logo=redque,normaltitle,nofoot]{aaltoslides} % SOME OPTION EXAMPLES
+
+\usepackage[latin9]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{amssymb,amsmath}
+\usepackage{url}
+\usepackage[finnish]{babel}
+\usepackage{lastpage}
+
+\title{Loppuraportti: A13-10 Radio-ohjattavan pienoismallin ohjausjärjestelmän ja käyttöliittymän kehittäminen}
+
+\author{
+Toni Liski, Konsta Hölttä, Lasse Kortetjärvi
+}
+
+\institute{AS-0.3200 Automaatio- ja systeemitekniikan projektityöt}
+
+\aaltofootertext{Väliraportti}{\today}{\insertframenumber/\inserttotalframenumber}
+
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\aaltotitleframe
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Tilanne tällä hetkellä}
+\begin{itemize}
+\item RC-autoon suunniteltu uusi voimansiirto
+\item Nykyisellä voimansiirrolla ajaminen / testaaminen ei onnistu
+\item Tästä johtuen mitään testausta ei ole liikkuvalla RC-autolla tehty
+\item Projekti lähtenyt vähän hitaasti liikkeelle
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{ABS- ja ESC -järjestelmät}
+\begin{itemize}
+\item Mittauksia nykyisestä ohjelmistosta tehty
+\item ABS-järjestelmän toimimattomuuden syynä hidas mekaniikka (jarruservot)
+\item Servon päivitystahti 20 ms
+\item Digiservoja/OpenServo? Jotain muuta?
+\item Vaijerien venyminen, palautusjouset, ...
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Käyttöliittymä}
+\begin{itemize}
+\item Käyttöliittymäkoodia jaettu modulaarisemmaksi
+\item Protokollamäärittelyt joustavampia
+\item Jatkokehitys helpompaa
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Mikrokontrollerit}
+
+\begin{itemize}
+\item Auto ei kulje, ei kiirettä
+\item Simuloidaan ajon sijaan Matlabilla
+\item Alustariippumaton ohjauskoodi
+\item Laiteläheiset toimilaitekoodit
+\item Simulaatiokoodi toimilaitteille
+\item Matlabille tarvitaan käyttöliittymän lisäksi simulaatiota
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\end{document}
