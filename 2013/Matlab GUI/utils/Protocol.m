@@ -81,13 +81,14 @@ classdef Protocol %< value
                 id = c.(fields{i});
                 if isscalar(id)
                     value = Protocol.getCarValue(c, id);
-                    c.appdata.com.write([2 id value]); % write two bytes
+%                    c.appdata.com.write([2 id value]); % write two bytes
+                    c.appdata.com.write2(id, value);
                 end
             end
-            c.appdata.com.write([0 99]); % write two bytes
+            c.appdata.com.write2(99, []); % write two bytes
         end
         
-        function rest = parse_buffer(buf)
+        function rest = parse_buffer2(buf)
             % msg: [0xFF][lenOfData][id][data]
             headersize = 3; % length of msg header size
             n = numel(buf);
@@ -98,12 +99,13 @@ classdef Protocol %< value
                 % header not included in size data
                 if (buf(i) ~= 255) % message start byte (0xFF)
                     Logging.log('corrupted msg...');
+                    return;
                 end
                 datasz = buf(i+1); % data size in bytes
                 chunksz = headersize + datasz; % message size
                 dataend = i + chunksz - 1; % last index of data
                 id = buf(i+2);
-
+                
                 if dataend > n % full message chunk not available?
                     break;
                 end
@@ -116,7 +118,37 @@ classdef Protocol %< value
             rest = buf(i:end); % return rest of the buffer
         end
             
+        function rest = parse_buffer(buf)
+            % msg: [lenOfData][id][data]
+            headersize = 2; % length of msg header size
+            n = numel(buf);
+            i = 1;
+            c = Car.getInstance;
+
+            while i+1 <= n % minimum length of message is 3
+                % header not included in size data
+                datasz = buf(i); % data size in bytes
+                chunksz = headersize + datasz; % message size
+                dataend = i + chunksz - 1; % last index of data
+                
+                if dataend > n % full message chunk not available?
+                    break;
+                end
+
+                id = buf(i+1);
+                data = ByteTools.buf2num(buf(i+2:dataend));
+                Protocol.parseMessage(c, id, data);
+
+                i = i + chunksz; % move pointer to start of the next message
+            end
+            rest = buf(i:end); % return rest of the buffer
+        end
+        
         function value = processMeasurementData(m)
+            if ~numel(m)
+                value = zeros(1,13);
+                return;
+            end
             value = zeros(size(m));
             c = Car.getInstance;
             

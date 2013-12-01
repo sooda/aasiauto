@@ -115,7 +115,7 @@ classdef Communication < handle
             c.appdata.connected = 0;
             
             if(c.appdata.manualdrive)
-                endmandrivebtn_Callback(0,0,0);
+%                endmandrivebtn_Callback(0,0,0);
             end
 
             fclose(this.serial_data);
@@ -129,6 +129,13 @@ classdef Communication < handle
         %This function checks if the car is initialized and ready to start a drive session
         %In other words: if sensordata from the car is received then it is ready
         function this = connectionTimer_triggered(this, varargin)
+                this.status = this.STATUSCODE.Initialized;
+                Logging.log('Initialized and ready for drive session.');
+                stop(this.connectionTimer);
+                c = Car.getInstance;
+                c.appdata.connected = 1;
+
+            
             if (this.serial_data.BytesAvailable && ...
                     this.status ~= this.STATUSCODE.Initialized)
                 this.status = this.STATUSCODE.Initialized;
@@ -172,7 +179,15 @@ classdef Communication < handle
         
         function this = write(this, val)
             val = ByteTools.num2buf(uint16(val));
+            val = ByteTools.duplicateFFs(val);
             this.buf_out = [this.buf_out uint8(255) val];
+        end
+        
+        function this = write2(this, id, data)
+            data = ByteTools.num2buf(uint16(data));
+            data = ByteTools.duplicateFFs(data);
+            sz = numel(data);
+            this.buf_out = uint8([this.buf_out 255 sz id data]);
         end
         
         % Read all bytes (BytesAvailable).
@@ -183,7 +198,26 @@ classdef Communication < handle
             elseif (this.status == this.STATUSCODE.Initialized)
                 val = [];
                 while (this.serial_data.BytesAvailable)
-                    val = [val; fread(this.serial_data, this.serial_data.BytesAvailable)];
+                    buf = fread(this.serial_data, this.serial_data.BytesAvailable);
+
+                    val = [val buf];
+                    return;
+                    % drop double-0xFF
+                    n = numel(buf);
+                    buf2 = buf;
+                    j = 1;
+                    i = 1;
+                    while i < n
+                        if buf(i) == 255 && buf(i+1) == 255
+                            i = i + 2;
+                            buf2(j+1) = '';
+                            continue;
+                        end
+                        j = j + 1;
+                        i = i + 1;
+                    end
+
+                    val = [val buf2];
                 end
             else
                 val = -1;
@@ -192,7 +226,7 @@ classdef Communication < handle
         
         % Write bytes
         function this = writeBytes(this, bytes)
-            if (this.status == 5) %this.STATUSCODE.Simul)
+            if (this.status == this.STATUSCODE.Simul)
                 Logging.log('Write data to simulation:');
                 Logging.log(bytes);
             elseif (this.status == this.STATUSCODE.Initialized)

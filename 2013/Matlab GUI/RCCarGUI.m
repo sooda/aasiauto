@@ -155,17 +155,13 @@ c = Car.getInstance;
 
 if (c.appdata.manualdrive)
     
-%    appdata = getappdata(handles.figure1, 'App_Data');
     c.appdata.manualdrive = 0;
-%    setappdata(handles.figure1, 'App_Data', appdata);
-    
-    ListenChar(0); %Stop listening for keyboard inputs
+
     stop(handles.timer);
     Logging.log('Manual drive stopped.');
 
     %Save Data
     if(get(handles.savedrivedatacheckbox, 'Value'))
-%        carData = getappdata(handles.figure1, 'Car_Data');
         carData = c.cardata;
         
         t = fix(clock);
@@ -442,7 +438,18 @@ end
 
 %Request and save the current car parameters
 function getCarConfParamBtn_Callback(hObject, eventdata, handles)
-getCarConfs(hObject, eventdata, handles);
+    c = Car.getInstance;
+    
+    if (~c.appdata.connected)
+        Logging.log('Not connected');
+        return;
+    end
+     
+    % Clear data buffer
+    c.appdata.com.read()
+    
+    % request parameters
+    c.appdata.com.write(2, []);
 end
 
 %Save car parameters to car
@@ -450,7 +457,8 @@ function setCarConfParamBtn_Callback(hObject, eventdata, handles)
 % hObject    handle to setCarConfParamBtn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-setCarConfs(hObject, eventdata, handles);
+    c = Car.getInstance;
+    Protocol.sendCarParams(c);
 end
 
 % --------------------------------------------------------------------

@@ -31,6 +31,14 @@ classdef Car < handle
         thirdPhaseReleaseBrake = 27
         lastPhaseReleaseBrake = 28
 
+        % New ABS parameters
+        slipTolerance = 30
+        enabled = 31
+        cutOffSpeed = 32
+        minAcc = 33
+        maxAcc = 34
+        muSplitThreshold = 35
+        
         % ESP parameters
         espEnabled = 40
         espSensitivityControlAngVel = 41

@@ -7,102 +7,129 @@ function UpdateDisplay(~, ~, hfigure, ~)
 
     c = Car.getInstance;
 
-    keys = getappdata(0, 'keys');
-    
-    %Get last element from each dataset
-    thro = c.cardata.throttle(size(c.cardata.throttle, end));
-    dir = c.cardata.wheeldirection(size(c.cardata.wheeldirection, end));
-    rev = c.cardata.reverse(size(c.cardata.reverse, end));
-    brake = 0;
-    sound_horn = 0;
+    joy = [-0.2891    0.2620   -0.5703    0.5397]; % [ left_max right_max forward_max backward_max ]
 
     measurement_data = c.cardata.last_measurements;
     data = Protocol.processMeasurementData(measurement_data);
-     
-    %Reading user keyboard commands
-
-    %Reading Brake commands
-    if (find(ismember(keys,'space')))
-         brake = 100;
-         thro = 0;
-         rev = 0;
-    elseif (find(ismember(keys,'n'))) %'n' = strong brake
-         brake = 75;
-         thro = 0;
-         rev = 0;
-    elseif (find(ismember(keys,'b')))%'b' = medium brake
-         brake = 50;
-         thro = 0;
-         rev = 0;
-    elseif (find(ismember(keys,'v')))%'v' = minimal brake
-         brake = 25;
-         thro = thro / 2;
-         rev = rev / 2;
-    else
-         brake = 0;
-
-         %If no brake, reading throttle commands
-         if (find(ismember(keys,'uparrow'))) %'uparrow'
-            thro = thro+5-thro/20;
+    keys = getappdata(0, 'keys');
+    
+%    if ~isnan(c.appdata.joystick)
+    if numel(c.appdata.joystick)
+        
+        a = read(c.appdata.joystick);
+        
+        thro = a(6) / joy(4) * 100;
+        dir = a(1) / joy(2) * 45;
+        rev = a(6) / joy(4) * 100;
+        brake = a(6) / joy(4) * 100;
+        sound_horn = 0;
+        
+        if (dir > 45)
+            dir = 45;
+        end
+        if (dir < -45)
+            dir = -45;
+        end;
+        
+        if (thro < 0)
+            thro = 0;
             rev = 0;
-         else
-           thro = thro-25;
-           if(thro < 0)
-               thro = 0;
-           end
+            brake = 75;
+        end
+        if (thro > 0)
+            rev = 0;
+        end
+        
+        
+    else
+        %Get last element from each dataset
+        thro = c.cardata.throttle(size(c.cardata.throttle, end));
+        dir = c.cardata.wheeldirection(size(c.cardata.wheeldirection, end));
+        rev = c.cardata.reverse(size(c.cardata.reverse, end));
+        brake = 0;
+        sound_horn = 0;
 
-           %If no brake or throttle then read reverse
-           if (find(ismember(keys,'downarrow'))) %'downarrow'
-                thro = 0;
-                % if carspeed < 2? --> enable TODOOOOOO ---> check this in
-                % microcontrols!
-                rev = rev+5-rev/20;
-           else
-                rev = rev-25;
-                if (rev < 0)
-                    rev = 0;
-                end
-           end  
+        %Reading user keyboard commands
 
-         end
-    end  
+        %Reading Brake commands
+        if (find(ismember(keys,'space')))
+             brake = 100;
+             thro = 0;
+             rev = 0;
+        elseif (find(ismember(keys,'n'))) %'n' = strong brake
+             brake = 75;
+             thro = 0;
+             rev = 0;
+        elseif (find(ismember(keys,'b')))%'b' = medium brake
+             brake = 50;
+             thro = 0;
+             rev = 0;
+        elseif (find(ismember(keys,'v')))%'v' = minimal brake
+             brake = 25;
+             thro = thro / 2;
+             rev = rev / 2;
+        else
+             brake = 0;
 
-    %Reading steering commands
-    if (find(ismember(keys,'rightarrow'))) %rightarrow
-        dir = -45;%dir - 20;
-         if(dir < -45)
-            dir=-45;
+             %If no brake, reading throttle commands
+             if (find(ismember(keys,'uparrow'))) %'uparrow'
+                thro = thro+5-thro/20;
+                rev = 0;
+             else
+               thro = thro-25;
+               if(thro < 0)
+                   thro = 0;
+               end
+
+               %If no brake or throttle then read reverse
+               if (find(ismember(keys,'downarrow'))) %'downarrow'
+                    thro = 0;
+                    % if carspeed < 2? --> enable TODOOOOOO ---> check this in
+                    % microcontrols!
+                    rev = rev+5-rev/20;
+               else
+                    rev = rev-25;
+                    if (rev < 0)
+                        rev = 0;
+                    end
+               end  
+
+             end
+        end  
+
+        %Reading steering commands
+        if (find(ismember(keys,'rightarrow'))) %rightarrow
+            dir = -45;%dir - 20;
+             if(dir < -45)
+                dir=-45;
+            end
+        end
+        %Reading steering commands
+        if (find(ismember(keys,'leftarrow'))) %leftarrow
+
+            dir = 45;%dir + 20;
+
+            if(dir > 45)
+                 dir = 45;
+             end
+        end
+
+        %If no steering command given
+        if (~find(ismember(keys,'leftarrow') + ismember(keys,'rightarrow'))) % ~right && ~left arrow
+             if(dir>0)
+                  dir = dir - 10;
+                  if(dir<0)
+                       dir= 0;
+                  end
+             else
+                  dir = dir + 10;
+                  if(dir>0)
+                      dir = 0;
+                  end     
+             end
         end
     end
-    %Reading steering commands
-    if (find(ismember(keys,'leftarrow'))) %leftarrow
-
-        dir = 45;%dir + 20;
-
-        if(dir > 45)
-             dir = 45;
-         end
-    end
-
-    %If no steering command given
-    if (~find(ismember(keys,'leftarrow') + ismember(keys,'rightarrow'))) % ~right && ~left arrow
-         if(dir>0)
-              dir = dir - 10;
-              if(dir<0)
-                   dir= 0;
-              end
-         else
-              dir = dir + 10;
-              if(dir>0)
-                  dir = 0;
-              end     
-         end
-    end
-
-    drv_clutch = uint8(0); % kytkimen asento
-    if find(ismember(keys,'c'))
-        drv_clutch = uint8(1);
-    end
+    
 
     if find(ismember(keys,'t'))
         sound_horn = 1;
@@ -118,6 +145,11 @@ function UpdateDisplay(~, ~, hfigure, ~)
     c.cardata.motorBatteryVoltage = [c.cardata.motorBatteryVoltage; data(12)];
     c.cardata.controllerBatteryVoltage = [c.cardata.controllerBatteryVoltage; data(13)];
     
+    % plot some measurements
+    figure(2);
+    set(gfa, 'YData', c.cardata.motorBatteryVoltage);
+    set(gfa, 'XData', 1:numel(c.cardata.motorBatteryVoltage));
+    
     % Update Timer
     c.cardata.timepassed = [c.cardata.timepassed; c.cardata.timepassed(end) + handles2.timer.InstantPeriod];
     
@@ -128,11 +160,11 @@ function UpdateDisplay(~, ~, hfigure, ~)
     % Calculate car position
     timeSinceLast = 0.0;
     if(numel(c.cardata.timepassed) > 1)
-        timeSinceLast = cardata.timepassed(end) - cardata.timepassed(end-1);
+        timeSinceLast = c.cardata.timepassed(end) - c.cardata.timepassed(end-1);
     end
 
-    posLength = size(c.cardata.position,1);
-    c.cardata.position = [c.cardata.position; c.cardata.position(posLength,:) + deltaPos];
+%    posLength = size(c.cardata.position,1);
+%    c.cardata.position = [c.cardata.position; c.cardata.position(posLength,:) + deltaPos];
 
 
     % Use Kalman filter to predict position using velocity,
@@ -203,33 +235,40 @@ function UpdateDisplay(~, ~, hfigure, ~)
     set(handles2.carspeed,'XData',c.cardata.timepassed);
     set(handles2.carspeed,'YData',c.cardata.totalvelocity);
  
-
     %Save steering data
     c.cardata.throttle = [c.cardata.throttle; thro];
     c.cardata.brake = [c.cardata.brake; brake];
     c.cardata.wheeldirection = [c.cardata.wheeldirection; dir];
     c.cardata.reverse = [c.cardata.reverse; rev];
 
-    thro = thro * 0.2; % TODO: scaling throttle and reverse shoudn't be needed here!
-    rev = rev * 0.2;
+%    thro = thro * 0.2; % TODO: scaling throttle and reverse shoudn't be needed here!
+%    rev = rev * 0.2;
 
     %SEND DATA TO CAR
-    drv_throttle = uint8(thro * 2.55);
-    drv_dir = uint8(128 + (dir * 127) / 45); % steering wheel direction
-    drv_brake = uint8(brake * 2.55);
-    drv_drvdir = uint8(0); % driving direction
-
-    if(thro > 0)
-        drv_drvdir = uint8(0);
-    elseif (rev > 0)
-        drv_drvdir = uint8(1);
-        drv_throttle = uint8(rev * 2.55);
+    if (rev > 0)
+        thro = rev*-1;
     end
+    drv_throttle = thro * 10; % throttle or reverse [-1000, 1000]
+    drv_dir = dir/45*1000; % steering wheel angle [-255, 255]
+    drv_brake = brake * 10;
 
-    % Write driving data to car
-    data = [drv_throttle drv_dir drv_brake drv_clutch drv_drvdir sound_horn];
-    datasz = 2*numel(data);
-    c.appdata.com.write([datasz 120 data]);
+    % throttle
+    data = ByteTools.num2buf(drv_throttle);
+    data = [data data];
+    c.appdata.com.write2(120, data); % id=120
+
+    % steering
+    data = ByteTools.num2buf(drv_dir);
+    c.appdata.com.write2(121, data); % id=121
+
+    % brake
+    data = ByteTools.num2buf(drv_brake);
+    data = [data data data data];
+    c.appdata.com.write2(122, data);
+    
+    % sound horn
+    data = ByteTools.num2buf(sound_horn);
+    c.appdata.com.write2(123, data);
     
     %Update command plots
     set(handles2.reverse,'YData',rev);

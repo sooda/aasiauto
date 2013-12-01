@@ -5,7 +5,7 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
     % Create a timer object to fire at 0.01 sec intervals
     % Specify function handles for its start and run callbacks
     handles.timer = timer('Executionmode','fixedRate','Period', 0.02,...
-        'TimerFcn', {@update_display,hObject,handles});
+        'TimerFcn', {@UpdateDisplay,hObject,handles});
 
     %set(handles.timer,'Period',1);
 
@@ -69,6 +69,13 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
     % Get instance of Car to set appdata and cardata
     c = Car.getInstance();
 
+    % enable or disable joystick
+    try
+        appdata.joystick = vrjoystick(1);
+    catch
+        appdata.joystick = [];
+    end
+    
     %applicationdata initialize
     %Application data refers to the data used by the GUI
     appdata.selectedcomport = '--';
@@ -162,6 +169,9 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
         setCarParametersData(handles,carParametersData.carParametersData); 
         set(handles.savedrivedatacheckbox,'Value',1)
     end
+    
+    % Open measurement figure
+    figure(2);
 
     % Update handles structure
     guidata(hObject, handles);
