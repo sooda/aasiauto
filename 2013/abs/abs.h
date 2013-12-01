@@ -1,6 +1,8 @@
 #ifndef RCCAR_ABS_H
 #define RCCAR_ABS_H
 
+#define MAX(a,b)			((a>b)?(a):(b))
+
 typedef struct absData_t absData_t;
 
 typedef enum{
@@ -10,6 +12,7 @@ typedef enum{
     MINACC,
     MAXACC,
     MUSPLITTHRESHOLD,
+    P,
     ABSPARAM_MAX
 }absParam; 
 
@@ -23,12 +26,6 @@ struct absData_t {
     absData_t* otherSide;
 };
 
-//Datatype for holding vehicle information for abs algorithm
-//Maybe should be moved to vehicle.c?
-typedef struct {
-    int currentSpeed;
-} vehicleData_t;
-
 //Abs parameters
 typedef struct {
     unsigned char slipTolerance;
@@ -37,6 +34,7 @@ typedef struct {
     unsigned char minAcc;
     unsigned char maxAcc;
     unsigned char muSplitThreshold;
+    unsigned char p;
 }absParams_t;
 
 //initialize abs system with default settings

@@ -4,7 +4,6 @@
 #include <stdlib.h>
 
 static absData_t FLdata, FRdata, RLdata, RRdata;
-static vehicleData_t vehicle;
 static absParams_t absParams;
 
 void initAbsData(void) {
@@ -14,7 +13,8 @@ void initAbsData(void) {
         .cutOffSpeed = 4,
         .minAcc = 2,
         .maxAcc = 8,
-        .muSplitThreshold = 10
+        .muSplitThreshold = 10,
+        .p = 1;
     };
     FLdata.otherSide = &FRdata;
     FRdata.otherSide = &FLdata;
@@ -30,22 +30,19 @@ void initAbsData(void) {
 
 void setCurrentSpeed(int deltaTime) {
     if(RRdata.brakeForce == 0 && RLdata.brakeForce == 0)
-        vehicle.currentSpeed = (RRdata.speed + RLdata.speed) >> 2;
+        vehicle.speed = (RRdata.speed + RLdata.speed) >> 2;
     else
-        vehicle.currentSpeed += getAcc()*deltaTime;
-}
-
-int getVehicleSpeed(void) {
-    return vehicle.currentSpeed;
+        vehicle.speed += getAcc()*deltaTime;
 }
 
 void calculateBrakeForceReq(absData_t* wheel) {
    if (wheel->slip < minSlip(absParams.slipTolerance) || wheel->acc < absParams.minAcc)
        //More power
-       wheel->forceReq += 10;
+       
+       wheel->forceReq += MAX(minSlip(absParams.slipTolerance) - wheel->slip, absParams.minAcc - wheel->acc)*absParams.p;
     else if(wheel->slip > maxSlip(absParams.slipTolerance) || wheel->acc > absParams.maxAcc)
         //Less power
-        wheel->forceReq -= 10;
+        wheel->forceReq -= MAX(wheel->slip - maxSlip(absParams.sliptolerance), wheel->acc - absParams.maxAcc)*absParams.p;
     //else
         //Same power
 }
@@ -103,6 +100,9 @@ void setAbsParam(unsigned char newValue, absParam param) {
         case MUSPLITTHRESHOLD:
             absParams.muSplitThreshold = newValue;
             break;
+        case P:
+            absParams.p = newValue;
+            break;
         default:
             break;
     }
@@ -127,6 +127,9 @@ unsigned char getAbsParam(absParam param) {
             break;
         case MUSPLITTHRESHOLD:
             return absParams.muSplitThreshold;
+            break;
+        case P:
+            return absParams.P;
             break;
         default:
             return -1;
