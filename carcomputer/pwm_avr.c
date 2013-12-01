@@ -18,7 +18,7 @@ void pwm_set(uint8_t i, uint16_t pos) {
 
 // both main and brake arduinos use the same configs for servo pwm
 void pwm_init_main_brakes(void) {
-	PORTA |= 0B00000011;
+	PORTA |= 0B00000011; // HAXME FIXME leds.c
 	DDRE |= _BV(3); // oc3a steer
 	DDRB |= _BV(5); // oc1a left
 	DDRB |= _BV(6); // oc1b right
@@ -53,6 +53,13 @@ void pwm_init_main_brakes(void) {
 	OCR3CH=0x00;
 	OCR3CL=0x00;
 
+	// TODO FIX crazy zero positions, calibrate & eepromsave
+#ifdef MCU_BRAKES
+	OCR1B = 1000; // FrontL
+	OCR3A = 1000; // RearL
+#endif
+
+
 	/* original control:
 	OCR1A = 1500 + (2 - 4 * driving_direction) * throttle + (steering_direction - 128) * throttle / 200;
 	OCR1B = 1500 + (2 - 4 * driving_direction) * throttle - (steering_direction - 128) * throttle / 200; 
@@ -61,7 +68,7 @@ void pwm_init_main_brakes(void) {
 }
 
 void pwm_init(void) {
-#if defined(MCU_MAIN) || defined(MCU_BRAKES)
+#if defined(MCU_DRIVER) || defined(MCU_BRAKES)
 	pwm_init_main_brakes();
 #else
 #error not yet
