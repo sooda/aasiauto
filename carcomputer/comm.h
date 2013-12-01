@@ -30,7 +30,7 @@ void recv_info_check(uint8_t stream, uint16_t type, uint16_t size, void *data);
 #define MSG_BRAKE 122
 #define MSG_HORN 123
 
-#define MEAS_NITEMS 12 // number of scalar elements
+#define MEAS_NITEMS 13 // number of scalar elements
 
 uint16_t comm_rxsize(void);
 uint16_t comm_peek_u16(void);

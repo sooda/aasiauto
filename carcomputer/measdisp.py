@@ -4,7 +4,7 @@ import struct
 import time
 
 MSG_CAR_MEAS_VECTOR = 110
-MEAS_NITEMS = 12
+MEAS_NITEMS = 13
 
 MEASNAMES = [
 	"encoder 1",
