@@ -71,7 +71,7 @@ void init() {
 void transmit_vals() {
 	static struct {
 		uint8_t sz, type;
-		uint16_t data[MEAS_NITEMS * sizeof(uint16_t)];
+		uint16_t data[MEAS_NITEMS];
 	} packet = {
 		.sz = MEAS_NITEMS * sizeof(uint16_t),
 		.type = MSG_CAR_MEAS_VECTOR,
