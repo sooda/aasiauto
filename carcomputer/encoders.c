@@ -13,10 +13,16 @@ struct encoderstate encoders(void) {
 	return state;
 }
 void encoders_update(void) {
-	// test placeholder
-	struct motorstate m = motors();
-	state.fleft = m.left;
-	state.rleft = m.left;
-	state.fright = m.right;
-	state.rright = m.right;
+	// FIXME get them from teensy
+#ifdef MCU_DRIVER
+	state.fleft = 123;
+	state.rleft = 234;
+	state.fright = 345;
+	state.rright = 456;
+#else
+	state.fleft = 1230;
+	state.rleft = 2340;
+	state.fright = 3450;
+	state.rright = 4560;
+#endif
 }

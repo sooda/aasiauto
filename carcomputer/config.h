@@ -3,7 +3,7 @@
 
 /* Hardware configuration: pin numbers etc. */
 
-#ifdef MCU_MAIN
+#ifdef MCU_DRIVER
 
 // OCR1A
 #define PWM_LEFTMOTOR 0
@@ -13,11 +13,9 @@
 #define PWM_STEERING 2
 // OCR3B: "clutch", not used
 
-// uart indices; HW is teensy <=> brake <=> master <=> host
-#define UART_MASTER 0
-
-// serial: host
-// serial1: brakes
+// uart indices; HW is teensy <=> brake <=> driver <=> host
+#define UART_HOST 0
+#define UART_SLAVE 1
 
 #define ADC_STEER 0
 #define ADC_MAINBATTERY 1
@@ -35,8 +33,8 @@
 // OCR3B rear right
 #define PWM_BRAKE_RR 3
 
-// serial3: teensy
-// serial1: main
+#define UART_HOST 1
+#define UART_SLAVE 3
 
 #else
 #ifdef MCU_SIM
@@ -56,5 +54,9 @@
 #endif
 #endif
 #endif
+
+// magic
+#define UDRNUM1(x) UDR ## x
+#define UDRNUM(x) UDRNUM1(x)
 
 #endif

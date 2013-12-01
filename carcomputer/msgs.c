@@ -13,8 +13,9 @@ void msgs_register_handler(uint8_t type, uint8_t size, msg_handler handler) {
 	msg_sizes[type] = size;
 }
 
-int8_t msgs_work(void) {
+int8_t msgs_work(/*uint8_t buf*/void) {
 	// TODO: several serial feeds (radio, teensy)
+	// FIXME this handles only comm from host so far, loop thru the bufs and do all
 	uint16_t buf = comm_rxsize();
 	// space for headers?
 	if (buf < 4)

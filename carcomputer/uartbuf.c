@@ -4,7 +4,7 @@
 void uartbuf_write(uint8_t buf, void *ptr, uint8_t n) {
 	while (n) {
 		uint8_t sent = ringbuf_write(buf, ptr, n);
-		uartflush();
+		uartflush(buf);
 		n -= sent;
 		ptr += sent;
 	}

@@ -11,6 +11,9 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
+MAKE_USART_INIT(0)
+MAKE_USART_INIT(1)
+
 /* Actual onboard drive
  *
  * read physical state from the sensors, compute, drive the actuators
@@ -22,7 +25,8 @@ volatile uint8_t flag_drive;    // 1000 Hz
 // 1000 Hz
 ISR(TIMER0_COMPA_vect) {
 	static uint8_t prescale;
-	if (++prescale == 10) {
+#warning change 200 back to 10
+	if (++prescale == 30) {
 		prescale = 0;
 		flag_transmit = 1;
 	}
@@ -50,10 +54,8 @@ void worktimer_init(void) {
 
 int main() {
 	clock_prescale_set(clock_div_1);
-	usart_init(38400);
-	UCSR0B |= _BV(RXCIE0);
-	UCSR0B |= _BV(TXCIE0);
-	//DDRD |= _BV(6); // led
+	usart_0_init(38400);
+	usart_1_init(38400);
 	DDRD |= _BV(3); // tx
 	DDRA |= 3;
 	// leds

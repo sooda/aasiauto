@@ -1,31 +1,14 @@
 #include "config.h"
 #include "encoders.h"
-#include "motors.h"
 #include "servos.h"
-#include "analog.h"
 #include "comm.h"
 #include "msgs.h"
 #include "uartbuf.h"
 #include "pwm.h"
-#include "uart.h"
 #include <stdlib.h>
-
-/* Common drive cycles for both simulation and real drive */
-
-
-void steer(uint8_t sz, uint8_t id) {
-	(void)sz; (void)id;
-	pwm_set(PWM_STEERING, comm_u16());
-//	hostbuf_read(&buf, sizeof(buf));
-}
-
-void steering_init(void) {
-	msgs_register_handler(MSG_STEER, sizeof(uint16_t), steer);
-}
 
 void sensors_update(void) {
 	encoders_update();
-	ana_meas_update();
 }
 
 // TODO: make this a watchdog, stop if no ping in e.g. 10 ms
@@ -34,19 +17,25 @@ static void pingpong(uint8_t sz, uint8_t id) {
 	dump_info(BUF_TXHOST, MSG_PONG, 0, NULL);
 }
 
-// ping pong the actual brake command to the brake ctrlr
-static void brake_cmd_proxy(uint8_t sz, uint8_t id) {
+static void param_saver_brakes(uint8_t sz, uint8_t id) {
 	(void)sz; (void)id;
-	static struct brk {
-		uint16_t fl, fr, rl, rr;
-	} brk;
-	uartbuf_read(BUF_RXHOST, &brk, sizeof(brk));
-	dump_info(BUF_TXSLAVE, MSG_BRAKE, sizeof(brk), &brk);
+	uint16_t param = comm_u16();
+	(void)param;
+	// TODO store the new value
 }
 
-static void brake_proxy(uint8_t sz, uint8_t id) {
+static void param_saver_abs(uint8_t sz, uint8_t id) {
+	(void)sz; (void)id;
 	uint16_t param = comm_u16();
-	dump_info(BUF_TXSLAVE, id, sz, &param);
+	(void)param;
+	// TODO store the new value
+}
+
+static void param_saver_esp(uint8_t sz, uint8_t id) {
+	(void)sz; (void)id;
+	uint16_t param = comm_u16();
+	(void)param;
+	// TODO store the new value
 }
 
 // u16 params
@@ -65,16 +54,24 @@ static void *imu_dump(void *p) {
 	return memcpy(p, &state, sizeof(state)) + sizeof(state);
 }
 
-// driver init; separate stuff for all three controllers
+static void brake_cmd(uint8_t sz, uint8_t id) {
+	(void)sz; (void)id;
+	static struct brk {
+		uint16_t fl, fr, rl, rr;
+	} brk;
+	uartbuf_read(BUF_RXHOST, &brk, sizeof(brk));
+	pwm_set(PWM_BRAKE_FR, brk.fr);
+	pwm_set(PWM_BRAKE_FL, brk.fl);
+	pwm_set(PWM_BRAKE_RL, brk.rl);
+	pwm_set(PWM_BRAKE_RR, brk.rr);
+}
+
 void init() {
 	pwm_init();
-	motors_init();
-	steering_init();
-	ana_meas_init();
-	init_param_array(MSG_BRAKE_PARAMS_START, MSG_BRAKE_PARAMS_END, brake_proxy);
-	init_param_array(MSG_ABS_PARAMS_START, MSG_ABS_PARAMS_END, brake_proxy);
-	init_param_array(MSG_ESP_PARAMS_START, MSG_ESP_PARAMS_END, brake_proxy);
-	msgs_register_handler(MSG_BRAKE, 4*sizeof(uint16_t), brake_cmd_proxy);
+	init_param_array(MSG_BRAKE_PARAMS_START, MSG_BRAKE_PARAMS_END, param_saver_brakes);
+	init_param_array(MSG_ABS_PARAMS_START, MSG_ABS_PARAMS_END, param_saver_esp);
+	init_param_array(MSG_ESP_PARAMS_START, MSG_ESP_PARAMS_END, param_saver_abs);
+	msgs_register_handler(MSG_BRAKE, 4*sizeof(uint16_t), brake_cmd);
 	msgs_register_handler(MSG_PING, 0, pingpong);
 }
 
@@ -93,12 +90,11 @@ void transmit_vals() {
 
 	p = encoders_dump(p);
 	p = imu_dump(p); // acc, gyro
-	p = ana_meas_dump(p);
 
 	HOSTBUF_DUMP(packet);
 }
 
 void driveiter(void) {
-	//steering_execute();
+	//read_user_input();
 	//abs_execute();
 }

@@ -33,8 +33,8 @@ uint8_t comm_u8(void) {
 	return x;
 }
 
-void dump_info(uint8_t stream, uint16_t type, uint16_t size, void *data) {
-	ringbuf_putchar(stream, 0xff);
+void dump_info(uint8_t stream, uint8_t type, uint8_t size, void *data) {
+	//ringbuf_putchar(stream, 0xff);
 	uartbuf_write(stream, &size, sizeof(size));
 	uartbuf_write(stream, &type, sizeof(type));
 	uartbuf_write(stream, data, size);
