@@ -10,7 +10,8 @@ struct motorstate motors(void) {
 	return state;
 }
 
-static void throttle(void) {
+static void throttle(uint8_t sz, uint8_t id) {
+	(void)sz; (void)id;
 	state.left = comm_u16();
 	state.right = comm_u16();
 	pwm_set(PWM_LEFTMOTOR, state.left);

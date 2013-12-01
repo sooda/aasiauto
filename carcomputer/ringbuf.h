@@ -16,8 +16,10 @@
 #define BUFS 4
 #define BUF_TXHOST 0 // to host
 #define BUF_RXHOST 1 // from host
-#define BUF_TXTEENSY 2
-#define BUF_RXTEENSY 3
+// drive controller talks to brakes, brakes talk to teensy
+// (TODO teensy doesn't talk to anybody; tune these in config.h)
+#define BUF_TXSLAVE 2
+#define BUF_RXSLAVE 3
 
 extern volatile uint8_t wptr[BUFS], rptr[BUFS];
 extern uint8_t buffer[BUFS][SIZE];

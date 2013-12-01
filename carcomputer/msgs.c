@@ -20,15 +20,15 @@ int8_t msgs_work(void) {
 	if (buf < 4)
 		return -1;
 
-	uint16_t size = comm_peek_u16();
+	uint16_t size = comm_peek_u8();
 	// can has whole packet?
 	if (4 + buf < size)
 		return -1;
 
 	// ready to go, flush size out
-	comm_u16();
+	comm_u8();
 
-	uint16_t type = comm_u16();
+	uint16_t type = comm_u8();
 	// if host code mismatches, inform about it and ignore the packet
 	if (type >= MSG_TYPE_MAX) {
 		comm_error(MSG_ERR_NOTYPE);
@@ -48,7 +48,7 @@ int8_t msgs_work(void) {
 		return -1;
 	}
 
-	msg_handlers[type]();
+	msg_handlers[type](size, type);
 
 	return 0;
 }

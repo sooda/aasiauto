@@ -5,8 +5,8 @@
 
 static struct encoderstate state;
 
-void encoders_dump(void) {
-	DUMP_INFO(ENCODERS_STATE, state);
+void *encoders_dump(void *p) {
+	return memcpy(p, &state, sizeof(state)) + sizeof(state);
 }
 
 struct encoderstate encoders(void) {

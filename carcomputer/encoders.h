@@ -10,7 +10,7 @@ struct encoderstate {
 
 void encoders_init(void);
 void encoders_update(void);
-void encoders_dump(void);
+void *encoders_dump(void *p);
 struct encoderstate encoders(void);
 
 #endif

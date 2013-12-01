@@ -21,6 +21,17 @@ uint16_t comm_u16(void) {
 	uartbuf_read(BUF_RXHOST, &x, sizeof(x));
 	return x;
 }
+uint8_t comm_peek_u8(void) {
+	uint8_t x = 0;
+	ringbuf_peek(BUF_RXHOST, &x, sizeof(x));
+	return x;
+}
+
+uint8_t comm_u8(void) {
+	uint8_t x = 0;
+	uartbuf_read(BUF_RXHOST, &x, sizeof(x));
+	return x;
+}
 
 void dump_info(uint8_t stream, uint16_t type, uint16_t size, void *data) {
 	ringbuf_putchar(stream, 0xff);
