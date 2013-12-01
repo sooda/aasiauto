@@ -29,6 +29,7 @@ void pingpong(void) {
 }
 
 void init() {
+	pwm_init();
 	motors_init();
 	steering_init();
 	msgs_register_handler(MSG_PING, 0, pingpong);
