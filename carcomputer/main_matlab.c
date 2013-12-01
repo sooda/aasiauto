@@ -19,14 +19,11 @@ int matlab_ctrl(int n, uint8_t* in, uint8_t* out) {
 	}
 
 	comm_simulate(n, in, out);
-	// FIXME: sync the control loop so that new data is buffered first and
-	// switched to at once
-	
-	// assume that the data doesn't come in at blazing speeds
-	// just process whatever there is so far
+
 	while (msgs_work() == 0)
 		;
 
+	sensors_update();
 	driveiter();
 	transmit_vals();
 

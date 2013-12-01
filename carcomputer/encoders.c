@@ -1,6 +1,7 @@
 #include "msgs.h"
 #include "comm.h"
 #include "encoders.h"
+#include "motors.h" // testing
 
 static struct encoderstate state;
 
@@ -11,17 +12,11 @@ void encoders_dump(void) {
 struct encoderstate encoders(void) {
 	return state;
 }
-
-void throttle(void) {
-	// placeholder example
-	int16_t speedl = comm_u16();
-	int16_t speedr = comm_u16();
-	state.fleft = speedl;
-	state.fright = speedr;
-	state.rleft = speedl/2;
-	state.rright = speedr/2;
-}
-
-void motors_init(void) {
-	msgs_register_handler(MSG_THROTTLE, 2*sizeof(uint16_t), throttle);
+void encoders_update(void) {
+	// test placeholder
+	struct motorstate m = motors();
+	state.fleft = m.left;
+	state.rleft = m.left;
+	state.fright = m.right;
+	state.rright = m.right;
 }

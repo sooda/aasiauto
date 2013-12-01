@@ -3,8 +3,8 @@
 volatile uint8_t wptr[BUFS], rptr[BUFS];
 uint8_t buffer[BUFS][SIZE];
 
-uint8_t uartbuf_write(uint8_t buf, uint8_t *ptr, uint8_t n) {
-	uint8_t space = SZMASK - uartbuf_size(buf);
+uint8_t ringbuf_write(uint8_t buf, void *ptr, uint8_t n) {
+	uint8_t space = SZMASK - ringbuf_size(buf);
 	uint8_t wp = wptr[buf];
 	if (space < n)
 		n = space;
@@ -19,8 +19,8 @@ uint8_t uartbuf_write(uint8_t buf, uint8_t *ptr, uint8_t n) {
 	return n;
 }
 
-uint8_t uartbuf_peek/*read*/(uint8_t buf, uint8_t *ptr, uint8_t n) {
-	uint8_t used = uartbuf_size(buf);
+uint8_t ringbuf_peek(uint8_t buf, void *ptr, uint8_t n) {
+	uint8_t used = ringbuf_size(buf);
 	uint8_t rp = rptr[buf];
 	if (used < n)
 		n = used;
@@ -36,13 +36,13 @@ uint8_t uartbuf_peek/*read*/(uint8_t buf, uint8_t *ptr, uint8_t n) {
 	//rptr[buf] = (rp + n) & SZMASK;
 	return n;
 }
-uint8_t uartbuf_read(uint8_t buf, uint8_t *ptr, uint8_t n) {
-	n = uartbuf_peek(buf, ptr, n);
+uint8_t ringbuf_read(uint8_t buf, void *ptr, uint8_t n) {
+	n = ringbuf_peek(buf, ptr, n);
 	rptr[buf] = (rptr[buf] + n) & SZMASK;
 	return n;
 }
 
-void buf_reset(void) {
+void ringbuf_reset(void) {
 	memset((void*)wptr, 0, sizeof(wptr));
 	memset((void*)rptr, 0, sizeof(wptr));
 }

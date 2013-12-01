@@ -25,91 +25,102 @@
 
 #define testinit() printf("starting %s()\n", __func__)
 
+// identical bufs, test with BUF_RXHOST
+#define buf_putchar(c) ringbuf_putchar(BUF_RXHOST, c)
+#define buf_getchar() ringbuf_getchar(BUF_RXHOST)
+#define buf_peek(b, n) ringbuf_peek(BUF_RXHOST, b, n)
+#define buf_size() ringbuf_size(BUF_RXHOST)
+#define buf_write(b, n) ringbuf_write(BUF_RXHOST, b, n)
+#define buf_read(b, n) ringbuf_read(BUF_RXHOST, b, n)
+#define buf_empty() ringbuf_empty(BUF_RXHOST)
+
 void hw_to_user() {
 	testinit();
 	// empty at start
-	expect_i(0, hostbuf_size());
+	expect_i(0, buf_size());
 
 	// one character inserted
-	uartbuf_putchar(BUF_RXHOST, 'o');
-	expect_i(1, hostbuf_size());
+	buf_putchar('o');
+	expect_i(1, buf_size());
 
 	// fill a bit more
-	uartbuf_putchar(BUF_RXHOST, ' ');
-	uartbuf_putchar(BUF_RXHOST, 'h');
-	uartbuf_putchar(BUF_RXHOST, 'a');
-	uartbuf_putchar(BUF_RXHOST, 'i');
-	expect_i(5, hostbuf_size());
+	buf_putchar(' ');
+	buf_putchar('h');
+	buf_putchar('a');
+	buf_putchar('i');
+	expect_i(5, buf_size());
 
-	char buf[100], n;
+	uint8_t buf[100], n;
 	// there should be something
-	n = hostbuf_peek(buf, 2);
+	n = buf_peek(buf, 2);
 	expect_i(2, n);
 	expect_c('o', buf[0]);
 	expect_c(' ', buf[1]);
 
 	// but peeking should not decrease its size
-	expect_i(5, hostbuf_size());
+	expect_i(5, buf_size());
 
 	// now actually reduce the size, check retrieved contents too
 	// TODO separate buffers
-	n = hostbuf_read(buf, 2);
+	n = buf_read(buf, 2);
 	expect_i(2, n);
 	expect_c('o', buf[0]);
 	expect_c(' ', buf[1]);
 	// reduced?
-	expect_i(3, hostbuf_size());
+	expect_i(3, buf_size());
 
 	// can take only what is there
-	n = hostbuf_read(buf, 99);
+	n = buf_read(buf, 99);
 	expect_i(3, n);
 	expect_c('h', buf[0]);
 	expect_c('a', buf[1]);
 	expect_c('i', buf[2]);
 
 	// now it's empty?
-	n = hostbuf_read(buf, 99);
+	n = buf_read(buf, 99);
 	expect_i(0, n);
 }
 
 void user_to_hw() {
-	char n;
+	testinit();
+	uint8_t n;
 	// put something there
-	n = hostbuf_write("o hai", 5);
+	n = buf_write("o hai", 5);
 	expect_i(5, n);
-	expect_i(5, uartbuf_size(BUF_TXHOST));
+	expect_i(5, buf_size());
 
 	// try to put more, it fills up
-	n = hostbuf_write("p hai", 5);
+	n = buf_write("p hai", 5);
 	expect_i(2, n);
-	expect_i(7, uartbuf_size(BUF_TXHOST));
+	expect_i(7, buf_size());
 
 	// read everything out
-	n = uartbuf_getchar(BUF_TXHOST); expect_c('o', n);
-	n = uartbuf_getchar(BUF_TXHOST); expect_c(' ', n);
-	n = uartbuf_getchar(BUF_TXHOST); expect_c('h', n);
-	n = uartbuf_getchar(BUF_TXHOST); expect_c('a', n);
-	n = uartbuf_getchar(BUF_TXHOST); expect_c('i', n);
-	n = uartbuf_getchar(BUF_TXHOST); expect_c('p', n);
-	n = uartbuf_getchar(BUF_TXHOST); expect_c(' ', n);
-	expect_i(1, uartbuf_empty(BUF_TXHOST));
+	n = buf_getchar(); expect_c('o', n);
+	n = buf_getchar(); expect_c(' ', n);
+	n = buf_getchar(); expect_c('h', n);
+	n = buf_getchar(); expect_c('a', n);
+	n = buf_getchar(); expect_c('i', n);
+	n = buf_getchar(); expect_c('p', n);
+	n = buf_getchar(); expect_c(' ', n);
+	expect_i(1, buf_empty());
 
 	// put shit in again
-	n = hostbuf_write("q hai", 5);
+	n = buf_write("q hai", 5);
 	expect_i(5, n);
-	expect_i(5, uartbuf_size(BUF_TXHOST));
+	expect_i(5, buf_size());
 
 	// read back
-	n = uartbuf_getchar(BUF_TXHOST); expect_c('q', n);
-	n = uartbuf_getchar(BUF_TXHOST); expect_c(' ', n);
-	n = uartbuf_getchar(BUF_TXHOST); expect_c('h', n);
-	n = uartbuf_getchar(BUF_TXHOST); expect_c('a', n);
-	n = uartbuf_getchar(BUF_TXHOST); expect_c('i', n);
+	n = buf_getchar(); expect_c('q', n);
+	n = buf_getchar(); expect_c(' ', n);
+	n = buf_getchar(); expect_c('h', n);
+	n = buf_getchar(); expect_c('a', n);
+	n = buf_getchar(); expect_c('i', n);
 }
 
 int main() {
 	hw_to_user();
 	hw_to_user();
+	ringbuf_reset();
 	user_to_hw();
 	user_to_hw();
 }

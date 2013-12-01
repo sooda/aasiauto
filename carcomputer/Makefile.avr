@@ -1,5 +1,9 @@
 all: test
 
-test: main_avr.c core.c encoders.c comm_avr.c msgs.c comm.c ringbuf.c
-	gcc -Wall -Wextra $^ -o $@
+# MCUMODE: MCU_MAIN, MCU_BRAKES, MCU_ENCODERS, MCU_MAIN
+
+test: main_avr.c core.c encoders.c comm_avr.c msgs.c comm.c ringbuf.c motors.c motors_avr.c pwm_avr.c uartbuf.c uart_avr.c
+	avr-gcc -mmcu=at90usb1286 -D$(MCUMODE) -Wall -Wextra -Os -DF_CPU=16000000 $^ -o $@
+	avr-size -d $@
+	avr-objcopy -j .text -j .data -O ihex $@ $@.hex
 

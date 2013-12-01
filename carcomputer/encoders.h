@@ -9,9 +9,8 @@ struct encoderstate {
 } __attribute__((packed));
 
 void encoders_init(void);
-void encoders_update(int some_data_here);
+void encoders_update(void);
 void encoders_dump(void);
 struct encoderstate encoders(void);
-void motors_init(void);
 
 #endif
