@@ -172,7 +172,7 @@ classdef Communication < handle
         
         function this = write(this, val)
             val = ByteTools.num2buf(uint16(val));
-            this.buf_out = [this.buf_out val];
+            this.buf_out = [this.buf_out uint8(255) val];
         end
         
         % Read all bytes (BytesAvailable).

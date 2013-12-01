@@ -2,11 +2,13 @@ function UpdateDisplay(~, ~, hfigure, ~)
     % Timer timer1 callback, called each time timer iterates.
     % Gets surface Z data, adds noise, and writes it back to surface object.
     
-    [~, ~, keysAreDown] = KbCheck();
+%    [~, ~, keysAreDown] = KbCheck();
     handles2 = guidata(hfigure);
 
     c = Car.getInstance;
 
+    keys = getappdata(0, 'keys');
+    
     %Get last element from each dataset
     thro = c.cardata.throttle(size(c.cardata.throttle, end));
     dir = c.cardata.wheeldirection(size(c.cardata.wheeldirection, end));
@@ -20,19 +22,19 @@ function UpdateDisplay(~, ~, hfigure, ~)
     %Reading user keyboard commands
 
     %Reading Brake commands
-    if(keysAreDown(32))%'Space bar' = full brake
+    if (find(ismember(keys,'space')))
          brake = 100;
          thro = 0;
          rev = 0;
-    elseif keysAreDown(78)%'n' = strong brake
+    elseif (find(ismember(keys,'n'))) %'n' = strong brake
          brake = 75;
          thro = 0;
          rev = 0;
-    elseif keysAreDown(66)%'b' = medium brake
+    elseif (find(ismember(keys,'b')))%'b' = medium brake
          brake = 50;
          thro = 0;
          rev = 0;
-    elseif keysAreDown(86)%'v' = minimal brake
+    elseif (find(ismember(keys,'v')))%'v' = minimal brake
          brake = 25;
          thro = thro / 2;
          rev = rev / 2;
@@ -40,7 +42,7 @@ function UpdateDisplay(~, ~, hfigure, ~)
          brake = 0;
 
          %If no brake, reading throttle commands
-         if(keysAreDown(38)) %'uparrow'
+         if (find(ismember(keys,'uparrow'))) %'uparrow'
             thro = thro+5-thro/20;
             rev = 0;
          else
@@ -50,7 +52,7 @@ function UpdateDisplay(~, ~, hfigure, ~)
            end
 
            %If no brake or throttle then read reverse
-           if(keysAreDown(40))%'downarrow'
+           if (find(ismember(keys,'downarrow'))) %'downarrow'
                 thro = 0;
                 % if carspeed < 2? --> enable TODOOOOOO ---> check this in
                 % microcontrols!
@@ -66,14 +68,14 @@ function UpdateDisplay(~, ~, hfigure, ~)
     end  
 
     %Reading steering commands
-    if(keysAreDown(37)) %rightarrow
+    if (find(ismember(keys,'rightarrow'))) %rightarrow
         dir = -45;%dir - 20;
          if(dir < -45)
             dir=-45;
         end
     end
     %Reading steering commands
-    if(keysAreDown(39)) %leftarrow
+    if (find(ismember(keys,'leftarrow'))) %leftarrow
 
         dir = 45;%dir + 20;
 
@@ -83,7 +85,7 @@ function UpdateDisplay(~, ~, hfigure, ~)
     end
 
     %If no steering command given
-    if(~keysAreDown(37)&& ~keysAreDown(39)) % ~right && ~left arrow
+    if (~find(ismember(keys,'leftarrow') + ismember(keys,'rightarrow'))) % ~right && ~left arrow
          if(dir>0)
               dir = dir - 10;
               if(dir<0)
@@ -98,11 +100,11 @@ function UpdateDisplay(~, ~, hfigure, ~)
     end
 
     drv_clutch = uint8(0); % kytkimen asento
-    if(keysAreDown(67)) % TODO: mikä näppäin? c?
+    if find(ismember(keys,'c'))
         drv_clutch = uint8(1);
     end
 
-    if(keysAreDown(84)) % TODO: mikä näppäin? t?
+    if find(ismember(keys,'t'))
         sound_horn = 1;
     end
 

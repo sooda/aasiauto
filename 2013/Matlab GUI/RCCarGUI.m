@@ -22,7 +22,7 @@ function varargout = RCCarGUI(varargin)
 
 % Edit the above text to modify the response to help RCCarGUI
 
-% Last Modified by GUIDE v2.5 29-Nov-2013 14:59:37
+% Last Modified by GUIDE v2.5 01-Dec-2013 12:56:37
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -118,20 +118,21 @@ function startmandrivebtn_Callback(hObject, eventdata, handles)
 % Only start timer if it is not running
 %appdata = getappdata(handles.figure1, 'App_Data');
 
-if (~exist('ListenChar', 'file'))
-    Logging.log('You need PsychToolBox to be installed in order to command Matlab with keyboard! Stop.');
-    return;
-end
+%if (~exist('ListenChar', 'file'))
+%    Logging.log('You need PsychToolBox to be installed in order to command Matlab with keyboard! Stop.');
+%    return;
+%end
 
 c = Car.getInstance;
 
 if c.appdata.connected
    
     c.appdata.manualdrive = 1;
-    ListenChar(2); %Start listening fror keyboard inputs
+%    ListenChar(2); %Start listening fror keyboard inputs
 %    stop(handles.timer2); %Stop the "initialize" timer
 % TODO! Serial is not here anymore
-    fread(c.appdata.serial, appdata.serial.BytesAvailable); % Clear car message buffer
+%    fread(c.appdata.serial, appdata.serial.BytesAvailable); % Clear car message buffer
+    c.appdata.com.read();
     start(handles.timer);
     %set(handles.textFieldSaveDataTo,'Enable', 'off');
     %set(handles.savedrivedatacheckbox,'Enable', 'off');
@@ -487,4 +488,62 @@ function DemoBtn_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 demomode;
+end
+
+
+% --- Executes on key press with focus on figure1 and none of its controls.
+function figure1_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  structure with the following fields (see FIGURE)
+%	Key: name of the key that was pressed, in lower case
+%	Character: character interpretation of the key(s) that was pressed
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
+
+a = {};
+if isappdata(0, 'keys')
+    a = getappdata(0, 'keys');
+end
+
+found = 0;
+
+for i=1:numel(a)
+    if strcmp(a(i), eventdata.Key)
+        found = 1;
+        break;
+    end
+end
+
+if ~found
+    a(end+1) = { eventdata.Key };
+end
+
+setappdata(0, 'keys', a);
+
+end
+
+
+% --- Executes on key release with focus on figure1 or any of its controls.
+function figure1_WindowKeyReleaseFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  structure with the following fields (see FIGURE)
+%	Key: name of the key that was released, in lower case
+%	Character: character interpretation of the key(s) that was released
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) released
+% handles    structure with handles and user data (see GUIDATA)
+
+a = {};
+if isappdata(0, 'keys')
+    a = getappdata(0, 'keys');
+end
+
+for i=1:numel(a)
+    if strcmp(a(i), eventdata.Key)
+        a(i) = '';
+        break;
+    end
+end
+
+setappdata(0, 'keys', a);
+
 end
