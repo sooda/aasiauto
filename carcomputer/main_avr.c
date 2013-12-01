@@ -23,11 +23,12 @@ volatile uint8_t flag_drive;
 int main() {
 	clock_prescale_set(clock_div_1);
 	usart_init(38400);
-	UCSR1B |= _BV(RXCIE1);
-	UCSR1B |= _BV(TXCIE1);
+	UCSR0B |= _BV(RXCIE0);
+	UCSR0B |= _BV(TXCIE0);
 	sei();
 	DDRD |= _BV(6); // led
 	DDRD |= _BV(3); // tx
+	DDRA |= 3;
 	init();
 	for (;;) {
 		msgs_work();

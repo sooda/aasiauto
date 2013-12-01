@@ -2,6 +2,7 @@
 #include <avr/io.h>
 #include <stdlib.h>
 #include <assert.h>
+#include "comm.h"
 
 void pwm_set(uint8_t i, uint16_t pos) {
 	// TODO map these properly
@@ -12,10 +13,15 @@ void pwm_set(uint8_t i, uint16_t pos) {
 		case 3: OCR3B = pos; break;
 		default: assert(0); break;
 	}
+	PORTA |= 0B00000011;
 }
 
 // both main and brake arduinos use the same configs for servo pwm
 void pwm_init_main_brakes(void) {
+	PORTA |= 0B00000011;
+	DDRE |= _BV(3); // oc3a steer
+	DDRB |= _BV(5); // oc1a left
+	DDRB |= _BV(6); // oc1b right
 	// clear OCn pin on compare match
 	// wave generation mode PWM phase & freq correct, top at ICR
 	// clock source clkio/8

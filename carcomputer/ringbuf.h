@@ -10,7 +10,7 @@
 
 // power of two, please
 // bitmask and also index of last id
-#define SZMASK 7 // TODO increase, this just for testing
+#define SZMASK 127 // TODO increase, this just for testing
 #define SIZE (SZMASK+1)
 
 #define BUFS 4

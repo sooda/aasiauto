@@ -13,8 +13,8 @@ static uint8_t in_sync;
 // previous byte was ff
 static uint8_t in_ff;
 
-ISR(USART1_RX_vect) {
-	uint8_t c = UDR1;
+ISR(USART0_RX_vect) {
+	uint8_t c = UDR0;
 	if (in_sync) {
 		if (in_ff) {
 			in_ff = 0;
@@ -39,9 +39,9 @@ ISR(USART1_RX_vect) {
 
 volatile uint8_t sending;
 
-ISR(USART1_TX_vect) {
+ISR(USART0_TX_vect) {
 	if (!ringbuf_empty(BUF_TXHOST))
-		UDR1 = ringbuf_getchar(BUF_TXHOST);
+		UDR0 = ringbuf_getchar(BUF_TXHOST);
 	else
 		sending = 0;
 }
@@ -50,7 +50,7 @@ void uartflush(void) {
 	cli();
 	if (!sending) {
 		sending = 1;
-		UDR1 = ringbuf_getchar(BUF_TXHOST);
+		UDR0 = ringbuf_getchar(BUF_TXHOST);
 	}
 	sei();
 }
