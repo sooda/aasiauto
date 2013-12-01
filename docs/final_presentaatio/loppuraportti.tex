@@ -18,7 +18,7 @@ Toni Liski, Konsta Hölttä, Lasse Kortetjärvi
 
 \institute{AS-0.3200 Automaatio- ja systeemitekniikan projektityöt}
 
-\aaltofootertext{Väliraportti}{\today}{\insertframenumber/\inserttotalframenumber}
+\aaltofootertext{Loppuraportti}{\today}{\insertframenumber/\inserttotalframenumber}
 
 
 \begin{document}
@@ -43,13 +43,25 @@ Toni Liski, Konsta Hölttä, Lasse Kortetjärvi
 
 \begin{frame}{ABS- ja ESC -järjestelmät}
 \begin{itemize}
-\item Mittauksia nykyisestä ohjelmistosta tehty
-\item ABS-järjestelmän toimimattomuuden syynä hidas mekaniikka (jarruservot)
-\item Servon päivitystahti 20 ms
-\item Digiservoja/OpenServo? Jotain muuta?
-\item Vaijerien venyminen, palautusjouset, ...
+\item Alkuperäinen tavoite ABS- ja ESC toimintojen jatkokehittäminen
+    \begin{itemize}
+        \item Jatkokehittäminen olisi vaatinut RC-autolla ajettavia testejä
+    \end{itemize}
+\item Alunperin epäilty ohjelmiston hitaus testattiin ja siitä ei löytynyt vikaa
 \end{itemize}
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{ABS- ja ESC -järjestelmät}
+\begin{itemize}
+\item Alkuperäinen säätö perustui pelkästään renkaiden kiihtyvyyksien tarkasteluun
+\item Muutettiin niin että myös renkaan luistoprosentti vaikuttaa säätöön
+\item Lisäksi $\mu$-split jarrutus otettiin huomioon
+\item Pyörintänopeusmittausten näytteenottotaajuutta kasvatettiin
+\end{itemize}
+\end{frame}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
