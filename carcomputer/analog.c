@@ -1,4 +1,6 @@
 #include "analog.h"
+#include "config.h"
+#include "adc.h"
 #include <stdint.h>
 #include <string.h>
 
@@ -9,11 +11,13 @@ static struct anadata {
 } state;
 
 void ana_meas_init(void) {
-	// TODO
+	adc_init();
 }
 
 void ana_meas_update(void) {
-	// TODO
+	state.steerangle = adc_read(ADC_STEER);
+	state.mainbattery = adc_read(ADC_MAINBATTERY);
+	state.drivebattery = adc_read(ADC_DRIVEBATTERY);
 }
 
 void *ana_meas_dump(void *p) {

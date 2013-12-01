@@ -24,6 +24,7 @@ void steering_init(void) {
 
 void sensors_update(void) {
 	encoders_update();
+	ana_meas_update();
 }
 
 // TODO: make this a watchdog, stop if no ping in e.g. 10 ms
@@ -53,14 +54,12 @@ static void *imu_dump(void *p) {
 	return memcpy(p, &state, sizeof(state)) + sizeof(state);
 }
 
-void send_measurements(void) {
-}
-
 // driver init; separate stuff for all three controllers
 void init() {
 	pwm_init();
 	motors_init();
 	steering_init();
+	ana_meas_init();
 	init_param_array(MSG_BRAKE_PARAMS_START, MSG_BRAKE_PARAMS_END, brake_proxy);
 	init_param_array(MSG_ABS_PARAMS_START, MSG_ABS_PARAMS_END, brake_proxy);
 	init_param_array(MSG_ESP_PARAMS_START, MSG_ESP_PARAMS_END, brake_proxy);

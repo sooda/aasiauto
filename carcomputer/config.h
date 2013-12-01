@@ -19,6 +19,10 @@
 // serial: host
 // serial1: brakes
 
+#define ADC_STEER 0
+#define ADC_MAINBATTERY 1
+#define ADC_DRIVEBATTERY 2
+
 #else
 #ifdef MCU_BRAKES
 
