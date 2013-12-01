@@ -5,9 +5,9 @@ c = Car.getInstance;
 
 %Set Vehicle parameters
 set(handles.dynamicWheelRollRadiusEdit, 'String', c.getParam(Car.dynamicWheelRollRadius));
-set(handles.wheelbaseEdit, 'String',c.getParam(Car.wheelbase));
+set(handles.wheelbaseEdit, 'String', c.getParam(Car.wheelbase));
 set(handles.vehicleMassEdit, 'String', c.getParam(Car.vehicleMass));
-set(handles.distanceFrontAxleCoGEdit, 'String',c.getParam(Car.distanceFrontAxleCoG));
+set(handles.distanceFrontAxleCoGEdit, 'String', c.getParam(Car.distanceFrontAxleCoG));
 set(handles.distanceRearAxleCoGEdit, 'String', c.getParam(Car.distanceRearAxleCoG));
 set(handles.frontAxleTurnStiffnessEdit, 'String', c.getParam(Car.frontAxleTurnStiffness));
 set(handles.rearAxleTurnStiffnessEdit, 'String', c.getParam(Car.rearAxleTurnStiffness));
@@ -23,15 +23,15 @@ set(handles.rearAxleLeftBrakeServosMaximumPositionsEdit, 'String', c.getParam(Ca
 set(handles.rearAxleRightBrakeServosMaximumPositionsEdit, 'String', c.getParam(Car.rearAxleRightBrakeServosMaximumPositions));
 
 %Set ABS Parameters
-set(handles.absEnabledCheckBox,'Value',c.getParam(Car.enabled));
-set(handles.slipToleranceEdit, 'String', c.getParam(Car.slipTolerance));
+set(handles.absEnabledCheckBox, 'Value', c.getParam(Car.enabled));
+set(handles.slipToleranceEdit, 'String', num2str(c.getParam(Car.slipTolerance)));
 set(handles.cutOffSpeedEdit, 'String', c.getParam(Car.cutOffSpeed));
 set(handles.minAccEdit, 'String', c.getParam(Car.minAcc));
 set(handles.maxAccEdit, 'String', c.getParam(Car.maxAcc));
 set(handles.muSplitThresholdEdit, 'String', c.getParam(Car.muSplitThreshold));
 
 %Set ESP Parameters
-set(handles.espEnabledCheckBox,'Value',c.getParam(Car.espEnabled));
+set(handles.espEnabledCheckBox, 'Value', c.getParam(Car.espEnabled));
 set(handles.espSensitivityControlAngVelEdit, 'String', c.getParam(Car.espSensitivityControlAngVel));
 set(handles.espSensitivityAdjSlipAngleEdit, 'String', c.getParam(Car.espSensitivityAdjSlipAngle));
 set(handles.espBrakeForceFactorEdit, 'String', c.getParam(Car.espBrakeForceFactor));

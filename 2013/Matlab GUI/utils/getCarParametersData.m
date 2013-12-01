@@ -24,6 +24,7 @@ c.setParam(Car.rearAxleLeftBrakeServosMaximumPositions, get(handles.rearAxleLeft
 c.setParam(Car.rearAxleRightBrakeServosMaximumPositions, get(handles.rearAxleRightBrakeServosMaximumPositionsEdit, 'String'));
 
 %Get ABS Parameters
+get(handles.absEnabledCheckBox,'Value')
 c.setParam(Car.enabled, get(handles.absEnabledCheckBox,'Value'));
 c.setParam(Car.slipTolerance, get(handles.slipToleranceEdit, 'String'));
 c.setParam(Car.cutOffSpeed, get(handles.cutOffSpeedEdit, 'String'));

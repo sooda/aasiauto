@@ -88,11 +88,22 @@ classdef Car < handle
         
         % Set Param
         function setParam(this, id, val)
+            if ischar(val)
+                val = str2double(val);
+            end
             this.params(id) = val;
         end
         
         % Save Car object to file
         function saveToFile(this, filename)
+            if length(filename) > 11 && strcmp(filename(end-10:end), '_params.mat')
+                filename = filename(1:end-11);
+            elseif length(filename) > 12 && strcmp(filename(end-11:end), '_appdata.mat')
+                filename = filename(1:end-12);
+            elseif strcmp(filename(end-3:end), '.mat')
+                filename = filename(1:end-4);
+            end
+            
             this.appdata
             params = this.params;
             appdata = this.appdata;
@@ -104,12 +115,25 @@ classdef Car < handle
         
         % Load Car object from file
         function loadFromFile(this, filename)
-            load([ filename '_params.mat' ], 'params');
-            load([ filename '_appdata.mat' ], 'appdata');
-            this.params = params;
-            this.appdata = appdata;
-            clear appdata;
-            clear params;
+            if length(filename) > 11 && strcmp(filename(end-10:end), '_params.mat')
+                filename = filename(1:end-11);
+            elseif length(filename) > 12 && strcmp(filename(end-11:end), '_appdata.mat')
+                filename = filename(1:end-12);
+            end
+            
+            if exist([filename '_params.mat'], 'file')
+                p = load([ filename '_params.mat' ], 'params');
+                this.params = p.params;
+                clear p;
+                Logging.log('Params loaded');
+            end
+
+            if exist([filename '_appdata.mat'], 'file')
+                p = load([ filename '_appdata.mat' ], 'appdata');
+                this.appdata = p.appdata;
+                clear p;
+                Logging.log('Appdata loaded');
+            end
         end
 
     end

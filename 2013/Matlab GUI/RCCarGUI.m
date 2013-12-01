@@ -350,7 +350,7 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
     %appdata = getappdata(handles.figure1, 'App_Data');
     c = Car.getInstance;
 
-    if (c.appdata.connected)
+    if isfield(c.appdata,'connected') && c.appdata.connected
         c.appdata.com.disconnectFromCar();
         c.appdata.connected = 0;
     end
@@ -381,11 +381,9 @@ c = Car.getInstance;
    c.appdata.save_parameters_directory = pathname;
    
    nameAndDir = strcat(pathname,filename);
+   getCarParametersData(handles);
+   c.saveToFile(nameAndDir);
 
-%   carParametersData = getCarParametersData(handles);
-   carParametersData = c.cardata;
-   save(nameAndDir, 'carParametersData');
-    
    Logging.log('Car parameters data saved.');
  end   
 end
@@ -402,14 +400,12 @@ c = Car.getInstance;
  %Load data
  if ~isequal(pathname,0) && ~isequal(filename,0)
    
-   nameAndDir = strcat(pathname,filename);
+    nameAndDir = strcat(pathname,filename);
 
-   carParametersData = load(nameAndDir);
-   carParametersData = carParametersData.carParametersData; %Simplify the struct structure
-   setCarParametersData(handles,carParametersData);
-   c.cardata = carParametersData;
+    c.loadFromFile(nameAndDir);
+    setCarParametersData(handles);
 
-   Logging.log('Car parameters data loaded.');
+    Logging.log('Car parameters data loaded.');
  end
 end
 % Resets the parameters
@@ -424,10 +420,10 @@ function resetToDefault_ClickedCallback(hObject, eventdata, handles)
 
 if strcmp(response, 'Reset parameters')
     
-   carParametersData = load('default_car_parameters.mat');
-   setCarParametersData(handles,carParametersData.carParametersData); %Simplify the struct structure and set data
+    c.loadFromFile('default');
+    setCarParametersData(handles);
    
-   Logging.log('Default car data parameters loaded.');
+    Logging.log('Default car data parameters loaded.');
 end
 end
 

@@ -164,9 +164,9 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
     title('Throttle')
 
     %Load and set the default values for the car parameters data
-    if exist('default_car_parameters.mat', 'file')
-        carParametersData = load('default_car_parameters.mat');
-        setCarParametersData(handles,carParametersData.carParametersData); 
+    if exist('default_params.mat', 'file')
+        c.loadFromFile('default');
+        setCarParametersData(handles);
         set(handles.savedrivedatacheckbox,'Value',1)
     end
     
