@@ -57,8 +57,12 @@ classdef Protocol %< value
             elseif id == 3 % Car requests car params
                 Protocol.sendCarParams(c);
                 
+            elseif id == 4 % ERROR
+                Logging.log('ERROR MESSAGE RECEIVED!');
+
             elseif id == 99 % All params have been sent by car/GUI
-                % ...
+                setCarParametersData();
+                Logging.log('All car parameters received successfully.');
                 
             elseif id == 110 % Car data vector (measurements)
                 c.cardata.last_measurements = data; % just override..

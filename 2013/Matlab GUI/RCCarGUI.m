@@ -22,7 +22,7 @@ function varargout = RCCarGUI(varargin)
 
 % Edit the above text to modify the response to help RCCarGUI
 
-% Last Modified by GUIDE v2.5 01-Dec-2013 12:56:37
+% Last Modified by GUIDE v2.5 01-Dec-2013 20:35:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -128,10 +128,6 @@ c = Car.getInstance;
 if c.appdata.connected
    
     c.appdata.manualdrive = 1;
-%    ListenChar(2); %Start listening fror keyboard inputs
-%    stop(handles.timer2); %Stop the "initialize" timer
-% TODO! Serial is not here anymore
-%    fread(c.appdata.serial, appdata.serial.BytesAvailable); % Clear car message buffer
     c.appdata.com.read();
     start(handles.timer);
     %set(handles.textFieldSaveDataTo,'Enable', 'off');
@@ -271,7 +267,6 @@ function textFieldSaveDataTo_ButtonDownFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if(get(handles.savedrivedatacheckbox,'value'))
-%    appdata = getappdata(handles.figure1, 'App_Data');
     c = Car.getInstance;
     currentvalue = get(hObject,'String');
 
@@ -289,7 +284,6 @@ if(get(handles.savedrivedatacheckbox,'value'))
      set(hObject,'String',c.appdata.save_drive_directory);
     end
     %Save save directory
-%    setappdata(handles.figure1, 'App_Data', appdata);
 end
 end
 
@@ -361,8 +355,9 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
         c.appdata.connected = 0;
     end
 
-    % Destroy timers
+    % Destroy timers and com objects
     delete(timerfindall);
+    delete(instrfindall);
 
     % Clean up
     delete(c);
@@ -377,7 +372,6 @@ function saveConfiguration_ClickedCallback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-%appdata = getappdata(handles.figure1, 'App_Data');
 c = Car.getInstance;
 
 [filename, pathname, ~] = uiputfile('*.mat', 'Save car setup parameters as');
@@ -388,11 +382,9 @@ c = Car.getInstance;
    
    nameAndDir = strcat(pathname,filename);
 
-   carParametersData = getCarParametersData(handles);
+%   carParametersData = getCarParametersData(handles);
+   carParametersData = c.cardata;
    save(nameAndDir, 'carParametersData');
- 
-   %Save appdata
-%   setappdata(handles.figure1, 'App_Data', c.appdata);
     
    Logging.log('Car parameters data saved.');
  end   
@@ -405,6 +397,8 @@ function openConfiguration_ClickedCallback(hObject, eventdata, handles)
 
 [filename, pathname, ~] = uigetfile('*.mat', 'Load car setup parameters from file');
 
+c = Car.getInstance;
+
  %Load data
  if ~isequal(pathname,0) && ~isequal(filename,0)
    
@@ -413,7 +407,8 @@ function openConfiguration_ClickedCallback(hObject, eventdata, handles)
    carParametersData = load(nameAndDir);
    carParametersData = carParametersData.carParametersData; %Simplify the struct structure
    setCarParametersData(handles,carParametersData);
-    
+   c.cardata = carParametersData;
+
    Logging.log('Car parameters data loaded.');
  end
 end
@@ -555,3 +550,12 @@ end
 setappdata(0, 'keys', a);
 
 end
+
+% --- Executes on button press in ApplyParamsBtn.
+function ApplyParamsBtn_Callback(hObject, eventdata, handles)
+% hObject    handle to ApplyParamsBtn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    getCarParametersData(handles);
+end
+
