@@ -170,9 +170,6 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
         set(handles.savedrivedatacheckbox,'Value',1)
     end
     
-    % Open measurement figure
-    figure(2);
-
     % Update handles structure
     guidata(hObject, handles);
     

@@ -22,7 +22,7 @@ function varargout = RCCarGUI(varargin)
 
 % Edit the above text to modify the response to help RCCarGUI
 
-% Last Modified by GUIDE v2.5 01-Dec-2013 20:35:27
+% Last Modified by GUIDE v2.5 01-Dec-2013 23:58:23
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -449,6 +449,10 @@ function setCarConfParamBtn_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
     c = Car.getInstance;
+    if (~c.appdata.connected)
+        Logging.log('Not connected');
+        return;
+    end
     Protocol.sendCarParams(c);
 end
 
@@ -555,3 +559,13 @@ function ApplyParamsBtn_Callback(hObject, eventdata, handles)
     getCarParametersData(handles);
 end
 
+% --- Executes on button press in drawMeasurements.
+function drawMeasurements_Callback(hObject, eventdata, handles)
+% hObject    handle to drawMeasurements (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    figure(2);
+    h.h1 = plot(0, [0 0]);
+    h.h2 = legend('Motor battery voltage', 'Control battery voltage');
+    setappdata(2, 'handles', h);
+end

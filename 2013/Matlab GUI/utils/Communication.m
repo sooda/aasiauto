@@ -61,6 +61,8 @@ classdef Communication < handle
                     start(this.connectionTimer); %Timer to check for Initialization
                     start(this.communicationTimer);
                     
+                    this.write2(0, []); % ping
+                    
                 catch err
 
                     if(strcmp(err.identifier, 'MATLAB:serial:fopen:opfailed'))
@@ -129,13 +131,14 @@ classdef Communication < handle
         %This function checks if the car is initialized and ready to start a drive session
         %In other words: if sensordata from the car is received then it is ready
         function this = connectionTimer_triggered(this, varargin)
-                this.status = this.STATUSCODE.Initialized;
-                Logging.log('Initialized and ready for drive session.');
-                stop(this.connectionTimer);
-                c = Car.getInstance;
-                c.appdata.connected = 1;
+%                this.status = this.STATUSCODE.Initialized;
+%                Logging.log('Initialized and ready for drive session.');
+%                stop(this.connectionTimer);
+%                c = Car.getInstance;
+%                c.appdata.connected = 1;
 
-            
+
+            % wait for input from car
             if (this.serial_data.BytesAvailable && ...
                     this.status ~= this.STATUSCODE.Initialized)
                 this.status = this.STATUSCODE.Initialized;

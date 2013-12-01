@@ -19,13 +19,13 @@ classdef Logging < handle
                 return;
             end
             
+            buffsize = 20;
+            
             oldmsgs = get(Logging.console, 'String');
-            msgssize = size(oldmsgs);
-            if(msgssize(1) > 8)
-                oldmsgs = oldmsgs(2:9); %delete first row
+            if(numel(oldmsgs) > buffsize)
+                oldmsgs(1) = ''; % delete oldest message
             end
             set(Logging.console, 'String', [oldmsgs;{message}]);
-            % set(handles.console2,'String',[oldmsgs;{message}]);
         end
     end
     

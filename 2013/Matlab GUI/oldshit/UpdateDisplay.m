@@ -2,7 +2,6 @@ function UpdateDisplay(~, ~, hfigure, ~)
     % Timer timer1 callback, called each time timer iterates.
     % Gets surface Z data, adds noise, and writes it back to surface object.
     
-%    [~, ~, keysAreDown] = KbCheck();
     handles2 = guidata(hfigure);
 
     c = Car.getInstance;
@@ -13,17 +12,27 @@ function UpdateDisplay(~, ~, hfigure, ~)
     data = Protocol.processMeasurementData(measurement_data);
     keys = getappdata(0, 'keys');
     
-%    if ~isnan(c.appdata.joystick)
+    %Get last element from each dataset
+    thro = c.cardata.throttle(end);
+    dir = c.cardata.wheeldirection(end);
+    rev = c.cardata.reverse(end);
+    brake = 0;
+    sound_horn = 0;
+
     if numel(c.appdata.joystick)
-        
-        a = read(c.appdata.joystick);
+        try 
+            a = read(c.appdata.joystick);
+        catch
+            c.appdata.joystick = [];
+            return;
+        end
         
         thro = a(6) / joy(4) * 100;
         dir = a(1) / joy(2) * 45;
         rev = a(6) / joy(4) * 100;
         brake = a(6) / joy(4) * 100;
         sound_horn = 0;
-        
+
         if (dir > 45)
             dir = 45;
         end
@@ -31,6 +40,15 @@ function UpdateDisplay(~, ~, hfigure, ~)
             dir = -45;
         end;
         
+        % dead zone near 0
+        if (abs(thro) < 2)
+            thro = 0;
+        end
+        if (abs(dir) < 2)
+            dir = 0;
+        end
+        
+        % sanity check
         if (thro < 0)
             thro = 0;
             rev = 0;
@@ -42,13 +60,6 @@ function UpdateDisplay(~, ~, hfigure, ~)
         
         
     else
-        %Get last element from each dataset
-        thro = c.cardata.throttle(size(c.cardata.throttle, end));
-        dir = c.cardata.wheeldirection(size(c.cardata.wheeldirection, end));
-        rev = c.cardata.reverse(size(c.cardata.reverse, end));
-        brake = 0;
-        sound_horn = 0;
-
         %Reading user keyboard commands
 
         %Reading Brake commands
@@ -106,9 +117,7 @@ function UpdateDisplay(~, ~, hfigure, ~)
         end
         %Reading steering commands
         if (find(ismember(keys,'leftarrow'))) %leftarrow
-
             dir = 45;%dir + 20;
-
             if(dir > 45)
                  dir = 45;
              end
@@ -118,12 +127,12 @@ function UpdateDisplay(~, ~, hfigure, ~)
         if (~find(ismember(keys,'leftarrow') + ismember(keys,'rightarrow'))) % ~right && ~left arrow
              if(dir>0)
                   dir = dir - 10;
-                  if(dir<0)
-                       dir= 0;
+                  if(dir < 0)
+                       dir = 0;
                   end
              else
                   dir = dir + 10;
-                  if(dir>0)
+                  if(dir > 0)
                       dir = 0;
                   end     
              end
@@ -145,11 +154,6 @@ function UpdateDisplay(~, ~, hfigure, ~)
     c.cardata.motorBatteryVoltage = [c.cardata.motorBatteryVoltage; data(12)];
     c.cardata.controllerBatteryVoltage = [c.cardata.controllerBatteryVoltage; data(13)];
     
-    % plot some measurements
-    figure(2);
-    set(gfa, 'YData', c.cardata.motorBatteryVoltage);
-    set(gfa, 'XData', 1:numel(c.cardata.motorBatteryVoltage));
-    
     % Update Timer
     c.cardata.timepassed = [c.cardata.timepassed; c.cardata.timepassed(end) + handles2.timer.InstantPeriod];
     
@@ -157,6 +161,15 @@ function UpdateDisplay(~, ~, hfigure, ~)
     totalvelocity = sum(c.cardata.wheelspeeds(end,1:4))/2;
     c.cardata.totalvelocity = [c.cardata.totalvelocity; totalvelocity];
 
+    % plot some measurements
+    if ishandle(2)
+        h = getappdata(2, 'handles');
+        mdata = { c.cardata.motorBatteryVoltage ;
+            c.cardata.controllerBatteryVoltage };
+        set(h.h1, {'YData'}, mdata, 'XData', c.cardata.timepassed);
+    end
+
+    
     % Calculate car position
     timeSinceLast = 0.0;
     if(numel(c.cardata.timepassed) > 1)
@@ -203,6 +216,7 @@ function UpdateDisplay(~, ~, hfigure, ~)
 
     end
 
+    % Apply Kalman-filter
     if (timeSinceLast > 0)
         s = c.appdata.kalmanfilter;
         s.dt = timeSinceLast;
@@ -255,11 +269,11 @@ function UpdateDisplay(~, ~, hfigure, ~)
     % throttle
     data = ByteTools.num2buf(drv_throttle);
     data = [data data];
-    c.appdata.com.write2(120, data); % id=120
+    c.appdata.com.write2(120, data);
 
     % steering
     data = ByteTools.num2buf(drv_dir);
-    c.appdata.com.write2(121, data); % id=121
+    c.appdata.com.write2(121, data);
 
     % brake
     data = ByteTools.num2buf(drv_brake);
@@ -276,4 +290,6 @@ function UpdateDisplay(~, ~, hfigure, ~)
     set(handles2.brake,'YData',brake);
     set(handles2.direction,'YData',dir);
 
+    drawnow;
+    
 end
