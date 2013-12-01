@@ -32,12 +32,14 @@ void recv_info_check(uint8_t stream, uint8_t type, uint8_t size, void *data);
 
 #define MEAS_NITEMS 13 // number of scalar elements
 
-uint16_t comm_rxsize(void);
-uint16_t comm_peek_u16(void);
-uint16_t comm_u16(void);
-uint8_t comm_peek_u8(void);
-uint8_t comm_u8(void);
-void comm_ignore(uint8_t nbytes);
-void comm_error(uint16_t errnr);
+#define MSG_HDRSIZE 2
+
+uint8_t comm_rxsize(uint8_t buf);
+uint16_t comm_peek_u16(uint8_t buf);
+uint16_t comm_u16(uint8_t buf);
+uint8_t comm_peek_u8(uint8_t buf);
+uint8_t comm_u8(uint8_t buf);
+void comm_ignore(uint8_t buf, uint8_t nbytes);
+void comm_error(uint16_t errnr, uint16_t param);
 
 #endif

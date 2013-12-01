@@ -5,8 +5,8 @@
 
 typedef void (*msg_handler)(uint8_t sz, uint8_t id);
 
-void msgs_register_handler(uint8_t type, uint8_t size, msg_handler handler);
-int8_t msgs_work(void);
+void msgs_register_handler(uint8_t buf, uint8_t type, uint8_t size, msg_handler handler);
+int8_t msgs_work(uint8_t bufid);
 
 #define MSG_TYPE_MAX 255
 

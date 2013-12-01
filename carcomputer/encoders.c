@@ -12,13 +12,10 @@ void *encoders_dump(void *p) {
 struct encoderstate encoders(void) {
 	return state;
 }
-void encoders_update(void) {
+void encoders_update(struct encoderstate newstate) {
 	// FIXME get them from teensy
 #ifdef MCU_DRIVER
-	state.fleft = 123;
-	state.rleft = 234;
-	state.fright = 345;
-	state.rright = 456;
+	state = newstate;
 #else
 	state.fleft = 1230;
 	state.rleft = 2340;

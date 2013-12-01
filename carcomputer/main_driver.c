@@ -11,6 +11,8 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
+#include <stdio.h>
+
 MAKE_USART_INIT(0)
 MAKE_USART_INIT(1)
 
@@ -33,6 +35,19 @@ ISR(TIMER0_COMPA_vect) {
 	flag_drive = 1;
 }
 
+static int uart_putchar(char c, FILE *stream) {
+	(void)stream;
+	cli();
+	while (!(UCSR0A & _BV(UDRE0)))
+		;
+	UDR0 = c;
+	while (!(UCSR0A & _BV(UDRE0)))
+		;
+	//sei();
+	return 0;
+}
+static FILE mystdout = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
+
 void worktimer_init(void) {
 	// ripped from the original program
 	
@@ -53,9 +68,12 @@ void worktimer_init(void) {
 }
 
 int main() {
+	stdout = &mystdout;
+	stderr = &mystdout;
 	clock_prescale_set(clock_div_1);
 	usart_0_init(38400);
 	usart_1_init(38400);
+	// assert(!"testing");
 	DDRD |= _BV(3); // tx
 	DDRA |= 3;
 	// leds
@@ -65,7 +83,8 @@ int main() {
 	worktimer_init();
 	sei();
 	for (;;) {
-		msgs_work();
+		msgs_work(BUF_RXHOST);
+		msgs_work(BUF_RXSLAVE);
 		sensors_update();
 		if (flag_drive) {
 			flag_drive = 0;

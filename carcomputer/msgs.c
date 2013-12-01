@@ -2,54 +2,62 @@
 #include "comm.h"
 #include <stdlib.h>
 #include <assert.h>
+#include "config.h"
+#include <stdio.h>
 
-msg_handler msg_handlers[MSG_TYPE_MAX];
-uint8_t msg_sizes[MSG_TYPE_MAX];
+static struct msg_handler_data {
+	msg_handler handler;
+	uint8_t size;
+} msg_handlers[N_STREAMS][MSG_TYPE_MAX];
 
-void msgs_register_handler(uint8_t type, uint8_t size, msg_handler handler) {
-	assert(msg_handlers[type] == NULL);
+void msgs_register_handler(uint8_t buf, uint8_t type, uint8_t size, msg_handler handler) {
+	buf = (buf == BUF_RXHOST) ? 1 : 0;
 	assert(type < MSG_TYPE_MAX);
-	msg_handlers[type] = handler;
-	msg_sizes[type] = size;
+	assert(msg_handlers[buf][type].handler == NULL);
+	msg_handlers[buf][type].handler = handler;
+	msg_handlers[buf][type].size = size;
 }
 
-int8_t msgs_work(/*uint8_t buf*/void) {
-	// TODO: several serial feeds (radio, teensy)
-	// FIXME this handles only comm from host so far, loop thru the bufs and do all
-	uint16_t buf = comm_rxsize();
-	// space for headers?
-	if (buf < 4)
+int8_t msgs_work(uint8_t bufid) {
+	// FIXME better indexing (divide by 2? get it from a single bit?)
+	uint8_t handbuf = (bufid == BUF_RXHOST) ? 1 : 0;
+	uint8_t available = comm_rxsize(bufid);
+
+	if (available < MSG_HDRSIZE)
 		return -1;
 
-	uint16_t size = comm_peek_u8();
+	uint8_t packsize = comm_peek_u8(bufid);
 	// can has whole packet?
-	if (4 + buf < size)
+	if (available < MSG_HDRSIZE + packsize)
 		return -1;
 
 	// ready to go, flush size out
-	comm_u8();
+	comm_u8(bufid);
 
-	uint16_t type = comm_u8();
+	uint8_t type = comm_u8(bufid);
 	// if host code mismatches, inform about it and ignore the packet
-	if (type >= MSG_TYPE_MAX) {
-		comm_error(MSG_ERR_NOTYPE);
-		comm_ignore(size);
+	if (type > MSG_TYPE_MAX) {
+		comm_error(MSG_ERR_NOTYPE, type);
+		comm_ignore(bufid, packsize);
 		return -1;
 	}
 	
-	if (!msg_handlers[type]) {
-		comm_error(MSG_ERR_NOTYPE);
-		comm_ignore(size);
+	if (!msg_handlers[handbuf][type].handler) {
+		comm_error(MSG_ERR_NOTYPE, type);
+		comm_ignore(bufid, packsize);
 		return -1;
 	}
 
-	if (size != msg_sizes[type]) {
-		comm_error(MSG_ERR_SIZE_MISMATCH);
-		comm_ignore(size);
+	if (packsize != msg_handlers[handbuf][type].size) {
+		comm_error(MSG_ERR_SIZE_MISMATCH, type);
+		comm_ignore(bufid, packsize);
 		return -1;
 	}
 
-	msg_handlers[type](size, type);
+	//if (handbuf == 0) printf(" yhyy %d %d\n", packsize, type);
+	//if (handbuf == 0) { comm_ignore(bufid, comm_rxsize(bufid)); return -1; }
+
+	msg_handlers[handbuf][type].handler(packsize, type);
 
 	return 0;
 }

@@ -5,6 +5,7 @@ import time
 
 MSG_CAR_MEAS_VECTOR = 110
 MSG_PONG = 1
+MSG_ERR = 4
 MEAS_NITEMS = 13
 
 MEASNAMES = [
@@ -42,7 +43,7 @@ def parse_packet(data):
 			j = 0
 
 			# brake cmd
-			ii = 1500 + i
+			ii = 1000 + i
 			i1 = ii & 0xff # low byte
 			if i1 == 0xff:
 				i1 = 0xfe # should duplicate ff's, not bothering
@@ -55,10 +56,15 @@ def parse_packet(data):
 			i += 10
 			if i == 500:
 				i = 0
+	elif kind == MSG_ERR:
+		print "YHYY"
+		print map(ord, data[2:])
+		time.sleep(1)
 	elif kind == MSG_PONG:
 		print "YAAAAAY\n" * 20
+		time.sleep(0.05)
 	else:
-		print "wat %s %s" % (sz, kind)
+		print "wat %s %s %s %s" % (sz, kind, data, "".join(data))
 		time.sleep(1)
 
 def parse(data):
@@ -74,10 +80,16 @@ def parse(data):
 ser = serial.Serial(argv[1], 38400)
 data = []
 
+last = time.time()
+ser.setTimeout(1)
 while True:
+	if time.time() - last > 2:
+		print "timeout? data=%s %s" % (data, "".join(data))
 	x = ser.read()
-	data.append(x)
-	packet, data = parse(data)
-	while packet:
-		parse_packet(packet)
+	if len(x):
+		last = time.time()
+		data.append(x)
 		packet, data = parse(data)
+		while packet:
+			parse_packet(packet)
+			packet, data = parse(data)

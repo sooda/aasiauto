@@ -59,4 +59,7 @@
 #define UDRNUM1(x) UDR ## x
 #define UDRNUM(x) UDRNUM1(x)
 
+// handle messages from host and from slave
+#define N_STREAMS 2
+
 #endif

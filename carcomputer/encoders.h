@@ -9,7 +9,8 @@ struct encoderstate {
 } __attribute__((packed));
 
 void encoders_init(void);
-void encoders_update(void);
+// TODO read from the stream, doh
+void encoders_update(struct encoderstate newstate);
 void *encoders_dump(void *p);
 struct encoderstate encoders(void);
 

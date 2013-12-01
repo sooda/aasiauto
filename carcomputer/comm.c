@@ -37,6 +37,7 @@ void recv_info_check(uint16_t type, uint16_t size, void *data) {
 
 #include "comm.h"
 
-void comm_error(uint16_t errnr) {
-	DUMP_INFO(MSG_ERR, errnr);
+void comm_error(uint16_t errnr, uint16_t param) {
+	struct { uint16_t a, b; } x = {errnr, param};
+	DUMP_INFO(MSG_ERR, x);
 }

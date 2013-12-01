@@ -51,6 +51,8 @@ void worktimer_init(void) {
 	TIMSK0 |= (1 << OCIE0A);
 }
 
+int initd;
+
 int main() {
 #if 0
 	DDRA |= _BV(2);
@@ -58,7 +60,7 @@ int main() {
 	for(;;) {
 		PORTA ^= _BV(2);
 		PORTA ^= _BV(7);
-		_delay_ms(500);
+		_delay_ms(1000);
 	}
 #endif
 	clock_prescale_set(clock_div_1);
@@ -73,7 +75,7 @@ int main() {
 	init();
 	sei();
 	for (;;) {
-		msgs_work();
+		msgs_work(BUF_RXHOST);
 		sensors_update();
 		if (flag_drive) {
 			flag_drive = 0;
@@ -81,7 +83,9 @@ int main() {
 		}
 		if (flag_transmit) {
 			flag_transmit = 0;
-			//transmit_vals();
+			//if (initd) { initd = 0;
+			//	transmit_vals(); }
+			transmit_vals();
 			PORTA ^= _BV(2);
 			PORTB ^= _BV(7);
 		}

@@ -8,7 +8,9 @@
 #include <stdlib.h>
 
 void sensors_update(void) {
-	encoders_update();
+	// FIXME
+	struct encoderstate st;
+	encoders_update(st);
 }
 
 // TODO: make this a watchdog, stop if no ping in e.g. 10 ms
@@ -19,21 +21,21 @@ static void pingpong(uint8_t sz, uint8_t id) {
 
 static void param_saver_brakes(uint8_t sz, uint8_t id) {
 	(void)sz; (void)id;
-	uint16_t param = comm_u16();
+	uint16_t param = comm_u16(BUF_RXHOST);
 	(void)param;
 	// TODO store the new value
 }
 
 static void param_saver_abs(uint8_t sz, uint8_t id) {
 	(void)sz; (void)id;
-	uint16_t param = comm_u16();
+	uint16_t param = comm_u16(BUF_RXHOST);
 	(void)param;
 	// TODO store the new value
 }
 
 static void param_saver_esp(uint8_t sz, uint8_t id) {
 	(void)sz; (void)id;
-	uint16_t param = comm_u16();
+	uint16_t param = comm_u16(BUF_RXHOST);
 	(void)param;
 	// TODO store the new value
 }
@@ -41,7 +43,7 @@ static void param_saver_esp(uint8_t sz, uint8_t id) {
 // u16 params
 static void init_param_array(uint8_t start, uint8_t end, msg_handler handler) {
 	for (; start < end; start++) {
-		msgs_register_handler(start, sizeof(uint16_t), handler);
+		msgs_register_handler(BUF_RXHOST, start, sizeof(uint16_t), handler);
 	}
 }
 
@@ -64,6 +66,8 @@ static void brake_cmd(uint8_t sz, uint8_t id) {
 	pwm_set(PWM_BRAKE_FL, brk.fl);
 	pwm_set(PWM_BRAKE_RL, brk.rl);
 	pwm_set(PWM_BRAKE_RR, brk.rr);
+	extern int initd;
+	initd = 1;
 }
 
 void init() {
@@ -71,8 +75,8 @@ void init() {
 	init_param_array(MSG_BRAKE_PARAMS_START, MSG_BRAKE_PARAMS_END, param_saver_brakes);
 	init_param_array(MSG_ABS_PARAMS_START, MSG_ABS_PARAMS_END, param_saver_esp);
 	init_param_array(MSG_ESP_PARAMS_START, MSG_ESP_PARAMS_END, param_saver_abs);
-	msgs_register_handler(MSG_BRAKE, 4*sizeof(uint16_t), brake_cmd);
-	msgs_register_handler(MSG_PING, 0, pingpong);
+	msgs_register_handler(BUF_RXHOST, MSG_BRAKE, 4*sizeof(uint16_t), brake_cmd);
+	msgs_register_handler(BUF_RXHOST, MSG_PING, 0, pingpong);
 }
 
 /* write the state vector to a single packet and send it to the host */

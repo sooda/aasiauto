@@ -25,14 +25,17 @@ flashbrakes: brakes.hex
 flashencoders: encoders.hex
 	avrdude $(DUDEOPTS) -U $^
 
-.PHONY: flashdriver flashbrakes all
+clean:
+	rm -f *.hex *.elf
+
+.PHONY: flashdriver flashbrakes all clean
 
 %.hex: %.elf
 	avr-size -d $<
 	avr-objcopy -j .text -j .data -O ihex $< $@
 
 driver.elf: $(SRC_DRIVER)
-	$(CC) -mmcu=atmega2560 -DMCU_DRIVER $(CFLAGS) $^ -o $@
+	$(CC) -D__ASSERT_USE_STDERR -mmcu=atmega2560 -DMCU_DRIVER $(CFLAGS) $^ -o $@
 
 brakes.elf: $(SRC_BRAKES)
 	$(CC) -mmcu=atmega2560 -DMCU_BRAKES $(CFLAGS) $^ -o $@
