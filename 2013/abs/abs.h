@@ -41,7 +41,7 @@ typedef struct {
 void initAbsData(void);
 
 
-//iterate on cycle
+//iterate one cycle
 void absIter(unsigned char brakePos);
 
 
