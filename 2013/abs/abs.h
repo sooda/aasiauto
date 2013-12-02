@@ -1,7 +1,7 @@
 #ifndef RCCAR_ABS_H
 #define RCCAR_ABS_H
 
-#define MAX(a,b)			((a>b)?(a):(b))
+#define MAX(a,b)    ((a>b)?(a):(b))
 
 typedef struct absData_t absData_t;
 
@@ -40,12 +40,19 @@ typedef struct {
 //initialize abs system with default settings
 void initAbsData(void);
 
+
+//iterate on cycle
+void absIter(unsigned char brakePos);
+
+
 //if no braking speed is calulated from rear wheels
 //if barking, speed is calculated from vehicle deceleration
-void setCurrentSpeed(int deltaTime);
+int currentSpeed(int deltaTime);
 
+/*
 //returns current speed of vehicle
 int getVehicleSpeed(void);
+*/
 
 //calculates preferred braking force
 //if wheel slip is bigger than optimal (set by tyremodel and slip tolerance) or wheel deceleration is too high, brake force is decreased

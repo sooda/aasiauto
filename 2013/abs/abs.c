@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 static absData_t FLdata, FRdata, RLdata, RRdata;
+static absData_t*[4] wheelData = {&FLdata, &FRdata, &RLdata, &RRdata };
 static absParams_t absParams;
 
 void initAbsData(void) {
@@ -28,12 +29,24 @@ void initAbsData(void) {
     setAbsParam(defaultValues.muSplitThreshold, MUSPLITTHRESHOLD);
 }
 
-void setCurrentSpeed(int deltaTime) {
+void absIter(unsigned char brakePos) {
+    for(unsigned char i = 0; i < 4; ++i)
+        updSensordata(wheelData[i]);
+    int speed = currentSpeed(1);
+    for(unsigned char i = 0; i < 4; ++i)
+        setBrakeForce(wheelData[i], brakePos);
+    }
+
+
+
+
+int currentSpeed(int deltaTime) {
     if(RRdata.brakeForce == 0 && RLdata.brakeForce == 0)
         vehicle.speed = (RRdata.speed + RLdata.speed) >> 2;
     else
         vehicle.speed += getAcc()*deltaTime;
 }
+
 
 void calculateBrakeForceReq(absData_t* wheel) {
    if (wheel->slip < minSlip(absParams.slipTolerance) || wheel->acc < absParams.minAcc)
