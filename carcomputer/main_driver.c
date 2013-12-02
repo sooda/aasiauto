@@ -27,8 +27,8 @@ volatile uint8_t flag_drive;    // 1000 Hz
 // 1000 Hz
 ISR(TIMER0_COMPA_vect) {
 	static uint8_t prescale;
-#warning change 200 back to 10
-	if (++prescale == 30) {
+#warning change back to 10
+	if (++prescale == 10) {
 		prescale = 0;
 		flag_transmit = 1;
 	}
@@ -66,6 +66,10 @@ void worktimer_init(void) {
 	//Enable timer compare interrupt
 	TIMSK0 |= (1 << OCIE0A);
 }
+void heartbeat(void) {
+	PORTA ^= _BV(2); // external blue led
+	PORTB ^= _BV(7); // some internal foo
+}
 
 int main() {
 	stdout = &mystdout;
@@ -91,10 +95,16 @@ int main() {
 			driveiter();
 		}
 		if (flag_transmit) {
+			static uint8_t subid;
 			flag_transmit = 0;
-			transmit_vals();
-			PORTA ^= _BV(2);
-			PORTB ^= _BV(7);
+			uint8_t err = transmit_vals();
+			if (err) {
+				if ((subid++ & 0x7f) < 0x40) // ~ 1s period
+					heartbeat();
+			} else {
+				if ((subid++ & 0x7) < 0x04) // ~ 0.1s period
+					heartbeat();
+			}
 		}
 	}
 }

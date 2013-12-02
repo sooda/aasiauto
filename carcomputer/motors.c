@@ -10,12 +10,16 @@ struct motorstate motors(void) {
 	return state;
 }
 
+void motorctl_set(int16_t l, int16_t r) {
+	pwm_set(PWM_LEFTMOTOR, l);
+	pwm_set(PWM_RIGHTMOTOR, r);
+}
+
 static void throttle(uint8_t sz, uint8_t id) {
 	(void)sz; (void)id;
 	state.left = comm_u16(BUF_RXHOST);
 	state.right = comm_u16(BUF_RXHOST);
-	pwm_set(PWM_LEFTMOTOR, state.left);
-	pwm_set(PWM_RIGHTMOTOR, state.right);
+	motorctl_set(state.left, state.right);
 }
 
 void motors_init(void) {

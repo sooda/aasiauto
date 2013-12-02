@@ -3,7 +3,7 @@
 
 void sensors_update(void);
 void init(void);
-void transmit_vals(void);
+uint8_t transmit_vals(void);
 void driveiter(void);
 
 #endif

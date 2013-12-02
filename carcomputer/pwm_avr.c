@@ -4,8 +4,10 @@
 #include <assert.h>
 #include "comm.h"
 
-void pwm_set(uint8_t i, uint16_t pos) {
+// pos -1000..1000
+void pwm_set(uint8_t i, int16_t pos) {
 	// TODO map these properly
+	pos = 1500 + pos / 2;
 	switch (i) {
 		case 0: OCR1A = pos; break;
 		case 1: OCR1B = pos; break;

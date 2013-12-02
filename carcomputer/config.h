@@ -68,4 +68,9 @@
 // handle messages from host and from slave
 #define N_STREAMS 2
 
+// how often the main ctrl updates stuff to host
+#define HZ 100
+
+#define WATCHDOG_MAX (HZ/2)
+
 #endif

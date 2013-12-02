@@ -15,7 +15,7 @@
 
 void steer(uint8_t sz, uint8_t id) {
 	(void)sz; (void)id;
-	pwm_set(PWM_STEERING, comm_u16(BUF_RXHOST));
+	pwm_set(PWM_STEERING, (int16_t)comm_u16(BUF_RXHOST));
 //	hostbuf_read(&buf, sizeof(buf));
 }
 
@@ -28,10 +28,24 @@ void sensors_update(void) {
 	ana_meas_update();
 }
 
-// TODO: make this a watchdog, stop if no ping in e.g. 10 ms
+uint16_t watchdog_val;
+
+void watchdog_reset(void) {
+	watchdog_val = WATCHDOG_MAX;
+}
+
+// 0 if cannot run
+uint8_t watchdog(void) {
+	if (watchdog_val)
+		watchdog_val--;
+
+	return watchdog_val;
+}
+
 static void pingpong(uint8_t sz, uint8_t id) {
 	(void)sz; (void)id;
 	dump_info(BUF_TXHOST, MSG_PONG, 0, NULL);
+	watchdog_reset();
 }
 
 // ping pong the actual brake command to the brake ctrlr
@@ -106,8 +120,17 @@ void init() {
 			2*sizeof(uint16_t), err_from_brakectl);
 }
 
+void failmode(void) {
+	motorctl_set(0, 0);
+}
+
 /* write the state vector to a single packet and send it to the host */
-void transmit_vals() {
+uint8_t transmit_vals(void) {
+	if (!watchdog()) {
+		failmode();
+		return 1;
+	}
+
 	static struct {
 		uint8_t sz, type;
 		uint16_t data[MEAS_NITEMS];
@@ -124,6 +147,8 @@ void transmit_vals() {
 	p = ana_meas_dump(p);
 
 	HOSTBUF_DUMP(packet);
+
+	return 0;
 }
 
 void driveiter(void) {

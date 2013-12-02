@@ -9,6 +9,6 @@ struct motorstate {
 
 void motors_init(void);
 struct motorstate motors(void);
-void motorctl_update(uint16_t l, uint16_t r);
+void motorctl_set(int16_t l, int16_t r);
 
 #endif
