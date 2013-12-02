@@ -452,7 +452,7 @@ function setCarConfParamBtn_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
     c = Car.getInstance;
-    if (~c.appdata.connected)
+    if (~isfield(c.appdata,'connected') || ~c.appdata.connected)
         Logging.log('Not connected');
         return;
     end

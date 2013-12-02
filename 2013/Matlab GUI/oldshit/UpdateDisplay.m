@@ -154,8 +154,8 @@ function UpdateDisplay(~, ~, hfigure, ~)
     % Process received measurement data
     
     % Store measured values
-    c.cardata.wheelspeeds = [c.cardata.wheelspeeds; data(1:4)];
-%    c.cardata.wheelspeeds = [c.cardata.wheelspeeds; 2 2 2 2];
+%    c.cardata.wheelspeeds = [c.cardata.wheelspeeds; data(1:4)];
+    c.cardata.wheelspeeds = [c.cardata.wheelspeeds; 2 2 2 2];
     c.cardata.acceleration = [c.cardata.acceleration; data(5:7)];
     c.cardata.gyro = [c.cardata.gyro; data(8:10)];
     c.cardata.wheeldirection = [c.cardata.wheeldirection; data(11)];
@@ -234,16 +234,14 @@ function UpdateDisplay(~, ~, hfigure, ~)
     %return;
     
     % Apply Kalman-filter
-
     if (timeSinceLast > 0)
         s = c.appdata.kalmanfilter;
-        dt = timeSinceLast;
 
         % set measured data
         s(end).z = [
            c.cardata.totalvelocity(end)
            c.cardata.acceleration(end)
-           degtorad(dir) % direction angle between [-45, 45] deg
+           degtorad(dir*-1) % direction angle between [-45, 45] deg
         ];
 
         s(end+1) = kalmanfilter(s(end)); % perform a Kalman filter iteration

@@ -1,7 +1,7 @@
 function A = calcA(s)
 %theta = 0;  % ajoneuvon suunta suhteessa x-akseliin
 %phi = 0;    % ohjauskulma suhteutettuna auton linjaan
-L = 4;       % akselien välimatka (TODO: mittaa autosta!)
+L = 5.2;    % akselien välimatka (m)2
 
 if ~isfield(s,'x')
     the = 0;

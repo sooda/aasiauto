@@ -7,9 +7,9 @@ classdef Protocol %< value
         function setCarValue(car, id, value)
             % TODO: value processing here?
             if id < 20
-%               value = value; % join from two bytes
+%               value = value;
             elseif id == 20
-%               value = value; % no conversion
+%               value = value;
             elseif id > 20 && id < 30
                value = num2str(value);
             elseif id == 40
@@ -17,11 +17,11 @@ classdef Protocol %< value
             elseif id > 40 && id <= 51
                value = num2str(value);
             elseif id > 51
-%               value = value; % join from two bytes
+%               value = value;
             end
 
-            disp('message:');
-            [num2str(id) ' - ' num2str(value)]
+%            disp('message:');
+%            [num2str(id) ' - ' num2str(value)]
             if numel(value) == 1
                 car.setParam(id, value);
             end
@@ -36,11 +36,11 @@ classdef Protocol %< value
             elseif id == 20
 %               value = value; % no conversion
             elseif id > 20 && id < 30
-               value = str2int(value);
+%               value = str2int(value);
             elseif id == 40
 %               value = value;
             elseif id > 40 && id <= 51
-               value = str2int(value);
+%               value = str2int(value);
             elseif id > 51
 %               value = value; % split to two bytes
             end
@@ -88,6 +88,9 @@ classdef Protocol %< value
         function sendCarParams(c)
             fields = fieldnames(c);
             for i=1:numel(fields)
+                if strcmp(fields{i},'appdata') || strcmp(fields{i},'cardata') % todo: any better way?
+                    continue;
+                end
                 id = c.(fields{i});
                 if isscalar(id)
                     value = Protocol.getCarValue(c, id);
