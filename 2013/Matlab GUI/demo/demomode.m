@@ -32,7 +32,7 @@ handles.h5 = rectangle('Position', [737,560+100,30,1], 'FaceColor', 'r', 'LineSt
 W = imresize(W, [200 200]);
 I(1:200,601:800,:) = W;
 
-text(735, 550, 'Break');
+text(735, 550, 'Brake');
 
 data.W = W;
 data.I = I;
