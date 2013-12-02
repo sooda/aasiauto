@@ -19,7 +19,7 @@ classdef Logging < handle
                 return;
             end
             
-            buffsize = 20;
+            buffsize = 8;
             
             oldmsgs = get(Logging.console, 'String');
             if(numel(oldmsgs) > buffsize)

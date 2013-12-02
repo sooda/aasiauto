@@ -21,7 +21,10 @@ classdef Protocol %< value
             end
 
             disp('message:');
-            car.setParam(id, value);
+            [num2str(id) ' - ' num2str(value)]
+            if numel(value) == 1
+                car.setParam(id, value);
+            end
             
         end
        
@@ -59,6 +62,7 @@ classdef Protocol %< value
                 
             elseif id == 4 % ERROR
                 Logging.log('ERROR MESSAGE RECEIVED!');
+                data
 
             elseif id == 99 % All params have been sent by car/GUI
                 setCarParametersData();
@@ -92,35 +96,35 @@ classdef Protocol %< value
             c.appdata.com.write2(99, []); % write two bytes
         end
         
-        function rest = parse_buffer2(buf)
+%        function rest = parse_buffer2(buf)
             % msg: [0xFF][lenOfData][id][data]
-            headersize = 3; % length of msg header size
-            n = numel(buf);
-            i = 1;
-            c = Car.getInstance;
+%            headersize = 3; % length of msg header size
+%            n = numel(buf);
+%            i = 1;
+%            c = Car.getInstance;
 
-            while i+2 <= n % minimum length of message is 3
+%            while i+2 <= n % minimum length of message is 3
                 % header not included in size data
-                if (buf(i) ~= 255) % message start byte (0xFF)
-                    Logging.log('corrupted msg...');
-                    return;
-                end
-                datasz = buf(i+1); % data size in bytes
-                chunksz = headersize + datasz; % message size
-                dataend = i + chunksz - 1; % last index of data
-                id = buf(i+2);
+%                if (buf(i) ~= 255) % message start byte (0xFF)
+%                    Logging.log('corrupted msg...');
+%                    return;
+%                end
+%                datasz = buf(i+1); % data size in bytes
+%                chunksz = headersize + datasz; % message size
+%                dataend = i + chunksz - 1; % last index of data
+%                id = buf(i+2);
                 
-                if dataend > n % full message chunk not available?
-                    break;
-                end
+%                if dataend > n % full message chunk not available?
+%                    break;
+%                end
 
-                data = ByteTools.buf2num(buf(i+3:dataend));
-                Protocol.parseMessage(c, id, data);
+%                data = ByteTools.buf2num(buf(i+3:dataend));
+%                Protocol.parseMessage(c, id, data);
 
-                i = i + chunksz; % move pointer to start of the next message
-            end
-            rest = buf(i:end); % return rest of the buffer
-        end
+%                i = i + chunksz; % move pointer to start of the next message
+%            end
+%            rest = buf(i:end); % return rest of the buffer
+%        end
             
         function rest = parse_buffer(buf)
             % msg: [lenOfData][id][data]
@@ -132,6 +136,12 @@ classdef Protocol %< value
             while i+1 <= n % minimum length of message is 3
                 % header not included in size data
                 datasz = buf(i); % data size in bytes
+                if mod(datasz,2) ~= 0
+                    disp(['Data size ei ole 2 jaollinen! ' num2str(datasz) num2str(buf(i+1)) ]);
+                    buf
+                    rest = [];
+                    return;
+                end
                 chunksz = headersize + datasz; % message size
                 dataend = i + chunksz - 1; % last index of data
                 
@@ -140,8 +150,19 @@ classdef Protocol %< value
                 end
 
                 id = buf(i+1);
-                data = ByteTools.buf2num(buf(i+2:dataend));
-                Protocol.parseMessage(c, id, data);
+                data = ByteTools.buf2num(int8(buf(i+2:dataend)));
+                
+                if id ~= 110 && id ~= 4 && id ~= 0 && id ~= 1 && id ~= 128
+                    disp('hassu viesti');
+                    [num2str(datasz) ' - ' num2str(id) ' - ' num2str(data)]
+                    [buf]
+                end
+                
+                if (c.appdata.manualdrive)
+                    Protocol.parseMessage(c, id, data);
+                else
+                    disp([c id data]);
+                end
 
                 i = i + chunksz; % move pointer to start of the next message
             end
@@ -149,11 +170,10 @@ classdef Protocol %< value
         end
         
         function value = processMeasurementData(m)
-            if ~numel(m)
-                value = zeros(1,13);
+            value = zeros(size(m));
+            if numel(m) == 0
                 return;
             end
-            value = zeros(size(m));
             c = Car.getInstance;
             
             % scale correct values

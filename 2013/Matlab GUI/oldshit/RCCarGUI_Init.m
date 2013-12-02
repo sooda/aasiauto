@@ -2,12 +2,11 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
     handles.output = hObject;
     
     % START USER CODE
+
     % Create a timer object to fire at 0.01 sec intervals
     % Specify function handles for its start and run callbacks
-    handles.timer = timer('Executionmode','fixedRate','Period', 0.02,...
+    handles.timer = timer('Executionmode','fixedRate','Period', 0.1,... % 0.02
         'TimerFcn', {@UpdateDisplay,hObject,handles});
-
-    %set(handles.timer,'Period',1);
 
     % Set the colors indicating a selected/unselected tab
     handles.unselectedTabColor=get(handles.monitoringText,'BackgroundColor');

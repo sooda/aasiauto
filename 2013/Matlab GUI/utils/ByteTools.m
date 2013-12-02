@@ -3,11 +3,23 @@ classdef ByteTools
 
     methods (Static)
         function num = buf2num(buf)
-            num = double(typecast(buf, 'int16'));
+            try
+                num = double(typecast(buf, 'int16'));
+            catch
+                num = [];
+                disp('ERROR2!!!')
+                buf
+            end
         end
     
         function buf = num2buf(num)
-            buf = typecast(uint16(num), 'uint8');
+            try
+                buf = typecast(int16(num), 'int8');
+            catch
+                buf = [];
+                disp('ERROR!!!');
+                num
+            end
         end
         
         function buf = duplicateFFs(val)

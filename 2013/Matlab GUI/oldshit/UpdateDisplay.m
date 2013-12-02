@@ -6,6 +6,8 @@ function UpdateDisplay(~, ~, hfigure, ~)
 
     c = Car.getInstance;
 
+    c.appdata.com.async_Communication_triggered(); % handle communication here
+    
     joy = [-0.2891    0.2620   -0.5703    0.5397]; % [ left_max right_max forward_max backward_max ]
 
     measurement_data = c.cardata.last_measurements;
@@ -124,7 +126,7 @@ function UpdateDisplay(~, ~, hfigure, ~)
         end
 
         %If no steering command given
-        if (~find(ismember(keys,'leftarrow') + ismember(keys,'rightarrow'))) % ~right && ~left arrow
+        if (~any(ismember(keys,'leftarrow') + ismember(keys,'rightarrow'))) % ~right && ~left arrow
              if(dir>0)
                   dir = dir - 10;
                   if(dir < 0)
@@ -267,22 +269,21 @@ function UpdateDisplay(~, ~, hfigure, ~)
     drv_brake = brake * 10;
 
     % throttle
-    data = ByteTools.num2buf(drv_throttle);
-    data = [data data];
+    data = [drv_throttle drv_throttle];
     c.appdata.com.write2(120, data);
 
     % steering
-    data = ByteTools.num2buf(drv_dir);
-    c.appdata.com.write2(121, data);
+    if drv_dir > 0
+        [121 drv_dir]
+    end
+    c.appdata.com.write2(121, drv_dir);
 
     % brake
-    data = ByteTools.num2buf(drv_brake);
-    data = [data data data data];
+    data = [drv_brake drv_brake drv_brake drv_brake];
     c.appdata.com.write2(122, data);
     
     % sound horn
-    data = ByteTools.num2buf(sound_horn);
-    c.appdata.com.write2(123, data);
+%    c.appdata.com.write2(123, sound_horn);
     
     %Update command plots
     set(handles2.reverse,'YData',rev);
@@ -290,6 +291,6 @@ function UpdateDisplay(~, ~, hfigure, ~)
     set(handles2.brake,'YData',brake);
     set(handles2.direction,'YData',dir);
 
-    drawnow;
+%    drawnow;
     
 end

@@ -9,6 +9,7 @@ classdef Communication < handle
         communicationTimer;
         buf_in;
         buf_out;
+        discardFirstMessage;
 
         STATUSCODE = struct('Disconnected', 0, ...
                             'Connecting', 1, ...
@@ -35,8 +36,10 @@ classdef Communication < handle
             
             this.connectionTimer = timer('Executionmode', 'fixedRate', 'Period', 0.5, ...
                 'TimerFcn', {@this.connectionTimer_triggered});
-            this.communicationTimer = timer('Executionmode', 'fixedRate', 'Period', 0.01, ...
-                'TimerFcn', {@this.async_Communication_triggered});
+%            this.communicationTimer = timer('Executionmode', 'fixedRate', 'Period', 0.01, ...
+%                'TimerFcn', {@this.async_Communication_triggered});
+            this.communicationTimer = timer('Executionmode', 'fixedRate', 'Period', 0.1, ...
+                'TimerFcn', {@this.keepAlive});
 
             if(strcmp(comport, '--'))
                 Logging.log('Please select a serial port.');
@@ -59,7 +62,7 @@ classdef Communication < handle
                     this.status = this.STATUSCODE.Connecting;
 
                     start(this.connectionTimer); %Timer to check for Initialization
-                    start(this.communicationTimer);
+%                    start(this.communicationTimer);
                     
                     this.write2(0, []); % ping
                     
@@ -98,7 +101,7 @@ classdef Communication < handle
             end
             
             % delete also all the rest timers
-            delete(timerfindall());
+%            delete(timerfindall());
             
             if (~this.isConnected() && this.status ~= this.STATUSCODE.Connecting)
                 % error!
@@ -146,6 +149,7 @@ classdef Communication < handle
                 stop(this.connectionTimer);
                 c = Car.getInstance;
                 c.appdata.connected = 1;
+%                this.discardFirstMessage = 1;
             else
             %    this.status = this.STATUSCODE.Disconnected;
             %    Logging.log('Initialization failed.');
@@ -153,8 +157,24 @@ classdef Communication < handle
             
         end
         
+        function this = keepAlive(this, varargin)
+            c = Car.getInstance;
+            if (this.status == this.STATUSCODE.Initialized && ~c.appdata.manualdrive)
+                this.write2(0, []); % ping
+                this.writeBytes(this.buf_out);
+                this.buf_out = [];
+
+                val = this.getBytes();
+                if (numel(val) > 0 && val(1) > -1)
+                    this.buf_in = [this.buf_in val];
+                    this.buf_in = Protocol.parse_buffer(this.buf_in); % just clean buffer here
+                end
+            end
+            
+        end
+        
         % Handle asynchronic reading and writing triggered by a timer.
-        function this = async_Communication_triggered(this, varargin)
+        function this = async_Communication_triggered(this) %, varargin)
             if (this.status == this.STATUSCODE.Simul)
                 if (exist('controller','file')) % file or builtin or class..
                     buf = controller(this.buf_out);
@@ -163,7 +183,7 @@ classdef Communication < handle
                 end
             elseif (this.status == this.STATUSCODE.Initialized)
                 val = this.getBytes();
-                if (numel(val) > 0 && val ~= -1)
+                if (numel(val) > 0 && val(1) > -1)
                     this.buf_in = [this.buf_in val];
                     this.buf_in = Protocol.parse_buffer(this.buf_in); % parse buffer asynchronously here!
                 end
@@ -181,16 +201,16 @@ classdef Communication < handle
         end
         
         function this = write(this, val)
-            val = ByteTools.num2buf(uint16(val));
+            val = ByteTools.num2buf(int16(val));
             val = ByteTools.duplicateFFs(val);
-            this.buf_out = [this.buf_out uint8(255) val];
+            this.buf_out = [this.buf_out int8(255) val];
         end
         
         function this = write2(this, id, data)
-            data = ByteTools.num2buf(uint16(data));
-            data = ByteTools.duplicateFFs(data);
+            data = ByteTools.num2buf(int16(data));
             sz = numel(data);
-            this.buf_out = uint8([this.buf_out 255 sz id data]);
+            data = ByteTools.duplicateFFs(data);
+            this.buf_out = int8([this.buf_out 255 sz id data]);
         end
         
         % Read all bytes (BytesAvailable).
@@ -200,28 +220,39 @@ classdef Communication < handle
                 val = -1;
             elseif (this.status == this.STATUSCODE.Initialized)
                 val = [];
-                while (this.serial_data.BytesAvailable)
+%                while (this.serial_data.BytesAvailable)
+                if (this.serial_data.BytesAvailable)
                     buf = fread(this.serial_data, this.serial_data.BytesAvailable);
 
-                    val = [val buf];
+%                    if (this.discardFirstMessage == 1 && numel(buf) > 0)
+%                        disp('Discard first bytes..');
+%                        buf
+%                        val = [];
+%                        return;
+%                    end
+                    val = [val buf'];
+%                    continue;
                     return;
+                    
                     % drop double-0xFF
-                    n = numel(buf);
-                    buf2 = buf;
-                    j = 1;
-                    i = 1;
-                    while i < n
-                        if buf(i) == 255 && buf(i+1) == 255
-                            i = i + 2;
-                            buf2(j+1) = '';
-                            continue;
-                        end
-                        j = j + 1;
-                        i = i + 1;
-                    end
+%                    n = numel(buf);
+%                    buf2 = buf;
+%                    j = 1;
+%                    i = 1;
+%                    while i < n
+%                        if buf(i) == 255 && buf(i+1) == 255
+%                            i = i + 2;
+%                            buf2(j+1) = '';
+%                            continue;
+%                        end
+%                        j = j + 1;
+%                        i = i + 1;
+%                    end
 
-                    val = [val buf2];
-                end
+%                    val = [val buf2];
+%                end
+                
+%                this.discardFirstMessage = 0;
             else
                 val = -1;
             end

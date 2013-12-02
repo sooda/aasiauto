@@ -128,7 +128,9 @@ c = Car.getInstance;
 if c.appdata.connected
    
     c.appdata.manualdrive = 1;
-    c.appdata.com.read();
+%    c.appdata.com.discardFirstMessage = 1;
+%    c.appdata.com.getBytes();
+%    c.appdata.com.read();
     start(handles.timer);
     %set(handles.textFieldSaveDataTo,'Enable', 'off');
     %set(handles.savedrivedatacheckbox,'Enable', 'off');
@@ -440,7 +442,7 @@ function getCarConfParamBtn_Callback(hObject, eventdata, handles)
     c.appdata.com.read()
     
     % request parameters
-    c.appdata.com.write(2, []);
+    c.appdata.com.write2(2, []);
 end
 
 %Save car parameters to car
