@@ -3,7 +3,11 @@
 #include "encoders.h"
 #include "motors.h" // testing
 
-static struct encoderstate state;
+static struct encoderstate state
+#ifdef MCU_BRAKES
+= {42, 1337, 42, 1337}
+#endif
+;
 
 void *encoders_dump(void *p) {
 	return memcpy(p, &state, sizeof(state)) + sizeof(state);
@@ -17,9 +21,17 @@ void encoders_update(struct encoderstate newstate) {
 #ifdef MCU_DRIVER
 	state = newstate;
 #else
+	(void)newstate;
+#ifdef MCU_BRAKES
 	state.fleft = 1230;
-	state.rleft = 2340;
-	state.fright = 3450;
+	state.fright = 2340;
+	state.rleft = newstate.rleft;
+	state.rright = newstate.rright;
+#else
+	state.fleft = 12300;
+	state.fright = 23400;
+	state.rleft = 3450;
 	state.rright = 4560;
+#endif
 #endif
 }

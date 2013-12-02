@@ -10,8 +10,11 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include <stdio.h>
 
-MAKE_USART_INIT(1)
+MAKE_USART_INIT(0) // pc, if debugging
+MAKE_USART_INIT(1) // driver
+MAKE_USART_INIT(3) // teensy
 
 /* Actual onboard drive
  *
@@ -31,6 +34,20 @@ ISR(TIMER0_COMPA_vect) {
 	}
 	flag_drive = 1;
 }
+
+static int uart_putchar(char c, FILE *stream) {
+	(void)stream;
+	cli();
+	while (!(UCSR0A & _BV(UDRE0)))
+		;
+	UDR0 = c;
+	while (!(UCSR0A & _BV(UDRE0)))
+		;
+	//sei();
+	return 0;
+}
+static FILE mystdout = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
+
 
 void worktimer_init(void) {
 	// ripped from the original program
@@ -63,8 +80,15 @@ int main() {
 		_delay_ms(1000);
 	}
 #endif
+	stdout = &mystdout;
+	stderr = &mystdout;
 	clock_prescale_set(clock_div_1);
+	usart_0_init(38400);
+	UCSR0B &= ~(_BV(RXCIE0) | _BV(TXCIE0));
+	printf("Hello world"); // cli() in putchar won't affect yet here
+	printf("Wollo Hello world"); // cli() in putchar won't affect yet here
 	usart_1_init(38400);
+	usart_3_init(38400);
 	//DDRD |= _BV(6); // led
 	DDRD |= _BV(3); // tx
 	DDRA |= 3;
@@ -76,6 +100,7 @@ int main() {
 	sei();
 	for (;;) {
 		msgs_work(BUF_RXHOST);
+		msgs_work(BUF_RXSLAVE);
 		sensors_update();
 		if (flag_drive) {
 			flag_drive = 0;

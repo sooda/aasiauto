@@ -50,7 +50,13 @@
 #define PWM_N 8
 
 #else
+#ifdef MCU_ENCODERS
+
+#define UART_HOST 1
+
+#else
 #error No proper MCU defined.
+#endif
 #endif
 #endif
 #endif

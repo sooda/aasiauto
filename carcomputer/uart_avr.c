@@ -90,6 +90,18 @@ ISR(USART3_TX_vect) {
 }
 #endif
 
+#ifdef MCU_ENCODERS
+ISR(USART1_RX_vect) {
+	ringbuf_putchar(BUF_RXHOST, UDR1);
+}
+ISR(USART1_TX_vect) {
+	if (!ringbuf_empty(BUF_TXHOST))
+		UDR1 = ringbuf_getchar(BUF_TXHOST);
+	else
+		sending &= ~_BV(HOST_BIT);
+}
+#endif
+
 void uartflush_host(void) {
 	cli();
 	if (!(sending & _BV(HOST_BIT))) {
@@ -99,6 +111,8 @@ void uartflush_host(void) {
 	sei();
 }
 
+#ifdef UART_SLAVE
+
 void uartflush_slave(void) {
 	cli();
 	if (!(sending & _BV(SLAVE_BIT))) {
@@ -107,3 +121,11 @@ void uartflush_slave(void) {
 	}
 	sei();
 }
+
+#else
+
+// won't get here, but needs to compile (FIXME)
+void uartflush_slave(void) {
+}
+
+#endif

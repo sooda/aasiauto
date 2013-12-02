@@ -39,12 +39,22 @@ static inline uint8_t ringbuf_full(uint8_t buf) {
 // le ring side, byte at a time
 
 // hw -> sw
+// a macro makes it easier to catch the assertion at proper location
+#if 0
 static inline void ringbuf_putchar(uint8_t buf, uint8_t c) {
 	assert(!ringbuf_full(buf));
 	uint8_t wp = wptr[buf];
 	buffer[buf][wp] = c;
 	wptr[buf] = (wp + 1) & SZMASK;
 }
+#else
+#define ringbuf_putchar(buf, c) do { \
+	assert(!ringbuf_full(buf)); \
+	uint8_t wp = wptr[buf]; \
+	buffer[buf][wp] = c; \
+	wptr[buf] = (wp + 1) & SZMASK; \
+} while (0)
+#endif
 
 // sw -> hw
 static inline uint8_t ringbuf_getchar(uint8_t buf) {

@@ -23,6 +23,11 @@ int8_t msgs_work(uint8_t bufid) {
 	uint8_t handbuf = (bufid == BUF_RXHOST) ? 1 : 0;
 	uint8_t available = comm_rxsize(bufid);
 
+#if MCU_ENCODERS
+	comm_ignore(bufid, available);
+	return 0;
+#endif
+
 	if (available < MSG_HDRSIZE)
 		return -1;
 

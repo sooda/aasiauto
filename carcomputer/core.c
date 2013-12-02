@@ -65,6 +65,14 @@ static void *imu_dump(void *p) {
 	return memcpy(p, &state, sizeof(state)) + sizeof(state);
 }
 
+static void err_from_brakectl(uint8_t sz, uint8_t id) {
+	(void)sz; (void)id;
+
+	uint16_t errtype = comm_u16(BUF_RXSLAVE);
+	uint16_t param = comm_u16(BUF_RXSLAVE);
+	comm_error(errtype | MSG_ERR_PROXIED_MASK, param);
+}
+
 static void meas_from_brakectl(uint8_t sz, uint8_t id) {
 	(void)sz; (void)id;
 	// TODO update those set by brakectl
@@ -93,6 +101,9 @@ void init() {
 
 	msgs_register_handler(BUF_RXSLAVE, MSG_CAR_MEAS_VECTOR,
 			MEAS_NITEMS*sizeof(uint16_t), meas_from_brakectl);
+
+	msgs_register_handler(BUF_RXSLAVE, MSG_ERR,
+			2*sizeof(uint16_t), err_from_brakectl);
 }
 
 /* write the state vector to a single packet and send it to the host */

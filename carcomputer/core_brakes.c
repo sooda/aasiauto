@@ -9,8 +9,8 @@
 
 void sensors_update(void) {
 	// FIXME
-	struct encoderstate st;
-	encoders_update(st);
+	//struct encoderstate st = {42,43,44,45};
+	//encoders_update(st);
 }
 
 // TODO: make this a watchdog, stop if no ping in e.g. 10 ms
@@ -70,6 +70,15 @@ static void brake_cmd(uint8_t sz, uint8_t id) {
 	initd = 1;
 }
 
+static void meas_from_wheelctl(uint8_t sz, uint8_t id) {
+	(void)sz; (void)id;
+	// TODO update those set by it
+	struct encoderstate enc;
+	uartbuf_read(BUF_RXSLAVE, &enc, sizeof(enc));
+	comm_ignore(BUF_RXSLAVE, (6+3)*sizeof(uint16_t));
+	encoders_update(enc);
+}
+
 void init() {
 	pwm_init();
 	init_param_array(MSG_BRAKE_PARAMS_START, MSG_BRAKE_PARAMS_END, param_saver_brakes);
@@ -77,6 +86,9 @@ void init() {
 	init_param_array(MSG_ESP_PARAMS_START, MSG_ESP_PARAMS_END, param_saver_abs);
 	msgs_register_handler(BUF_RXHOST, MSG_BRAKE, 4*sizeof(uint16_t), brake_cmd);
 	msgs_register_handler(BUF_RXHOST, MSG_PING, 0, pingpong);
+
+	msgs_register_handler(BUF_RXSLAVE, MSG_CAR_MEAS_VECTOR,
+			MEAS_NITEMS*sizeof(uint16_t), meas_from_wheelctl);
 }
 
 /* write the state vector to a single packet and send it to the host */

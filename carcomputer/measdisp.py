@@ -34,8 +34,8 @@ def parse_packet(data):
 	kind = ord(data[1])
 	if kind == MSG_CAR_MEAS_VECTOR:
 		nums = struct.unpack("<" + "H" * MEAS_NITEMS, "".join(data[2:]))
-		print j
-		print i
+		print "j",j
+		print "i",i
 		print "\n".join("%s:\t%d" % t for t in zip(MEASNAMES, nums))
 
 		j += 1
@@ -50,7 +50,6 @@ def parse_packet(data):
 			i2 = (ii >> 8) & 0xff # hi byte
 			hax = "".join(map(chr, [i1, i2, i1, i2, i1, i2, i1, i2]))
 
-			ser.write("\xff\x00\x00")
 			ser.write("\xff\x08\x7a" + hax)
 			ser.write("\xff\x00\x00")
 			i += 10
@@ -61,7 +60,7 @@ def parse_packet(data):
 		print map(ord, data[2:])
 		time.sleep(1)
 	elif kind == MSG_PONG:
-		print "YAAAAAY\n" * 20
+		print "YAAAAAY PONG\n" * 20
 		time.sleep(0.05)
 	else:
 		print "wat %s %s %s %s" % (sz, kind, data, "".join(data))
