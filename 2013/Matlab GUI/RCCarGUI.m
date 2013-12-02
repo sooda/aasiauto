@@ -571,4 +571,11 @@ function drawMeasurements_Callback(hObject, eventdata, handles)
     h.h1 = plot(0, [0 0]);
     h.h2 = legend('Motor battery voltage', 'Control battery voltage');
     setappdata(2, 'handles', h);
+    
+    c = Car.getInstance;
+    
+    mdata = { c.cardata.motorBatteryVoltage ;
+    c.cardata.controllerBatteryVoltage };
+    set(h.h1, {'YData'}, mdata, 'XData', c.cardata.timepassed');
+
 end

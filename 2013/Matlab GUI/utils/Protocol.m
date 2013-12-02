@@ -161,7 +161,8 @@ classdef Protocol %< value
                 if (c.appdata.manualdrive)
                     Protocol.parseMessage(c, id, data);
                 else
-                    disp([id data]);
+                    % Manual drive is not enabled, do nothing.
+                    %disp([id data]);
                 end
 
                 i = i + chunksz; % move pointer to start of the next message

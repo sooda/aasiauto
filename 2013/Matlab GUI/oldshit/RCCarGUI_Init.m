@@ -109,7 +109,7 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
     cardata.wheeldirection = 0;
     %cardata.dynamicwheelradius = 0;
     cardata.brake = 0;
-    cardata.position = [0 0 0]; %X Y Z
+    cardata.position = [0 0]; %X Y Z
     cardata.gyro = [0 0 0]; %X Y Z
     cardata.wheelspeeds = [0 0 0 0]; %Left front, Right front, Left back, Right back
     cardata.totalvelocity = 0;

@@ -157,7 +157,11 @@ function UpdateDisplay(~, ~, hfigure, ~)
     c.cardata.controllerBatteryVoltage = [c.cardata.controllerBatteryVoltage; data(13)];
     
     % Update Timer
-    c.cardata.timepassed = [c.cardata.timepassed; c.cardata.timepassed(end) + handles2.timer.InstantPeriod];
+%    if isnan(c.cardata.timepassed(end))
+%        c.cardata.timepassed(end+1) = 0.1;
+%    else
+    c.cardata.timepassed(end+1) = c.cardata.timepassed(end) +0.1; %+ handles2.timer.InstantPeriod;
+%    end
     
     % Car Total velocity
     totalvelocity = sum(c.cardata.wheelspeeds(end,1:4))/2;
@@ -165,11 +169,12 @@ function UpdateDisplay(~, ~, hfigure, ~)
 
     % plot some measurements
     if ishandle(2)
-        disp('here');
         h = getappdata(2, 'handles');
-        mdata = { c.cardata.motorBatteryVoltage ;
-            c.cardata.controllerBatteryVoltage };
-        set(h.h1, {'YData'}, mdata, 'XData', c.cardata.timepassed);
+        if isfield(h,'h1')
+            mdata = { c.cardata.motorBatteryVoltage ;
+                c.cardata.controllerBatteryVoltage };
+            set(h.h1, {'YData'}, mdata, 'XData', c.cardata.timepassed');
+        end
     end
 
     
@@ -178,17 +183,15 @@ function UpdateDisplay(~, ~, hfigure, ~)
     if(numel(c.cardata.timepassed) > 1)
         timeSinceLast = c.cardata.timepassed(end) - c.cardata.timepassed(end-1);
     end
-
 %    posLength = size(c.cardata.position,1);
 %    c.cardata.position = [c.cardata.position; c.cardata.position(posLength,:) + deltaPos];
 
 
     % Use Kalman filter to predict position using velocity,
     % acceleration and theta angle
-
     % initialize on the first time
     if (~isfield(c.appdata,'kalmanfilter'))
-        s.dt = timeSinceLast;
+        dt = 0.1; %timeSinceLast;
         s.A = calcA(nan); % initialize with theta 0
 
         % Define a process noise (stdev) as the car operates:
@@ -215,14 +218,19 @@ function UpdateDisplay(~, ~, hfigure, ~)
         % Do not specify an initial state:
         s.x = nan;
         s.P = nan;
+%        s.z = [0; 0; 0];
         c.appdata.kalmanfilter = s;
 
     end
-
+    
+    %c.appdata = rmfield(c.appdata,'kalmanfilter');
+    %return;
+    
     % Apply Kalman-filter
+
     if (timeSinceLast > 0)
         s = c.appdata.kalmanfilter;
-        s.dt = timeSinceLast;
+        dt = timeSinceLast;
 
         % set measured data
         s(end).z = [
@@ -243,8 +251,6 @@ function UpdateDisplay(~, ~, hfigure, ~)
         c.cardata.position = [c.cardata.position; pos];
         c.appdata.kalmanfilter = s;
     end
-                
-
     % Update c.cardata
     set(handles2.carpath,'XData',c.cardata.position(:,1));
     set(handles2.carpath,'YData',c.cardata.position(:,2));
@@ -260,7 +266,6 @@ function UpdateDisplay(~, ~, hfigure, ~)
 
 %    thro = thro * 0.2; % TODO: scaling throttle and reverse shoudn't be needed here!
 %    rev = rev * 0.2;
-
     %SEND DATA TO CAR
     if (rev > 0)
         thro = rev*-1;
@@ -271,17 +276,17 @@ function UpdateDisplay(~, ~, hfigure, ~)
 
     % throttle
     data = [drv_throttle drv_throttle];
-    c.appdata.com.write2(120, data);
+%    c.appdata.com.write2(120, data);
 
     % steering
     if drv_dir > 0
         [121 drv_dir]
     end
-    c.appdata.com.write2(121, drv_dir);
+%    c.appdata.com.write2(121, drv_dir);
 
     % brake
     data = [drv_brake drv_brake drv_brake drv_brake];
-    c.appdata.com.write2(122, data);
+%    c.appdata.com.write2(122, data);
     
     % sound horn
 %    c.appdata.com.write2(123, sound_horn);

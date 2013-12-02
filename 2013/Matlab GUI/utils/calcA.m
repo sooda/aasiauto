@@ -11,7 +11,7 @@ else
     the = s.x(5);       % theta angle from state vector
     phi = -1 * s.z(3);  % phi angle from measurements
 %    phi = s.x(6);
-    dt = s.dt;
+    dt = 0.1; %s.dt;
 end
 
 A = [
