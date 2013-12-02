@@ -164,7 +164,8 @@ function UpdateDisplay(~, ~, hfigure, ~)
 %    end
     
     % Car Total velocity
-    totalvelocity = sum(c.cardata.wheelspeeds(end,1:4))/2;
+%    totalvelocity = sum(c.cardata.wheelspeeds(end,1:4))/4;
+    totalvelocity = max(c.cardata.wheelspeeds(end,1:4));
     c.cardata.totalvelocity = [c.cardata.totalvelocity; totalvelocity];
 
     % plot some measurements

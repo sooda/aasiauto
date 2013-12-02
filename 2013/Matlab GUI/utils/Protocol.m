@@ -69,6 +69,7 @@ classdef Protocol %< value
                 Logging.log('All car parameters received successfully.');
                 
             elseif id == 110 % Car data vector (measurements)
+                data
                 c.cardata.last_measurements = data; % just override..
                 
             elseif id == 120 % Driving data from GUI to Car..
@@ -80,7 +81,7 @@ classdef Protocol %< value
         end
         
         function pong(c)
-            c.appdata.com.write([0 1]); % 0-length pong
+            c.appdata.com.write2(1, []); % pong
         end
         
         function sendCarParams(c)
@@ -89,7 +90,6 @@ classdef Protocol %< value
                 id = c.(fields{i});
                 if isscalar(id)
                     value = Protocol.getCarValue(c, id);
-%                    c.appdata.com.write([2 id value]); % write two bytes
                     c.appdata.com.write2(id, value);
                 end
             end
@@ -180,9 +180,10 @@ classdef Protocol %< value
             % scale correct values
             
             % Wheel speeds
-            % Speed [km/h] = 3.6 * pi * wheeldiameter[m] * relevations/seconds
+            % Speed [km/h] = 3.6 * pi * wheeldiameter[m] * relevations/seconds / scaling factor
             for i=1:4
-                value(i) = 1.4137 *(( m(i) /512)/0.01); %TODO: em?
+                value(i) = 2 * pi * 62.5/1000 *(( m(i) /2048)/0.00125) / 16;
+                
             end
             
             % Acceleration-x,y,z

@@ -189,6 +189,8 @@ classdef Communication < handle
                     this.buf_in = Protocol.parse_buffer(this.buf_in); % parse buffer asynchronously here!
                 end
                 
+                this.write2(0, []); % ping
+                
                 if numel(this.buf_out) > 0
                     this.writeBytes(this.buf_out);
                     this.buf_out = [];
@@ -222,7 +224,9 @@ classdef Communication < handle
             elseif (this.status == this.STATUSCODE.Initialized)
                 val = [];
 %                while (this.serial_data.BytesAvailable)
+                disp(',');
                 if (this.serial_data.BytesAvailable)
+                    disp('.');
                     buf = fread(this.serial_data, this.serial_data.BytesAvailable);
 
 %                    if (this.discardFirstMessage == 1 && numel(buf) > 0)
