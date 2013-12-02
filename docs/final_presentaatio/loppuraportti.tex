@@ -30,9 +30,8 @@ Toni Liski, Konsta Hölttä, Lasse Kortetjärvi
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{Auto}
-Insert hieno (lol) kuva tähän, vaikka tänpäiväiseltä devaussessiolta läppäreiden ja radion ja kolan kanssa..
-
-Autosta kans kuva??
+\centering
+\includegraphics[width=0.9\textwidth]{autoprojekti.png}
 \end{frame}
 
 \begin{frame}{Auto}
@@ -42,6 +41,7 @@ Autosta kans kuva??
 \item Hitautta servoissa
 \item Heikkouksia nopeusmittauksessa
 \item Ruuvit tiukassa
+\item Servoihin ajateltu jännitesäätöä
 \end{itemize}
 \end{frame}
 
@@ -50,7 +50,7 @@ Autosta kans kuva??
 \item Alkuperäinen koodi proof-of-concept-tasoista
 \item Tutkittu, siistitty, uudelleenkirjoitettu
 \item Tavoitteena helppo jatkokehitysympäristö
-\item Sekä tietysti varsinainen käyttö
+\item Sekä tietysti varsinainen käyttö, vakaa toiminta
 \end{itemize}
 \end{frame}
 
@@ -59,7 +59,8 @@ Autosta kans kuva??
 \item Jäljessä
 \item Tilausten kanssa viivettä
 \item Refaktoroinnissa on työtä
-\item Automaattihifistelyjä ei voi testata
+\item Automaattihifistelyjä ei voi testata ajamatta
+\item Suunnitelman hienoimmat ominaisuudet tuskin toteutuvat
 \end{itemize}
 \end{frame}
 
@@ -97,32 +98,47 @@ Autosta kans kuva??
 \item 80-90\% koodista kirjoitettu uudestaan
 \item Jatkokehitys helpompaa
 \item Otettu Kalman-filtteri käyttöön
+\item Yksi 2000-rivinen tiedosto $\Rightarrow$ parikymmentä pienempää
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Käyttöliittymä}
-Pari kuvaa GUI:sta tänne!
+\centering
+\includegraphics[width=0.5\textwidth]{demomode.png}
+\end{frame}
+
+\begin{frame}{Käyttöliittymä}
+\centering
+\includegraphics[width=0.9\textwidth]{gui1.png}
+\end{frame}
+
+\begin{frame}{Käyttöliittymä}
+\centering
+\includegraphics[width=0.9\textwidth]{gui1.png}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{Mikrokontrollerit}
+\begin{frame}{Mikrokontrollerit; varsinainen ohjaus}
 \begin{itemize}
+\item Enemmän koodia, tosin paljon selkeämpää
 \item Vielä hiottavaa
 \item Auto ei kulje edelleenkään: hardisongelmia, ei riipu ohjauksesta
 \item Koodi käytännössä uusittu kokonaan
 \item Paremmin strukturoitua, porttautuvaa
 \item Voi kääntää matlabin mex-funktioksi
+\item Alun perin kolme tiedostoa (yksi per kontrolleri)
+\item Nyt parikymmentä
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Mikrokontrollerit}
 \begin{itemize}
-\item Edelleen kaikki kolme kontrolleria käytössä
+\item Kytkentöjen takia edelleen kaikki kolme kontrolleria käytössä
+\item PC $\Leftrightarrow$ ohjaus $\Leftrightarrow$ jarrut $\Leftrightarrow$ enkooderit
 \item Yhteistä kommunikaatiokoodia, pakettipohjainen protokolla
 \item Alkuperäinen copypasta korvattu geneerisemmällä koodilla
 \item Ei juurikaan ota kantaa instrumentoinnin kytkentöihin
-\item PC $\Leftrightarrow$ ohjaus $\Leftrightarrow$ jarrut $\Leftrightarrow$ enkooderit
 \item Synkronointi?
 \end{itemize}
 \end{frame}
