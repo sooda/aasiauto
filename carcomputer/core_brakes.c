@@ -68,10 +68,10 @@ static void brake_cmd(uint8_t sz, uint8_t id) {
 		uint16_t fl, fr, rl, rr;
 	} brk;
 	uartbuf_read(BUF_RXHOST, &brk, sizeof(brk));
-	pwm_set(PWM_BRAKE_FR, brk.fr);
-	pwm_set(PWM_BRAKE_FL, brk.fl);
-	pwm_set(PWM_BRAKE_RL, brk.rl);
-	pwm_set(PWM_BRAKE_RR, brk.rr);
+	servo_set(PWM_BRAKE_FR, brk.fr/2);
+	servo_set(PWM_BRAKE_FL, brk.fl/2);
+	servo_set(PWM_BRAKE_RL, brk.rl/2);
+	servo_set(PWM_BRAKE_RR, brk.rr/2);
 	extern int initd;
 	initd = 1;
 }
