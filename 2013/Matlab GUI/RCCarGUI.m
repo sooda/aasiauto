@@ -211,6 +211,7 @@ if(strcmp(c.appdata.selectedcomport, '--'))
     Logging.log('Please select a serial port.')
 
 else
+    c.appdata.manualdrive = 0;
     c.appdata.com = Communication();
     c.appdata.com.connectToCar(c.appdata.selectedcomport);
 

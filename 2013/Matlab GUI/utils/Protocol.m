@@ -131,7 +131,7 @@ classdef Protocol %< value
             headersize = 2; % length of msg header size
             n = numel(buf);
             i = 1;
-            c = Car.getInstance;
+            c = Car.getInstance();
 
             while i+1 <= n % minimum length of message is 3
                 % header not included in size data
@@ -150,7 +150,7 @@ classdef Protocol %< value
                 end
 
                 id = buf(i+1);
-                data = ByteTools.buf2num(int8(buf(i+2:dataend)));
+                data = ByteTools.buf2num(uint8(buf(i+2:dataend)));
                 
                 if id ~= 110 && id ~= 4 && id ~= 0 && id ~= 1 && id ~= 128
                     disp('hassu viesti');
@@ -161,7 +161,7 @@ classdef Protocol %< value
                 if (c.appdata.manualdrive)
                     Protocol.parseMessage(c, id, data);
                 else
-                    disp([c id data]);
+                    disp([id data]);
                 end
 
                 i = i + chunksz; % move pointer to start of the next message

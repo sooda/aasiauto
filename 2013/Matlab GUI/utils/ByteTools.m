@@ -14,7 +14,7 @@ classdef ByteTools
     
         function buf = num2buf(num)
             try
-                buf = typecast(int16(num), 'int8');
+                buf = typecast(int16(num), 'uint8');
             catch
                 buf = [];
                 disp('ERROR!!!');

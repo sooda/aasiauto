@@ -62,9 +62,9 @@ classdef Communication < handle
                     this.status = this.STATUSCODE.Connecting;
 
                     start(this.connectionTimer); %Timer to check for Initialization
-%                    start(this.communicationTimer);
+                    start(this.communicationTimer);
                     
-                    this.write2(0, []); % ping
+                    fwrite(this.serial_data, uint8([0 0]));
                     
                 catch err
 
@@ -140,14 +140,14 @@ classdef Communication < handle
 %                c = Car.getInstance;
 %                c.appdata.connected = 1;
 
-
+            disp('.');
             % wait for input from car
             if (this.serial_data.BytesAvailable && ...
                     this.status ~= this.STATUSCODE.Initialized)
                 this.status = this.STATUSCODE.Initialized;
                 Logging.log('Initialized and ready for drive session.');
                 stop(this.connectionTimer);
-                c = Car.getInstance;
+                c = Car.getInstance();
                 c.appdata.connected = 1;
 %                this.discardFirstMessage = 1;
             else
@@ -158,8 +158,9 @@ classdef Communication < handle
         end
         
         function this = keepAlive(this, varargin)
-            c = Car.getInstance;
-            if (this.status == this.STATUSCODE.Initialized && ~c.appdata.manualdrive)
+            c = Car.getInstance();
+            
+            if ~isfield(c.appdata,'manualdrive') || (this.status == this.STATUSCODE.Initialized && c.appdata.manualdrive ~= 1)
                 this.write2(0, []); % ping
                 this.writeBytes(this.buf_out);
                 this.buf_out = [];
@@ -200,17 +201,17 @@ classdef Communication < handle
             this.buf_in = [];
         end
         
-        function this = write(this, val)
-            val = ByteTools.num2buf(int16(val));
-            val = ByteTools.duplicateFFs(val);
-            this.buf_out = [this.buf_out int8(255) val];
-        end
+%        function this = write(this, val)
+%            val = ByteTools.num2buf(int16(val));
+%            val = ByteTools.duplicateFFs(val);
+%            this.buf_out = [this.buf_out int8(255) val];
+%        end
         
         function this = write2(this, id, data)
             data = ByteTools.num2buf(int16(data));
             sz = numel(data);
             data = ByteTools.duplicateFFs(data);
-            this.buf_out = int8([this.buf_out 255 sz id data]);
+            this.buf_out = uint8([this.buf_out 255 sz id data]);
         end
         
         % Read all bytes (BytesAvailable).
@@ -250,7 +251,7 @@ classdef Communication < handle
 %                    end
 
 %                    val = [val buf2];
-%                end
+                end
                 
 %                this.discardFirstMessage = 0;
             else

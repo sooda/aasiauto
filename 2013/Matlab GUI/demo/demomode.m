@@ -59,7 +59,7 @@ v2 = c.cardata.wheelspeeds(end,2)+1;
 v3 = c.cardata.wheelspeeds(end,3)+1;
 v4 = c.cardata.wheelspeeds(end,4)+1;
 
-b = sum(c.cardata.acceleration(end)) / 3 +1; % total acceleration..
+b = sum(c.cardata.acceleration(end)) / 1 + 1; % total acceleration..
 r = c.cardata.brake(end) +1;
 
 a = c.cardata.wheeldirection(end);

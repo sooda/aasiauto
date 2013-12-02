@@ -165,6 +165,7 @@ function UpdateDisplay(~, ~, hfigure, ~)
 
     % plot some measurements
     if ishandle(2)
+        disp('here');
         h = getappdata(2, 'handles');
         mdata = { c.cardata.motorBatteryVoltage ;
             c.cardata.controllerBatteryVoltage };
