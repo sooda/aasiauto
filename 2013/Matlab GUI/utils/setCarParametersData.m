@@ -1,6 +1,7 @@
 %Set the parameter data to the car parameters editboxes
-function setCarParametersData(handles)
+function setCarParametersData()
 
+handles = getappdata(0, 'handles');
 c = Car.getInstance;
 
 %Set Vehicle parameters

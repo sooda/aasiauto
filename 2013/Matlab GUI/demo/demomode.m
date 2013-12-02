@@ -54,10 +54,10 @@ c = Car.getInstance;
 %b = rand*100;      % acceleration of wheels [0, 100]
 %a = (rand-0.5)*90; % steering wheel angle [-45,45]
 
-v1 = c.cardata.wheelspeeds(end,1)/1000+1;
-v2 = c.cardata.wheelspeeds(end,2)/1000+1;
-v3 = c.cardata.wheelspeeds(end,3)/1000+1;
-v4 = c.cardata.wheelspeeds(end,4)/1000+1;
+v1 = c.cardata.wheelspeeds(end,1)*15+1;
+v2 = c.cardata.wheelspeeds(end,2)*15+1;
+v3 = c.cardata.wheelspeeds(end,3)*15+1;
+v4 = c.cardata.wheelspeeds(end,4)*15+1;
 
 b = sum(c.cardata.acceleration(end)) / 1 + 1; % total acceleration..
 r = c.cardata.brake(end) +1;

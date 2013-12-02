@@ -5,7 +5,7 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
 
     % Create a timer object to fire at 0.01 sec intervals
     % Specify function handles for its start and run callbacks
-    handles.timer = timer('Executionmode','fixedRate','Period', 0.1,... % 0.02
+    handles.timer = timer('Executionmode','fixedRate','Period', 0.05,... % 0.02
         'TimerFcn', {@UpdateDisplay,hObject,handles});
 
     % Set the colors indicating a selected/unselected tab
@@ -160,10 +160,12 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
     ylim([0 100])
     title('Throttle')
 
+    setappdata(0, 'handles', handles);
+
     %Load and set the default values for the car parameters data
     if exist('default_params.mat', 'file')
         c.loadFromFile('default');
-        setCarParametersData(handles);
+        setCarParametersData();
         set(handles.savedrivedatacheckbox,'Value',1)
     end
     

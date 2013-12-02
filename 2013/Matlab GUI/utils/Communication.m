@@ -59,6 +59,8 @@ classdef Communication < handle
                     fopen (this.serial_data);
 
                     Logging.log('Connected, please wait for car initialization...');
+                    disp(['Please, notice that microcontrollers must have been turned ' ...
+                        'on before attempting to connect the car.']);
                     this.status = this.STATUSCODE.Connecting;
 
                     start(this.connectionTimer); %Timer to check for Initialization
@@ -140,7 +142,6 @@ classdef Communication < handle
 %                c = Car.getInstance;
 %                c.appdata.connected = 1;
 
-            disp('.');
             % wait for input from car
             if (this.serial_data.BytesAvailable && ...
                     this.status ~= this.STATUSCODE.Initialized)
@@ -151,8 +152,9 @@ classdef Communication < handle
                 c.appdata.connected = 1;
 %                this.discardFirstMessage = 1;
             else
-            %    this.status = this.STATUSCODE.Disconnected;
-            %    Logging.log('Initialization failed.');
+                % ping
+                fwrite(this.serial_data, uint8([0 0]));
+                disp('.');
             end
             
         end
@@ -224,9 +226,7 @@ classdef Communication < handle
             elseif (this.status == this.STATUSCODE.Initialized)
                 val = [];
 %                while (this.serial_data.BytesAvailable)
-                disp(',');
                 if (this.serial_data.BytesAvailable)
-                    disp('.');
                     buf = fread(this.serial_data, this.serial_data.BytesAvailable);
 
 %                    if (this.discardFirstMessage == 1 && numel(buf) > 0)

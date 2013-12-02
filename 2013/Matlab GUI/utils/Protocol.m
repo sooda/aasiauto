@@ -52,7 +52,7 @@ classdef Protocol %< value
                 Protocol.pong(c);
                 
             elseif id == 1 % pong
-                Logging.log('Got pong!');
+%                Logging.log('Got pong!');
                 
             elseif id == 2 % GUI requests car params
                 % ...
@@ -65,12 +65,13 @@ classdef Protocol %< value
                 data
 
             elseif id == 99 % All params have been sent by car/GUI
-                setCarParametersData();
                 Logging.log('All car parameters received successfully.');
+                setCarParametersData();
                 
             elseif id == 110 % Car data vector (measurements)
-                data
-                c.cardata.last_measurements = data; % just override..
+                if (c.appdata.manualdrive)
+                    c.cardata.last_measurements = data; % just override..
+                end
                 
             elseif id == 120 % Driving data from GUI to Car..
                 % ...
@@ -93,7 +94,7 @@ classdef Protocol %< value
                     c.appdata.com.write2(id, value);
                 end
             end
-            c.appdata.com.write2(99, []); % write two bytes
+            c.appdata.com.write2(99, []);
         end
         
 %        function rest = parse_buffer2(buf)
@@ -137,7 +138,7 @@ classdef Protocol %< value
                 % header not included in size data
                 datasz = buf(i); % data size in bytes
                 if mod(datasz,2) ~= 0
-                    disp(['Data size ei ole 2 jaollinen! ' num2str(datasz) num2str(buf(i+1)) ]);
+                    disp(['Data size ei ole 2 jaollinen! ' num2str(datasz) ' ' num2str(buf(i+1)) ]);
                     buf
                     rest = [];
                     return;
@@ -152,18 +153,13 @@ classdef Protocol %< value
                 id = buf(i+1);
                 data = ByteTools.buf2num(uint8(buf(i+2:dataend)));
                 
-                if id ~= 110 && id ~= 4 && id ~= 0 && id ~= 1 && id ~= 128
-                    disp('hassu viesti');
-                    [num2str(datasz) ' - ' num2str(id) ' - ' num2str(data)]
-                    [buf]
-                end
+%                if id ~= 110 && id ~= 4 && id ~= 0 && id ~= 1 && id ~= 128
+%                    disp('hassu viesti');
+%                    [num2str(datasz) ' - ' num2str(id) ' - ' num2str(data)]
+%                    [buf]
+%                end
                 
-                if (c.appdata.manualdrive)
-                    Protocol.parseMessage(c, id, data);
-                else
-                    % Manual drive is not enabled, do nothing.
-                    %disp([id data]);
-                end
+                Protocol.parseMessage(c, id, data);
 
                 i = i + chunksz; % move pointer to start of the next message
             end
@@ -203,10 +199,10 @@ classdef Protocol %< value
             value(11) = m(11);
             
             % Motor battery voltage
-            value(12) = m(12);
+            value(12) = m(12) / 1023 * 8.4;
             
             % Controller battery voltage
-            value(13) = m(13);
+            value(13) = m(13) / 1023 * 12.6;
         end
 
    end

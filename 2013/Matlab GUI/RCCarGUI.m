@@ -115,9 +115,6 @@ function startmandrivebtn_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Only start timer if it is not running
-%appdata = getappdata(handles.figure1, 'App_Data');
-
 %if (~exist('ListenChar', 'file'))
 %    Logging.log('You need PsychToolBox to be installed in order to command Matlab with keyboard! Stop.');
 %    return;
@@ -127,10 +124,16 @@ c = Car.getInstance;
 
 if c.appdata.connected
    
+    % enable or disable joystick
+    if ~numel(c.appdata.joystick)
+        try
+            c.appdata.joystick = vrjoystick(1);
+        catch
+            c.appdata.joystick = [];
+        end
+    end
+    
     c.appdata.manualdrive = 1;
-%    c.appdata.com.discardFirstMessage = 1;
-%    c.appdata.com.getBytes();
-%    c.appdata.com.read();
     start(handles.timer);
     %set(handles.textFieldSaveDataTo,'Enable', 'off');
     %set(handles.savedrivedatacheckbox,'Enable', 'off');
@@ -166,7 +169,7 @@ if (c.appdata.manualdrive)
         tim = strcat(num2str(t(6)),num2str(t(5)),num2str(t(4)),num2str(t(3)),num2str(t(2)),num2str(t(1)));
         filename = '\dSession';
         nameAndDir = strcat(c.appdata.save_drive_directory, filename, tim, '.mat');
-        save(nameAndDir, 'carData')
+        save(nameAndDir, 'carData');
         Logging.log('Data saved to selected directory.');
     end
     
@@ -177,7 +180,7 @@ if (c.appdata.manualdrive)
     c.cardata.reverse = 0;
     c.cardata.wheeldirection = 0;
     c.cardata.brake = 0;
-    c.cardata.position = [0 0 0]; %X Y Z
+    c.cardata.position = [0 0]; %X Y
     c.cardata.gyro = [0 0 0]; %X Y Z
     c.cardata.wheelspeeds = [0 0 0 0]; %Left front, Right front, Left back, Right back
     c.cardata.totalvelocity = 0;
@@ -406,7 +409,7 @@ c = Car.getInstance;
     nameAndDir = strcat(pathname,filename);
 
     c.loadFromFile(nameAndDir);
-    setCarParametersData(handles);
+    setCarParametersData();
 
     Logging.log('Car parameters data loaded.');
  end
@@ -424,7 +427,7 @@ function resetToDefault_ClickedCallback(hObject, eventdata, handles)
 if strcmp(response, 'Reset parameters')
     
     c.loadFromFile('default');
-    setCarParametersData(handles);
+    setCarParametersData();
    
     Logging.log('Default car data parameters loaded.');
 end
@@ -439,9 +442,6 @@ function getCarConfParamBtn_Callback(hObject, eventdata, handles)
         return;
     end
      
-    % Clear data buffer
-    c.appdata.com.read()
-    
     % request parameters
     c.appdata.com.write2(2, []);
 end

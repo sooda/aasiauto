@@ -1,4 +1,5 @@
 function UpdateDisplay(~, ~, hfigure, ~)
+
     % Timer timer1 callback, called each time timer iterates.
     % Gets surface Z data, adds noise, and writes it back to surface object.
     
@@ -35,6 +36,10 @@ function UpdateDisplay(~, ~, hfigure, ~)
         brake = a(6) / joy(4) * 100;
         sound_horn = 0;
 
+        if abs(thro) > 2
+            brake = 0;
+        end
+        
         if (dir > 45)
             dir = 45;
         end
@@ -150,6 +155,7 @@ function UpdateDisplay(~, ~, hfigure, ~)
     
     % Store measured values
     c.cardata.wheelspeeds = [c.cardata.wheelspeeds; data(1:4)];
+%    c.cardata.wheelspeeds = [c.cardata.wheelspeeds; 2 2 2 2];
     c.cardata.acceleration = [c.cardata.acceleration; data(5:7)];
     c.cardata.gyro = [c.cardata.gyro; data(8:10)];
     c.cardata.wheeldirection = [c.cardata.wheeldirection; data(11)];
@@ -277,20 +283,24 @@ function UpdateDisplay(~, ~, hfigure, ~)
 
     % throttle
     data = [drv_throttle drv_throttle];
-%    c.appdata.com.write2(120, data);
+    c.appdata.com.write2(120, data);
 
     % steering
-    if drv_dir > 0
-        [121 drv_dir]
-    end
-%    c.appdata.com.write2(121, drv_dir);
+%    if drv_dir > 0
+%        [121 drv_dir]
+%    end
+    c.appdata.com.write2(121, drv_dir);
 
     % brake
     data = [drv_brake drv_brake drv_brake drv_brake];
-%    c.appdata.com.write2(122, data);
+    c.appdata.com.write2(122, data);
     
     % sound horn
 %    c.appdata.com.write2(123, sound_horn);
+    
+    if rev > 0
+        thro = 0;
+    end
     
     %Update command plots
     set(handles2.reverse,'YData',rev);
