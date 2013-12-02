@@ -23,9 +23,10 @@ void pwm_set(uint8_t i, int16_t pos) {
 // both main and brake arduinos use the same configs for servo pwm
 void pwm_init_main_brakes(void) {
 	PORTA |= 0B00000011; // HAXME FIXME leds.c
-	DDRE |= _BV(3); // oc3a steer
-	DDRB |= _BV(5); // oc1a left
-	DDRB |= _BV(6); // oc1b right
+	DDRB |= _BV(5); // oc1a
+	DDRB |= _BV(6); // oc1b
+	DDRE |= _BV(3); // oc3a
+	DDRE |= _BV(4); // oc3b
 	// clear OCn pin on compare match
 	// wave generation mode PWM phase & freq correct, top at ICR
 	// clock source clkio/8
