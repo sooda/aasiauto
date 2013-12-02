@@ -29,12 +29,35 @@ Toni Liski, Konsta Hölttä, Lasse Kortetjärvi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{Tilanne tällä hetkellä}
+\begin{frame}{Auto}
+Insert hieno (lol) kuva tähän, vaikka tänpäiväiseltä devaussessiolta läppäreiden ja radion ja kolan kanssa
+\end{frame}
+
+\begin{frame}{Auto}
 \begin{itemize}
-\item RC-autoon suunniteltu uusi voimansiirto
-\item Nykyisellä voimansiirrolla ajaminen / testaaminen ei onnistu
-\item Tästä johtuen mitään testausta ei ole liikkuvalla RC-autolla tehty
-\item Projekti lähtenyt vähän hitaasti liikkeelle
+\item Akku oli liian pieni
+\item Voimansiirtoa uusitaan
+\item Hitautta servoissa
+\item Heikkouksia nopeusmittauksessa
+\item Ruuvit tiukassa
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Koodi}
+\begin{itemize}
+\item Alkuperäinen koodi proof-of-concept-tasoista
+\item Tutkittu, siistitty, uudelleenkirjoitettu
+\item Tavoitteena helppo jatkokehitysympäristö
+\item Sekä tietysti varsinainen käyttö
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Aikataulu}
+\begin{itemize}
+\item Jäljessä
+\item Tilausten kanssa viivettä
+\item Refaktoroinnissa on työtä
+\item Automaattihifistelyjä ei voi testata
 \end{itemize}
 \end{frame}
 
@@ -76,21 +99,27 @@ Toni Liski, Konsta Hölttä, Lasse Kortetjärvi
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{Mikrokontrollerit}
-
 \begin{itemize}
-\item Auto ei kulje, ei kiirettä
-\item Simuloidaan ajon sijaan Matlabilla
-\item Alustariippumaton ohjauskoodi
-\item Laiteläheiset toimilaitekoodit
-\item Simulaatiokoodi toimilaitteille
-\item Matlabille tarvitaan käyttöliittymän lisäksi simulaatiota
+\item Vielä hiottavaa
+\item Auto ei kulje edelleenkään: hardisongelmia, ei riipu ohjauksesta
+\item Koodi käytännössä uusittu kokonaan
+\item Paremmin strukturoitua, porttautuvaa
+\item Voi kääntää matlabin mex-funktioksi
 \end{itemize}
+\end{frame}
 
+\begin{frame}{Mikrokontrollerit}
+\begin{itemize}
+\item Edelleen kaikki kolme kontrolleria käytössä
+\item Yhteistä kommunikaatiokoodia, pakettipohjainen protokolla
+\item Alkuperäinen copypasta korvattu geneerisemmällä koodilla
+\item Ei juurikaan ota kantaa instrumentoinnin kytkentöihin
+\item PC $\Leftrightarrow$ ohjaus $\Leftrightarrow$ jarrut $\Leftrightarrow$ enkooderit
+\item Synkronointi?
+\end{itemize}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 
 
 \end{document}
