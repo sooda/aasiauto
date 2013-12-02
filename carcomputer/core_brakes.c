@@ -28,7 +28,7 @@ static void param_saver_brakes(uint8_t sz, uint8_t id) {
 	if (id <= 3)
 		servo_neutral(id, arg);
 	else if (id >= 4 && id <= 7) // deviation from the middle pos?
-		servo_max(id, arg);
+		servo_max(id - 4, arg);
 }
 
 static void param_saver_abs(uint8_t sz, uint8_t id) {
@@ -81,11 +81,11 @@ static void dump_params(uint8_t sz, uint8_t id) {
 	uint16_t x;
 #if 1
 	for (uint8_t i = 0; i < 4; i++) {
-		x = servo_neutral_get(0);
+		x = servo_neutral_get(i);
 		DUMP_INFO(MSG_BRAKE_PARAMS_START + i, x);
 	}
 	for (uint8_t i = 0; i < 4; i++) {
-		x = servo_max_get(0);
+		x = servo_max_get(i);
 		DUMP_INFO(MSG_BRAKE_PARAMS_START + 4 + i, x);
 	}
 #endif
