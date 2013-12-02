@@ -6,11 +6,16 @@
 #include "uartbuf.h"
 #include "pwm.h"
 #include <stdlib.h>
+#include "wheelSpeeds.h"
 
 void sensors_update(void) {
 	// FIXME
 	struct encoderstate st;
-	encoders_update(st);
+	st.fleft = 12300;
+	st.fright = 23400;
+	st.rleft = 3450;
+	st.rright = 4560;
+	//encoders_update(st);
 }
 
 // TODO: make this a watchdog, stop if no ping in e.g. 10 ms
@@ -25,6 +30,18 @@ void init() {
 
 /* write the state vector to a single packet and send it to the host */
 void transmit_vals() {
+	// XXX currently updated here, not in sensors_update()
+
+	rData_t speeds = getSpeeds();
+	struct encoderstate st;
+	st.fleft = speeds.FLeft;
+	st.fright = speeds.FRight;
+	st.rleft = speeds.RLeft;
+	st.rright = speeds.RRight;
+	encoders_update(st);
+	//msgData_t msg = parseMsg(speeds, acc);
+	//sendData(msg);
+
 	static struct {
 		uint8_t sz, type;
 		uint16_t data[MEAS_NITEMS];

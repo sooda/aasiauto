@@ -17,21 +17,29 @@ struct encoderstate encoders(void) {
 	return state;
 }
 void encoders_update(struct encoderstate newstate) {
-	// FIXME get them from teensy
+	// FIXME get them from teensy (HAX, almost done)
 #ifdef MCU_DRIVER
 	state = newstate;
 #else
 	(void)newstate;
 #ifdef MCU_BRAKES
+#if 0
 	state.fleft = 1230;
 	state.fright = 2340;
 	state.rleft = newstate.rleft;
 	state.rright = newstate.rright;
 #else
+	state = newstate;
+#endif
+#else
+#if 0
 	state.fleft = 12300;
 	state.fright = 23400;
 	state.rleft = 3450;
 	state.rright = 4560;
+#else
+	state = newstate;
+#endif
 #endif
 #endif
 }
