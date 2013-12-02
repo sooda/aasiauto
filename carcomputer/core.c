@@ -63,10 +63,23 @@ static void brake_proxy(uint8_t sz, uint8_t id) {
 	dump_info(BUF_TXSLAVE, id, sz, &param);
 }
 
+static void brake_back_proxy(uint8_t sz, uint8_t id) {
+	uint16_t param;
+	if (sz)
+		param = comm_u16(BUF_RXSLAVE);
+	dump_info(BUF_TXHOST, id, sz, &param);
+}
+
+static void dump_params_proxy(uint8_t sz, uint8_t id) {
+	(void)sz;
+	dump_info(BUF_TXSLAVE, id, 0, NULL);
+}
+
 // u16 params
-static void init_param_array(uint8_t start, uint8_t end, msg_handler handler) {
-	for (; start < end; start++) {
-		msgs_register_handler(BUF_RXHOST, start, sizeof(uint16_t), handler);
+// HOX end-inclusive
+static void init_param_array(uint8_t buf, uint8_t start, uint8_t end, msg_handler handler) {
+	for (; start <= end; start++) {
+		msgs_register_handler(buf, start, sizeof(uint16_t), handler);
 	}
 }
 
@@ -107,9 +120,9 @@ void init() {
 	motors_init();
 	steering_init();
 	ana_meas_init();
-	init_param_array(MSG_BRAKE_PARAMS_START, MSG_BRAKE_PARAMS_END, brake_proxy);
-	init_param_array(MSG_ABS_PARAMS_START, MSG_ABS_PARAMS_END, brake_proxy);
-	init_param_array(MSG_ESP_PARAMS_START, MSG_ESP_PARAMS_END, brake_proxy);
+	init_param_array(BUF_RXHOST, MSG_BRAKE_PARAMS_START, MSG_BRAKE_PARAMS_END, brake_proxy);
+	init_param_array(BUF_RXHOST, MSG_ABS_PARAMS_START, MSG_ABS_PARAMS_END, brake_proxy);
+	init_param_array(BUF_RXHOST, MSG_ESP_PARAMS_START, MSG_ESP_PARAMS_END, brake_proxy);
 	msgs_register_handler(BUF_RXHOST, MSG_BRAKE, 4*sizeof(uint16_t), brake_cmd_proxy);
 	msgs_register_handler(BUF_RXHOST, MSG_PING, 0, pingpong);
 
@@ -118,6 +131,13 @@ void init() {
 
 	msgs_register_handler(BUF_RXSLAVE, MSG_ERR,
 			2*sizeof(uint16_t), err_from_brakectl);
+
+	msgs_register_handler(BUF_RXHOST, MSG_REQ_PARAMS, 0, dump_params_proxy);
+
+	init_param_array(BUF_RXSLAVE, MSG_BRAKE_PARAMS_START, MSG_BRAKE_PARAMS_END, brake_back_proxy);
+	init_param_array(BUF_RXSLAVE, MSG_ABS_PARAMS_START, MSG_ABS_PARAMS_END, brake_back_proxy);
+	init_param_array(BUF_RXSLAVE, MSG_ESP_PARAMS_START, MSG_ESP_PARAMS_END, brake_back_proxy);
+	msgs_register_handler(BUF_RXSLAVE, MSG_PARAMS_EOF, 0, brake_back_proxy);
 }
 
 void failmode(void) {

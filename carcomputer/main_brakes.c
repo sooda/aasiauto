@@ -51,7 +51,7 @@ static FILE mystdout = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
 
 void worktimer_init(void) {
 	// ripped from the original program
-	
+
 	// Timer/Counter 0 initialization
 	// Clock source: System Clock
 	// Clock value: 250,000 kHz

@@ -11,7 +11,7 @@ DUDEOPTS := -pm2560 -cstk500v2 -P/dev/ttyACM0 -b115200
 
 SRC_COMMON := comm_avr.c msgs.c comm.c ringbuf.c uartbuf.c uart_avr.c
 SRC_DRIVER := main_driver.c core.c encoders.c motors.c motors_avr.c pwm_avr.c analog.c adc.c $(SRC_COMMON)
-SRC_BRAKES := main_brakes.c pwm_avr.c core_brakes.c encoders.c $(SRC_COMMON)
+SRC_BRAKES := main_brakes.c pwm_avr.c core_brakes.c encoders.c servos.c $(SRC_COMMON)
 SRC_ENCODERS := main_encoders.c core_encoders.c encoders.c initTeensy.c wheelSpeeds.c lsq.c $(SRC_COMMON)
 
 all: driver.hex brakes.hex encoders.hex

@@ -61,6 +61,11 @@ int8_t msgs_work(uint8_t bufid) {
 
 	//if (handbuf == 0) printf(" yhyy %d %d\n", packsize, type);
 	//if (handbuf == 0) { comm_ignore(bufid, comm_rxsize(bufid)); return -1; }
+#if 0
+#if MCU_BRAKES
+	printf("ankka vankka");
+#endif
+#endif
 
 	msg_handlers[handbuf][type].handler(packsize, type);
 

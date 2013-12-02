@@ -4,10 +4,7 @@
 #include <assert.h>
 #include "comm.h"
 
-// pos -1000..1000
-void pwm_set(uint8_t i, int16_t pos) {
-	// TODO map these properly
-	pos = 1500 + pos / 2;
+void pwm_set_raw(uint8_t i, uint16_t pos) {
 	switch (i) {
 		case 0: OCR1A = pos; break;
 		case 1: OCR1B = pos; break;
@@ -15,7 +12,12 @@ void pwm_set(uint8_t i, int16_t pos) {
 		case 3: OCR3B = pos; break;
 		default: assert(0); break;
 	}
-	PORTA |= 0B00000011;
+}
+
+// pos -1000..1000
+void pwm_set(uint8_t i, int16_t pos) {
+	// TODO map these properly
+	pwm_set_raw(i, 1500 + pos / 2);
 }
 
 // both main and brake arduinos use the same configs for servo pwm

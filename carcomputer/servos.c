@@ -1,29 +1,47 @@
 #include "comm.h"
+#include "pwm.h"
+#include <avr/eeprom.h>
 
 struct servocfg {
-	uint16_t center, min, max;
+	uint16_t center, max;
 } __attribute__((packed));
 
 // FIXME brakes and steering separtely.
 
 static struct servocfgs {
-	struct servocfg steering;
-	struct servocfg frontleft, frontright;
-	struct servocfg rearleft, rearright;
-} state __attribute__((packed));
+	struct servocfg cfg[4];
+} state;
 
 static struct servocfgs state_save EEMEM;
 
-void servos_dump(void) {
-	DUMP_INFO(SERVO_STATUS, state);
+static void save(void) {
+	eeprom_write_block(&state, &state_save, sizeof(state));
 }
 
 void servos_init(void) {
-	servohw_init();
 	eeprom_read_block(&state, &state_save, sizeof(state));
-	pwm_set(0, state.steering.center);
-	pwm_set(1, state.frontleft.center);
-	pwm_set(2, state.frontright.center);
-	pwm_set(3, state.rearleft.center);
-	pwm_set(4, state.rearright.center);
+#if MCU_BRAKES
+	pwm_set_raw(0, state.cfg[0].center);
+	pwm_set_raw(1, state.cfg[1].center);
+	pwm_set_raw(2, state.cfg[2].center);
+	pwm_set_raw(3, state.cfg[3].center);
+#endif
+}
+
+void servo_neutral(uint8_t id, uint16_t arg) {
+	state.cfg[id].center = arg;
+	save();
+}
+
+void servo_max(uint8_t id, uint16_t arg) {
+	state.cfg[id].max = arg;
+	save();
+}
+
+uint16_t servo_neutral_get(uint8_t id) {
+	return state.cfg[id].center;
+}
+
+uint16_t servo_max_get(uint8_t id) {
+	return state.cfg[id].max;
 }

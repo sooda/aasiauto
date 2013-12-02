@@ -38,7 +38,7 @@ def parse_packet(data):
 		nums = struct.unpack("<" + "H" * MEAS_NITEMS, "".join(data[2:]))
 		print "j",j
 		print "i",i
-		#print "\n".join("%s:\t%d" % t for t in zip(MEASNAMES, nums))
+		print "\n".join("%s:\t%d" % t for t in zip(MEASNAMES, nums))
 
 		j += 1
 		if j == 10:
@@ -61,7 +61,7 @@ def parse_packet(data):
 				hax = int(800 * math.sin(i / 100.0))
 				print "hax",hax
 				hax = struct.pack("<h", hax)
-				ser.write("\xff\x02\x79" + hax)
+				#ser.write("\xff\x02\x79" + hax)
 			# pingpong
 			print "le send"
 			ser.write("\xff\x00\x00")
