@@ -1,6 +1,8 @@
 #include "abs.h"
 #include "tyredata.h"
 #include "vehicle.h"
+#include "pwm.h"
+#include "config.h"
 #include <stdlib.h>
 
 static absData_t FLdata, FRdata, RLdata, RRdata;
@@ -33,12 +35,16 @@ void absIter(unsigned char brakePos) {
     for(unsigned char i = 0; i < 4; ++i)
         updSensordata(wheelData[i]);
     int speed = currentSpeed(1);
-    for(unsigned char i = 0; i < 4; ++i)
-        setBrakeForce(wheelData[i], brakePos);
-    }
+    pwm_set(PWM_BRAKE_FL, setBrakeForce(&FLdata, brakePos));
+    pwm_set(PWM_BRAKE_FR, setBrakeForce(&FRdata, brakePos));
+    pwm_set(PWM_BRAKE_RL, setBrakeForce(&RLdata, brakePos));
+    pwm_set(PWM_BRAKE_RR, setBrakeForce(&RRdata, brakePos));
+}
 
-
-
+void updSensorData(absData_t* wheel) {
+//    wheel->speed = 0;
+//    wheel->acc = 0;
+}
 
 int currentSpeed(int deltaTime) {
     if(RRdata.brakeForce == 0 && RLdata.brakeForce == 0)

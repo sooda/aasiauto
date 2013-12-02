@@ -40,10 +40,11 @@ typedef struct {
 //initialize abs system with default settings
 void initAbsData(void);
 
-
 //iterate one cycle
 void absIter(unsigned char brakePos);
 
+//Update sensor data
+void updSensorData(absData_t* wheel);
 
 //if no braking speed is calulated from rear wheels
 //if barking, speed is calculated from vehicle deceleration
