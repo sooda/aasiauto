@@ -3,20 +3,22 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
     
     % START USER CODE
 
-    % Create a timer object to fire at 0.01 sec intervals
+    % Create a timer object to fire at 0.05 sec intervals
     % Specify function handles for its start and run callbacks
     handles.timer = timer('Executionmode','fixedRate','Period', 0.05,... % 0.02
         'TimerFcn', {@UpdateDisplay,hObject,handles});
 
     % Set the colors indicating a selected/unselected tab
-    handles.unselectedTabColor=get(handles.monitoringText,'BackgroundColor');
-    handles.selectedTabColor=handles.unselectedTabColor-0.1;
+    handles.selectedTabColor=get(handles.monitoringText,'BackgroundColor');
+    handles.unselectedTabColor=handles.selectedTabColor-0.1;
 
     % Set units to normalize for easier handling
     set(handles.monitoringText,'Units','normalized')
-    set(handles.carSetupText,'Units','normalized')
     set(handles.monitoringPanel,'Units','normalized')
+    set(handles.carSetupText,'Units','normalized')
     set(handles.carSetupPanel,'Units','normalized')
+    set(handles.autoDriveText,'Units','normalized')
+    set(handles.autoDrivePanel,'Units','normalized')
 
     % Set logging console handle
     Logging.console(handles.console);
@@ -29,7 +31,7 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
                     'YTick',[],...
                     'Color',handles.selectedTabColor,...
                     'Position',[pos1(1) pos1(2) pos1(3) pos1(4)+0.01],...
-                    'ButtonDownFcn','RCCarGUI(''a1bd'',gcbo,[],guidata(gcbo))');
+                    'ButtonDownFcn','RCCarGUI(''tbd'',gcbo,[1],guidata(gcbo))');
     handles.t1=text('String',' Monitoring',...
                     'Units','normalized',...
                     'Position',[(pos1(3)-pos1(1))/2,pos1(2)/2+pos1(4)],...
@@ -38,7 +40,7 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
                     'Margin',0.001,...
                     'FontSize',8,...
                     'Backgroundcolor',handles.selectedTabColor,...
-                    'ButtonDownFcn','RCCarGUI(''t1bd'',gcbo,[],guidata(gcbo))');
+                    'ButtonDownFcn','RCCarGUI(''tbd'',gcbo,[1],guidata(gcbo))');
 
     % Tab 2
     pos2=get(handles.carSetupText,'Position');
@@ -49,7 +51,7 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
                     'YTick',[],...
                     'Color',handles.unselectedTabColor,...
                     'Position',[pos2(1) pos2(2) pos2(3) pos2(4)+0.01],...
-                    'ButtonDownFcn','RCCarGUI(''a2bd'',gcbo,[],guidata(gcbo))');
+                    'ButtonDownFcn','RCCarGUI(''tbd'',gcbo,[2],guidata(gcbo))');
     handles.t2=text('String',' Car Setup',...
                     'Units','normalized',...
                     'Position',[pos2(3)/2,pos2(2)/2+pos2(4)],...
@@ -58,12 +60,32 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
                     'Margin',0.001,...
                     'FontSize',8,...
                     'Backgroundcolor',handles.unselectedTabColor,...
-                    'ButtonDownFcn','RCCarGUI(''t2bd'',gcbo,[],guidata(gcbo))');
+                    'ButtonDownFcn','RCCarGUI(''tbd'',gcbo,[2],guidata(gcbo))');
+
+    % Tab 3
+    pos3=get(handles.autoDriveText,'Position');
+    pos3(1)=pos2(1)+pos2(3);
+    handles.a3=axes('Units','normalized',...
+                    'Box','on',...
+                    'XTick',[],...
+                    'YTick',[],...
+                    'Color',handles.unselectedTabColor,...
+                    'Position',[pos3(1) pos3(2) pos3(3) pos3(4)+0.01],...
+                    'ButtonDownFcn','RCCarGUI(''tbd'',gcbo,[3],guidata(gcbo))');
+    handles.t3=text('String',' Auto Drive',...
+                    'Units','normalized',...
+                    'Position',[pos3(3)/2,pos3(2)/2+pos3(4)],...
+                    'HorizontalAlignment','left',...
+                    'VerticalAlignment','middle',...
+                    'Margin',0.001,...
+                    'FontSize',8,...
+                    'Backgroundcolor',handles.unselectedTabColor,...
+                    'ButtonDownFcn','RCCarGUI(''tbd'',gcbo,[3],guidata(gcbo))');
 
     % Manage panels (place them in the correct position and manage visibilities)
     pan1pos=get(handles.monitoringPanel,'Position');
-    set(handles.carSetupPanel,'Position',pan1pos)
-    set(handles.carSetupPanel,'Visible','off')
+    set(handles.carSetupPanel,'Position',pan1pos);
+    set(handles.autoDrivePanel,'Position',pan1pos);
 
     % Get instance of Car to set appdata and cardata
     c = Car.getInstance();
@@ -98,42 +120,21 @@ function RCCarGUI_Init(hObject, ~, handles, varargin)
     appdata.messagelength = 21; %message from car
     appdata.initialized = 0;
     appdata.read_value_counter = 0;
-%    setappdata(hObject,'App_Data',appdata); %Save the data
     c.appdata = appdata;
     
     %Cardata initialize
     %Cardata refers to the data we get from the cars sensors
-    cardata.throttle = 0;
-    cardata.velocity = 0;
-    cardata.reverse = 0;
-    cardata.wheeldirection = 0;
-    %cardata.dynamicwheelradius = 0;
-    cardata.brake = 0;
-    cardata.position = [0 0]; %X Y Z
-    cardata.gyro = [0 0 0]; %X Y Z
-    cardata.wheelspeeds = [0 0 0 0]; %Left front, Right front, Left back, Right back
-    cardata.totalvelocity = 0;
-    cardata.acceleration = [0.0 0.0 0.0]; %X, Y, Z
-    cardata.timepassed = 0;
-    cardata.motorBatteryVoltage = 0;
-    cardata.controllerBatteryVoltage = 0;
-    cardata.acc_scaling = 32.0/1024.0*9.81; %the conversion factor from raw data to m/s^2
-    cardata.last_measurements = [];
-    c.cardata = cardata;
+    c.cardata = InitCarData();
 
     %Route Map plot setup
     handles.carpath = plot(handles.carpathDisplay,1);
     axes(handles.carpathDisplay);
     title('Route Map')
-    %ylim([-100 100])
-    %xlim([-100 100])
 
     %Velocity plot setup
     handles.carspeed = plot(handles.speedDisplay,1);
     axes(handles.speedDisplay);
     title('Velocity')
-    %ylim([0 50])
-    %xlim([-100 100])
 
     %Direction plot setup
     handles.direction = barh(handles.directionDisplay,0);

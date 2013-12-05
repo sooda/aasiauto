@@ -22,7 +22,7 @@ function varargout = RCCarGUI(varargin)
 
 % Edit the above text to modify the response to help RCCarGUI
 
-% Last Modified by GUIDE v2.5 01-Dec-2013 23:58:23
+% Last Modified by GUIDE v2.5 05-Dec-2013 16:38:55
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -68,45 +68,34 @@ function varargout = RCCarGUI_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 end
 
-% Text object 1 callback (tab 1)
-function t1bd(hObject,eventdata,handles)
-set(hObject,'BackgroundColor',handles.selectedTabColor)
-set(handles.t2,'BackgroundColor',handles.unselectedTabColor)
-set(handles.a1,'Color',handles.selectedTabColor)
-set(handles.a2,'Color',handles.unselectedTabColor)
-set(handles.monitoringPanel,'Visible','on')
-set(handles.carSetupPanel,'Visible','off')
-end
+% Text and axis callback (tab)
+function tbd(hObject,eventdata,handles)
+    set(handles.t1,'BackgroundColor',handles.unselectedTabColor)
+    set(handles.t2,'BackgroundColor',handles.unselectedTabColor)
+    set(handles.t3,'BackgroundColor',handles.unselectedTabColor)
 
-% Text object 2 callback (tab 2)
-function t2bd(hObject,eventdata,handles)
-set(hObject,'BackgroundColor',handles.selectedTabColor)
-set(handles.t1,'BackgroundColor',handles.unselectedTabColor)
-set(handles.a2,'Color',handles.selectedTabColor)
-set(handles.a1,'Color',handles.unselectedTabColor)
-set(handles.carSetupPanel,'Visible','on')
-set(handles.monitoringPanel,'Visible','off')
-end
+    set(handles.a1,'Color',handles.unselectedTabColor)
+    set(handles.a2,'Color',handles.unselectedTabColor)
+    set(handles.a3,'Color',handles.unselectedTabColor)
 
-% Axes object 1 callback (tab 1)
-function a1bd(hObject,eventdata,handles)
-set(hObject,'Color',handles.selectedTabColor)
-set(handles.a2,'Color',handles.unselectedTabColor)
-set(handles.t1,'BackgroundColor',handles.selectedTabColor)
-set(handles.t2,'BackgroundColor',handles.unselectedTabColor)
-set(handles.monitoringPanel,'Visible','on')
-set(handles.carSetupPanel,'Visible','off')
-end
+    set(handles.monitoringPanel,'Visible','off')
+    set(handles.carSetupPanel,'Visible','off')
+    set(handles.autoDrivePanel,'Visible','off')
 
-% Axes object 2 callback (tab 2)
-function a2bd(hObject,eventdata,handles)
-set(hObject,'Color',handles.selectedTabColor)
-set(handles.a1,'Color',handles.unselectedTabColor)
-set(handles.t2,'BackgroundColor',handles.selectedTabColor)
-set(handles.t1,'BackgroundColor',handles.unselectedTabColor)
-set(handles.carSetupPanel,'Visible','on')
-set(handles.monitoringPanel,'Visible','off')
-
+    switch (eventdata)
+        case 1
+            set(handles.monitoringPanel,'Visible','on')
+            set(handles.t1,'BackgroundColor',handles.selectedTabColor)
+            set(handles.a1,'Color',handles.selectedTabColor)
+        case 2
+            set(handles.carSetupPanel,'Visible','on')
+            set(handles.t2,'BackgroundColor',handles.selectedTabColor)
+            set(handles.a2,'Color',handles.selectedTabColor)
+        case 3
+            set(handles.autoDrivePanel,'Visible','on')
+            set(handles.t3,'BackgroundColor',handles.selectedTabColor)
+            set(handles.a3,'Color',handles.selectedTabColor)
+    end
 end
 
 % --- Executes on START MANUAL DRIVE button press.
@@ -174,22 +163,7 @@ if (c.appdata.manualdrive)
     end
     
     %Reset Car Data
-%    cardata = getappdata(handles.figure1, 'Car_Data');
-    c.cardata.throttle = 0;
-    c.cardata.velocity = 0;
-    c.cardata.reverse = 0;
-    c.cardata.wheeldirection = 0;
-    c.cardata.brake = 0;
-    c.cardata.position = [0 0]; %X Y
-    c.cardata.gyro = [0 0 0]; %X Y Z
-    c.cardata.wheelspeeds = [0 0 0 0]; %Left front, Right front, Left back, Right back
-    c.cardata.totalvelocity = 0;
-    c.cardata.acceleration = [0.0 0.0 0.0]; %X, Y, Z
-    c.cardata.timepassed = 0;
-    c.cardata.motorBatteryVoltage = 0;
-    c.cardata.controllerBatteryVoltage = 0;
-    
-%    setappdata(handles.figure1, 'Car_Data',cardata);
+    c.cardata = InitCarData();
 end
 end
 %This is the main loop that runs when the car is in manual drive
@@ -325,28 +299,7 @@ function savedrivedatacheckbox_Callback(hObject, eventdata, handles)
         set(handles.textFieldSaveDataTo,'Enable', 'off');
     end
 end
-% --- If Enable == 'on', executes on mouse press in 5 pixel border.
-% --- Otherwise, executes on mouse press in 5 pixel border or over textFieldReadDataFrom.
-function textFieldReadDataFrom_ButtonDownFcn(hObject, eventdata, handles)
-    % hObject    handle to textFieldReadDataFrom (see GCBO)
-    % eventdata  reserved - to be defined in a future version of MATLAB
-    % handles    structure with handles and user data (see GUIDATA)
-    %appdata = getappdata(handles.figure1, 'App_Data');
-    currentvalue = get(hObject,'String');
-    c = Car.getInstance;
-    
-    %Choose save directory
-    [c.appdata.readComFile, c.appdata.readComDirectory] = uigetfile('*.mat','MAT-files (*.mat)','Select a file');
 
-    %Display save directory
-    if (c.appdata.readComFile == 0)
-     set(hObject,'String',currentvalue);
-    else
-     set(hObject,'String',strcat(c.appdata.readComDirectory,c.appdata.readComFile));
-    end
-    %Save save directory
-%    setappdata(handles.figure1, 'App_Data', appdata);
-end
 % --- Executes when user attempts to close figure1.
 function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
@@ -506,6 +459,7 @@ function figure1_KeyPressFcn(hObject, eventdata, handles)
 %	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
 % handles    structure with handles and user data (see GUIDATA)
 
+% store pressed keys into 'keys' structure
 a = {};
 if isappdata(0, 'keys')
     a = getappdata(0, 'keys');
@@ -538,6 +492,7 @@ function figure1_WindowKeyReleaseFcn(hObject, eventdata, handles)
 %	Modifier: name(s) of the modifier key(s) (i.e., control, shift) released
 % handles    structure with handles and user data (see GUIDATA)
 
+% remove released keys from 'keys' structure
 a = {};
 if isappdata(0, 'keys')
     a = getappdata(0, 'keys');
@@ -578,4 +533,45 @@ function drawMeasurements_Callback(hObject, eventdata, handles)
     c.cardata.controllerBatteryVoltage };
     set(h.h1, {'YData'}, mdata, 'XData', c.cardata.timepassed');
 
+end
+
+
+% --- Executes on selection change in listbox1.
+function listbox1_Callback(hObject, eventdata, handles)
+% hObject    handle to listbox1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns listbox1 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from listbox1
+
+if isfield(handles, 'TestSection') && ishandle(handles.TestSection)
+    delete(handles.TestSection);
+end
+
+handles.TestSection = uipanel(...
+    'Parent',handles.autoDrivePanel,...
+    'Title','TestSection',...
+    'Position',[0.1857018308631212 0.01483679525222552 0.809067131647777 0.9703264094955492]); % asd...
+
+guidata(handles.figure1, handles);
+
+contents = cellstr(get(hObject,'String'));
+t = contents{get(hObject,'Value')};
+eval([t '(handles)']);
+
+
+end
+
+% --- Executes during object creation, after setting all properties.
+function listbox1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to listbox1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 end

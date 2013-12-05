@@ -266,7 +266,7 @@ function UpdateDisplay(~, ~, hfigure, ~)
     %Save steering data
     c.cardata.throttle = [c.cardata.throttle; thro];
     c.cardata.brake = [c.cardata.brake; brake];
-    c.cardata.wheeldirection = [c.cardata.wheeldirection; dir];
+    c.cardata.steeringwheel = [c.cardata.steeringwheel; dir];
     c.cardata.reverse = [c.cardata.reverse; rev];
 
 %    thro = thro * 0.2; % TODO: scaling throttle and reverse shoudn't be needed here!

@@ -6,7 +6,7 @@ function main
     clear;
 
     %% Add subfolders to path
-    folders =  { 'utils' , 'oldshit' , 'tests', 'demo' };
+    folders =  { 'utils' , 'oldshit' , 'tests', 'demo', 'autodrive' };
 
     for i = 1:length(folders)
         d = fullfile(pwd, char(folders(i)), filesep);
