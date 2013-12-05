@@ -2645,7 +2645,7 @@ design rules under a new name.</description>
 </pass>
 </autorouter>
 <elements>
-<element name="U1" library="vishay_motor" package="SOIC127P600X175-8N" value="" x="11.43" y="7.82" rot="MR180">
+<element name="U1" library="vishay_motor" package="SOIC127P600X175-8N" value="SI9986DY-T1-E3" x="11.43" y="7.82" rot="MR180">
 <attribute name="PACKAGE" value="SOIC-8" x="40.64" y="11.63" size="1.778" layer="28" rot="MR180" display="off"/>
 <attribute name="OC_NEWARK" value="06J8287" x="40.64" y="11.63" size="1.778" layer="28" rot="MR180" display="off"/>
 <attribute name="MPN" value="SI9986DY-T1-E3" x="40.64" y="11.63" size="1.778" layer="28" rot="MR180" display="off"/>
@@ -2658,7 +2658,7 @@ design rules under a new name.</description>
 <attribute name="MF" value="MOLEX" x="-4.60984375" y="-11.4499375" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="OC_FARNELL" value="1462920" x="-4.60984375" y="-11.4499375" size="1.778" layer="27" rot="R270" display="off"/>
 </element>
-<element name="X2" library="con-ptr500" package="AK500/2" value="" x="17.11" y="8.22" rot="R90">
+<element name="X2" library="con-ptr500" package="AK500/2" value="MOTOR" x="17.11" y="8.22" rot="R90">
 <attribute name="OC_NEWARK" value="unknown" x="31.08" y="24.73" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="" x="31.08" y="24.73" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MF" value="" x="31.08" y="24.73" size="1.778" layer="27" rot="R90" display="off"/>
@@ -2672,7 +2672,7 @@ design rules under a new name.</description>
 <element name="D2" library="diode" package="SOD123" value="PTVS6V0S1UR" x="6.4" y="11.4" rot="MR180"/>
 </elements>
 <signals>
-<signal name="VCC">
+<signal name="VDD">
 <contactref element="U1" pad="3"/>
 <contactref element="C1" pad="1"/>
 <contactref element="C2" pad="1"/>

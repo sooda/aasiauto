@@ -178,11 +178,13 @@
 <packages>
 </packages>
 <symbols>
-<symbol name="VCC">
+<symbol name="VDD">
 <wire x1="1.27" y1="-1.905" x2="0" y2="0" width="0.254" layer="94"/>
 <wire x1="0" y1="0" x2="-1.27" y2="-1.905" width="0.254" layer="94"/>
+<wire x1="0" y1="1.27" x2="-1.27" y2="-1.905" width="0.254" layer="94"/>
+<wire x1="1.27" y1="-1.905" x2="0" y2="1.27" width="0.254" layer="94"/>
 <text x="-2.54" y="-2.54" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
-<pin name="VCC" x="0" y="-2.54" visible="off" length="short" direction="sup" rot="R90"/>
+<pin name="VDD" x="0" y="-2.54" visible="off" length="short" direction="sup" rot="R90"/>
 </symbol>
 <symbol name="GND">
 <wire x1="-1.905" y1="0" x2="1.905" y2="0" width="0.254" layer="94"/>
@@ -191,10 +193,10 @@
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="VCC" prefix="P+">
+<deviceset name="VDD" prefix="VDD">
 <description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
 <gates>
-<gate name="VCC" symbol="VCC" x="0" y="0"/>
+<gate name="G$1" symbol="VDD" x="0" y="0"/>
 </gates>
 <devices>
 <device name="">
@@ -8819,16 +8821,16 @@ type RDH, grid 15 mm</description>
 </class>
 </classes>
 <parts>
-<part name="U1" library="vishay_motor" deviceset="SI9986DY-T1-E3" device=""/>
-<part name="P+1" library="supply1" deviceset="VCC" device=""/>
+<part name="U1" library="vishay_motor" deviceset="SI9986DY-T1-E3" device="" value="SI9986DY-T1-E3"/>
+<part name="P+1" library="supply1" deviceset="VDD" device=""/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="X1" library="con-molex" deviceset="22-23-2041" device=""/>
-<part name="X2" library="con-ptr500" deviceset="AK500/2" device=""/>
+<part name="X2" library="con-ptr500" deviceset="AK500/2" device="" value="MOTOR"/>
 <part name="RIN_A" library="resistor2" deviceset="R-EU_" device="0207/10" value="100"/>
 <part name="RIN_B" library="resistor2" deviceset="R-EU_" device="0207/10" value="100"/>
 <part name="C1" library="resistor" deviceset="C-EU" device="C0805" value="100n"/>
 <part name="C2" library="resistor" deviceset="C-EU" device="C0805" value="1u"/>
-<part name="P+2" library="supply1" deviceset="VCC" device=""/>
+<part name="P+2" library="supply1" deviceset="VDD" device=""/>
 <part name="GND2" library="supply1" deviceset="GND" device=""/>
 <part name="D1" library="diode" deviceset="DIODE-" device="SOD123" value="PTVS6V0S1UR"/>
 <part name="D2" library="diode" deviceset="DIODE-" device="SOD123" value="PTVS6V0S1UR"/>
@@ -8843,7 +8845,7 @@ type RDH, grid 15 mm</description>
 </plain>
 <instances>
 <instance part="U1" gate="A" x="45.72" y="60.96"/>
-<instance part="P+1" gate="VCC" x="7.62" y="91.44"/>
+<instance part="P+1" gate="G$1" x="7.62" y="91.44"/>
 <instance part="GND1" gate="1" x="-12.7" y="33.02"/>
 <instance part="X1" gate="-1" x="-20.32" y="60.96" rot="MR0"/>
 <instance part="X1" gate="-2" x="-20.32" y="68.58" rot="MR0"/>
@@ -8854,8 +8856,8 @@ type RDH, grid 15 mm</description>
 <instance part="RIN_A" gate="G$1" x="12.7" y="66.04"/>
 <instance part="RIN_B" gate="G$1" x="12.7" y="60.96"/>
 <instance part="C1" gate="G$1" x="93.98" y="66.04"/>
-<instance part="C2" gate="G$1" x="101.6" y="66.04"/>
-<instance part="P+2" gate="VCC" x="93.98" y="81.28"/>
+<instance part="C2" gate="G$1" x="106.68" y="66.04"/>
+<instance part="P+2" gate="G$1" x="93.98" y="81.28"/>
 <instance part="GND2" gate="1" x="96.52" y="38.1"/>
 <instance part="D1" gate="G$1" x="-5.08" y="48.26" rot="R90"/>
 <instance part="D2" gate="G$1" x="0" y="48.26" rot="R90"/>
@@ -8867,9 +8869,9 @@ type RDH, grid 15 mm</description>
 <busses>
 </busses>
 <nets>
-<net name="VCC" class="0">
+<net name="VDD" class="0">
 <segment>
-<pinref part="P+1" gate="VCC" pin="VCC"/>
+<pinref part="P+1" gate="G$1" pin="VDD"/>
 <wire x1="7.62" y1="68.58" x2="7.62" y2="78.74" width="0.1524" layer="91"/>
 <pinref part="U1" gate="A" pin="VDD"/>
 <wire x1="7.62" y1="78.74" x2="7.62" y2="88.9" width="0.1524" layer="91"/>
@@ -8877,14 +8879,15 @@ type RDH, grid 15 mm</description>
 <wire x1="27.94" y1="78.74" x2="7.62" y2="78.74" width="0.1524" layer="91"/>
 <pinref part="X1" gate="-2" pin="S"/>
 <wire x1="-17.78" y1="68.58" x2="7.62" y2="68.58" width="0.1524" layer="91"/>
+<junction x="7.62" y="78.74"/>
 </segment>
 <segment>
-<pinref part="P+2" gate="VCC" pin="VCC"/>
+<pinref part="P+2" gate="G$1" pin="VDD"/>
 <pinref part="C1" gate="G$1" pin="1"/>
-<wire x1="93.98" y1="78.74" x2="93.98" y2="76.2" width="0.1524" layer="91"/>
 <pinref part="C2" gate="G$1" pin="1"/>
-<wire x1="101.6" y1="68.58" x2="93.98" y2="68.58" width="0.1524" layer="91"/>
-<wire x1="93.98" y1="68.58" x2="93.98" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="106.68" y1="68.58" x2="93.98" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="93.98" y1="68.58" x2="93.98" y2="78.74" width="0.1524" layer="91"/>
+<junction x="93.98" y="68.58"/>
 </segment>
 </net>
 <net name="GND" class="0">
@@ -8898,10 +8901,10 @@ type RDH, grid 15 mm</description>
 <pinref part="GND2" gate="1" pin="GND"/>
 <pinref part="C1" gate="G$1" pin="2"/>
 <wire x1="96.52" y1="40.64" x2="93.98" y2="40.64" width="0.1524" layer="91"/>
-<wire x1="93.98" y1="40.64" x2="93.98" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="93.98" y1="40.64" x2="93.98" y2="60.96" width="0.1524" layer="91"/>
 <pinref part="C2" gate="G$1" pin="2"/>
-<wire x1="101.6" y1="60.96" x2="93.98" y2="60.96" width="0.1524" layer="91"/>
-<wire x1="93.98" y1="60.96" x2="93.98" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="106.68" y1="60.96" x2="93.98" y2="60.96" width="0.1524" layer="91"/>
+<junction x="93.98" y="60.96"/>
 </segment>
 <segment>
 <pinref part="U1" gate="A" pin="SA"/>
@@ -8911,6 +8914,7 @@ type RDH, grid 15 mm</description>
 <pinref part="U1" gate="A" pin="SB"/>
 <wire x1="15.24" y1="53.34" x2="15.24" y2="33.02" width="0.1524" layer="91"/>
 <wire x1="27.94" y1="53.34" x2="15.24" y2="53.34" width="0.1524" layer="91"/>
+<junction x="15.24" y="53.34"/>
 </segment>
 <segment>
 <pinref part="U1" gate="A" pin="GND"/>
@@ -8965,6 +8969,7 @@ type RDH, grid 15 mm</description>
 <pinref part="D2" gate="G$1" pin="C"/>
 <wire x1="0" y1="60.96" x2="7.62" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="0" y1="50.8" x2="0" y2="60.96" width="0.1524" layer="91"/>
+<junction x="0" y="60.96"/>
 </segment>
 </net>
 <net name="N$5" class="0">
@@ -8975,6 +8980,7 @@ type RDH, grid 15 mm</description>
 <pinref part="D1" gate="G$1" pin="C"/>
 <wire x1="-5.08" y1="66.04" x2="7.62" y2="66.04" width="0.1524" layer="91"/>
 <wire x1="-5.08" y1="50.8" x2="-5.08" y2="66.04" width="0.1524" layer="91"/>
+<junction x="-5.08" y="66.04"/>
 </segment>
 </net>
 </nets>
