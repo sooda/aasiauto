@@ -206,6 +206,10 @@ classdef Protocol %< value
             
             % Controller battery voltage
             value(13) = m(13) / 1023 * 12.6;
+            
+            if numel(m) > 15
+                value(14:16) = m(14:16);
+            end
         end
 
    end

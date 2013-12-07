@@ -1,7 +1,6 @@
 function UpdateDisplay(~, ~, hfigure, ~)
 
     % Timer timer1 callback, called each time timer iterates.
-    % Gets surface Z data, adds noise, and writes it back to surface object.
     
     handles2 = guidata(hfigure);
 

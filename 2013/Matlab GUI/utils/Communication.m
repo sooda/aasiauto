@@ -20,12 +20,12 @@ classdef Communication < handle
     end
     
     methods
-        % Class constructor
+        %% Class constructor
         function this = Communication()
             this.status = this.STATUSCODE.Disconnected;
         end
         
-        % Opens serial connection to car
+        %% Open serial connection to car
         function this = connectToCar(this, comport)
             
             if (this.status ~= this.STATUSCODE.Disconnected)
@@ -82,6 +82,7 @@ classdef Communication < handle
             end
         end % /connectToCar
 
+        %% Check if GUI is connected to car.
         function val = isConnected(this)
             val = 0;
             if (this.status == this.STATUSCODE.Connected || ...
@@ -91,7 +92,7 @@ classdef Communication < handle
             end
         end
         
-        % Disconnects serial connection
+        %% Disconnect serial connection
         function this = disconnectFromCar(this)
             if (isvalid(this.communicationTimer))
                 stop(this.communicationTimer);
@@ -133,8 +134,8 @@ classdef Communication < handle
 
         end % /disconnectFromCar
         
-        %This function checks if the car is initialized and ready to start a drive session
-        %In other words: if sensordata from the car is received then it is ready
+        %% This function checks if the car is initialized and ready to start a drive session
+        % In other words: if sensordata from the car is received then it is ready
         function this = connectionTimer_triggered(this, varargin)
 %                this.status = this.STATUSCODE.Initialized;
 %                Logging.log('Initialized and ready for drive session.');
@@ -159,6 +160,7 @@ classdef Communication < handle
             
         end
         
+        %% Keep connection between GUI and Car alive
         function this = keepAlive(this, varargin)
             c = Car.getInstance();
             
@@ -176,7 +178,7 @@ classdef Communication < handle
             
         end
         
-        % Handle asynchronic reading and writing triggered by a timer.
+        %% Handle asynchronic reading and writing triggered by a timer.
         function this = async_Communication_triggered(this) %, varargin)
             if (this.status == this.STATUSCODE.Simul)
                 if (exist('controller','file')) % file or builtin or class..
@@ -188,7 +190,7 @@ classdef Communication < handle
                 val = this.getBytes();
                 if (numel(val) > 0 && val(1) > -1)
                     this.buf_in = [this.buf_in val];
-                    this.buf_in = Protocol.parse_buffer(this.buf_in); % parse buffer asynchronously here!
+                    this.buf_in = Protocol.parse_buffer(this.buf_in);
                 end
                 
                 this.write2(0, []); % ping
@@ -199,7 +201,8 @@ classdef Communication < handle
                 end
             end
         end
-         
+        
+        %% Return content of the read buffer
         function val = read(this)
             val = this.buf_in;
             this.buf_in = [];
@@ -211,6 +214,7 @@ classdef Communication < handle
 %            this.buf_out = [this.buf_out int8(255) val];
 %        end
         
+        %% Write data with given ID to buffer
         function this = write2(this, id, data)
             data = ByteTools.num2buf(int16(data));
             sz = numel(data);
@@ -218,7 +222,7 @@ classdef Communication < handle
             this.buf_out = uint8([this.buf_out 255 sz id data]);
         end
         
-        % Read all bytes (BytesAvailable).
+        %% Read all bytes (BytesAvailable).
         function val = getBytes(this)
             if (this.status == this.STATUSCODE.Simul)
                 Logging.log('Reading data from simulation (async)...');
@@ -263,7 +267,7 @@ classdef Communication < handle
             end
         end
         
-        % Write bytes
+        %% Write bytes to serial connection
         function this = writeBytes(this, bytes)
             if (this.status == this.STATUSCODE.Simul)
                 Logging.log('Write data to simulation:');

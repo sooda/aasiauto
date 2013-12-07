@@ -14,6 +14,11 @@ function cardata = InitCarData()
     cardata.motorBatteryVoltage = 0;
     cardata.controllerBatteryVoltage = 0;
     cardata.acc_scaling = 32.0/1024.0*9.81; %the conversion factor from raw data to m/s^2
+    cardata.dist1 = 0;
+    cardata.dist2 = 0;
+    cardata.distToFront = 0;
+    cardata.autoDrive_distToFront = 0;
+    cardata.autoDrive_time = 0;
     cardata.last_measurements = [];
 end
 
