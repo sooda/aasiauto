@@ -58,7 +58,7 @@ savedrivedatacheckbox_Callback(handles.savedrivedatacheckbox, eventdata, handles
 end
 
 % --- Outputs from this function are returned to the command line.
-function varargout = RCCarGUI_OutputFcn(hObject, eventdata, handles) 
+function varargout = RCCarGUI_OutputFcn(~, ~, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -69,7 +69,7 @@ varargout{1} = handles.output;
 end
 
 % Text and axis callback (tab)
-function tbd(hObject,eventdata,handles)
+function tbd(~,eventdata,handles)
     set(handles.t1,'BackgroundColor',handles.unselectedTabColor)
     set(handles.t2,'BackgroundColor',handles.unselectedTabColor)
     set(handles.t3,'BackgroundColor',handles.unselectedTabColor)
@@ -99,7 +99,7 @@ function tbd(hObject,eventdata,handles)
 end
 
 % --- Executes on START MANUAL DRIVE button press.
-function startmandrivebtn_Callback(hObject, eventdata, handles)
+function startmandrivebtn_Callback(~, ~, handles)
 % hObject    handle to startmandrivebtn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -134,7 +134,7 @@ end
 end
 
 % --- Executes on END MANUAL DRIVE button press.
-function endmandrivebtn_Callback(hObject, eventdata, handles)
+function endmandrivebtn_Callback(~, ~, handles)
 % hObject    handle to stopbtn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -152,8 +152,12 @@ if (c.appdata.manualdrive)
 
     %Save Data
     if(get(handles.savedrivedatacheckbox, 'Value'))
-        carData = c.cardata;
-        
+        carData = c.cardata; %#ok<*NASGU>
+
+        if ~exist(c.appdata.save_drive_directory, 'dir')
+            mkdir(c.appdata.save_drive_directory);
+        end
+
         t = fix(clock);
         tim = strcat(num2str(t(6)),num2str(t(5)),num2str(t(4)),num2str(t(3)),num2str(t(2)),num2str(t(1)));
         filename = '\dSession';
@@ -177,7 +181,7 @@ function update_display(hObject,eventdata,hfigure,handles)
 end
     
 % --- Executes on button press in Connect To Car.
-function connecttocarbtn_Callback(hObject, eventdata, handles)
+function connecttocarbtn_Callback(~, ~, ~)
 % hObject    handle to connecttocarbtn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -197,7 +201,7 @@ end
 end
 
 % --- Executes on button press in Disconnect From Car.
-function disconnectfromcarbtn_Callback(hObject, eventdata, handles)
+function disconnectfromcarbtn_Callback(~, ~, ~)
 % hObject    handle to disconnectfromcarbtn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -216,7 +220,7 @@ delete(instrfindall('Type', 'serial'));
 end
 
 % --- Executes on selection change in portConnectpop.
-function portConnectpop_Callback(hObject, eventdata, handles)
+function portConnectpop_Callback(hObject, ~, ~)
 % hObject    handle to portConnectpop (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -241,7 +245,7 @@ end
 
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
 % --- Otherwise, executes on mouse press in 5 pixel border or over textFieldSaveDataTo.
-function textFieldSaveDataTo_ButtonDownFcn(hObject, eventdata, handles)
+function textFieldSaveDataTo_ButtonDownFcn(hObject, ~, handles)
 % hObject    handle to textFieldSaveDataTo (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -301,7 +305,7 @@ function savedrivedatacheckbox_Callback(hObject, eventdata, handles)
 end
 
 % --- Executes when user attempts to close figure1.
-function figure1_CloseRequestFcn(hObject, eventdata, handles)
+function figure1_CloseRequestFcn(hObject, ~, ~)
 % hObject    handle to figure1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -315,6 +319,7 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
     end
 
     % Destroy timers and com objects
+    stop(timerfindall);
     delete(timerfindall);
     delete(instrfindall);
 
@@ -326,7 +331,7 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
     delete(hObject);
 end
 % --------------------------------------------------------------------
-function saveConfiguration_ClickedCallback(hObject, eventdata, handles)
+function saveConfiguration_ClickedCallback(~, ~, handles)
 % hObject    handle to saveConfiguration (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -347,7 +352,7 @@ c = Car.getInstance;
  end   
 end
 % --------------------------------------------------------------------
-function openConfiguration_ClickedCallback(hObject, eventdata, handles)
+function openConfiguration_ClickedCallback(~, ~, ~)
 % hObject    handle to openConfiguration (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -368,7 +373,7 @@ c = Car.getInstance;
  end
 end
 % Resets the parameters
-function resetToDefault_ClickedCallback(hObject, eventdata, handles)
+function resetToDefault_ClickedCallback(~, ~, ~)
 % hObject    handle to resetToDefault (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -387,7 +392,7 @@ end
 end
 
 %Request and save the current car parameters
-function getCarConfParamBtn_Callback(hObject, eventdata, handles)
+function getCarConfParamBtn_Callback(~, ~, ~)
     c = Car.getInstance;
     
     if (~c.appdata.connected)
@@ -400,7 +405,7 @@ function getCarConfParamBtn_Callback(hObject, eventdata, handles)
 end
 
 %Save car parameters to car
-function setCarConfParamBtn_Callback(hObject, eventdata, handles)
+function setCarConfParamBtn_Callback(~, ~, ~)
 % hObject    handle to setCarConfParamBtn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -413,7 +418,7 @@ function setCarConfParamBtn_Callback(hObject, eventdata, handles)
 end
 
 % --------------------------------------------------------------------
-function aboutGUI_ClickedCallback(hObject, eventdata, handles)
+function aboutGUI_ClickedCallback(~, ~, ~)
 % hObject    handle to aboutGUI (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -425,7 +430,7 @@ end
 % --------------------------------------------------------------------
 
 % --- Executes during object creation, after setting all properties.
-function Generic_callback(hObject, eventdata, handles)
+function Generic_callback(hObject, ~, ~)
 % hObject    handle to ButtonPressDisplay (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -435,14 +440,14 @@ end
 end
 
 % --- Executes during object creation, after setting all properties.
-function Empty_callback(hObject, eventdata, handles)
+function Empty_callback(~, ~, ~)
 % hObject    handle to ButtonPressDisplay (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 end
 
 % --- Executes on button press in DemoBtn.
-function DemoBtn_Callback(hObject, eventdata, handles)
+function DemoBtn_Callback(~, ~, ~)
 % hObject    handle to DemoBtn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -451,7 +456,7 @@ end
 
 
 % --- Executes on key press with focus on figure1 and none of its controls.
-function figure1_KeyPressFcn(hObject, eventdata, handles)
+function figure1_KeyPressFcn(~, eventdata, ~)
 % hObject    handle to figure1 (see GCBO)
 % eventdata  structure with the following fields (see FIGURE)
 %	Key: name of the key that was pressed, in lower case
@@ -484,7 +489,7 @@ end
 
 
 % --- Executes on key release with focus on figure1 or any of its controls.
-function figure1_WindowKeyReleaseFcn(hObject, eventdata, handles)
+function figure1_WindowKeyReleaseFcn(~, eventdata, ~)
 % hObject    handle to figure1 (see GCBO)
 % eventdata  structure with the following fields (see FIGURE)
 %	Key: name of the key that was released, in lower case
@@ -500,7 +505,7 @@ end
 
 for i=1:numel(a)
     if strcmp(a(i), eventdata.Key)
-        a(i) = '';
+        a(i) = ''; %#ok<AGROW>
         break;
     end
 end
@@ -510,7 +515,7 @@ setappdata(0, 'keys', a);
 end
 
 % --- Executes on button press in ApplyParamsBtn.
-function ApplyParamsBtn_Callback(hObject, eventdata, handles)
+function ApplyParamsBtn_Callback(~, ~, handles)
 % hObject    handle to ApplyParamsBtn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -518,7 +523,7 @@ function ApplyParamsBtn_Callback(hObject, eventdata, handles)
 end
 
 % --- Executes on button press in drawMeasurements.
-function drawMeasurements_Callback(hObject, eventdata, handles)
+function drawMeasurements_Callback(~, ~, ~)
 % hObject    handle to drawMeasurements (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -530,14 +535,14 @@ function drawMeasurements_Callback(hObject, eventdata, handles)
     c = Car.getInstance;
     
     mdata = { c.cardata.motorBatteryVoltage ;
-    c.cardata.controllerBatteryVoltage };
+              c.cardata.controllerBatteryVoltage };
     set(h.h1, {'YData'}, mdata, 'XData', c.cardata.timepassed');
 
 end
 
 
 % --- Executes on selection change in listbox1.
-function listbox1_Callback(hObject, eventdata, handles)
+function listbox1_Callback(hObject, ~, handles)
 % hObject    handle to listbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -564,7 +569,7 @@ eval([t '(handles)']);
 end
 
 % --- Executes during object creation, after setting all properties.
-function listbox1_CreateFcn(hObject, eventdata, handles)
+function listbox1_CreateFcn(hObject, ~, ~)
 % hObject    handle to listbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called

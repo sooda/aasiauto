@@ -1,7 +1,7 @@
 function A = calcA(s)
 %theta = 0;  % ajoneuvon suunta suhteessa x-akseliin
 %phi = 0;    % ohjauskulma suhteutettuna auton linjaan
-L = 5.2;    % akselien välimatka (m)2
+L = 5.2;    % akselien välimatka (m) < pitäisi olla 0.52
 
 if ~isfield(s,'x')
     the = 0;
@@ -11,7 +11,7 @@ else
     the = s.x(5);       % theta angle from state vector
     phi = -1 * s.z(3);  % phi angle from measurements
 %    phi = s.x(6);
-    dt = 0.1; %s.dt;
+    dt = 0.05; %s.dt;
 end
 
 A = [

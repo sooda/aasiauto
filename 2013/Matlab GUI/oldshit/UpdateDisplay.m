@@ -9,19 +9,17 @@ function UpdateDisplay(~, ~, hfigure, ~)
 
     c.appdata.com.async_Communication_triggered(); % handle communication here
     
-    joy = [-0.2891    0.2620   -0.5703    0.5397]; % [ left_max right_max forward_max backward_max ]
 
     measurement_data = c.cardata.last_measurements;
     data = Protocol.processMeasurementData(measurement_data);
     keys = getappdata(0, 'keys');
     
     %Get last element from each dataset
-    thro = c.cardata.throttle(end);
-    dir = c.cardata.wheeldirection(end);
-    rev = c.cardata.reverse(end);
-    brake = 0;
-    sound_horn = 0;
-
+    sound_horn = 0;  %#ok<*NASGU>
+    maxAngle = 30; % maximum steering wheel angle
+    
+    %% Read joystick input
+    joy = [-0.2891    0.2620   -0.5703    0.5397]; % [ left_max right_max forward_max backward_max ]
     if numel(c.appdata.joystick)
         try 
             a = read(c.appdata.joystick);
@@ -31,7 +29,7 @@ function UpdateDisplay(~, ~, hfigure, ~)
         end
         
         thro = a(6) / joy(4) * 100;
-        dir = a(1) / joy(2) * 45;
+        dir = a(1) / joy(2) * maxAngle;
         rev = a(6) / joy(4) * 100;
         brake = a(6) / joy(4) * 100;
         sound_horn = 0;
@@ -40,11 +38,11 @@ function UpdateDisplay(~, ~, hfigure, ~)
             brake = 0;
         end
         
-        if (dir > 45)
-            dir = 45;
+        if (dir > maxAngle)
+            dir = maxAngle;
         end
-        if (dir < -45)
-            dir = -45;
+        if (dir < -maxAngle)
+            dir = -maxAngle;
         end;
         
         % dead zone near 0
@@ -65,97 +63,18 @@ function UpdateDisplay(~, ~, hfigure, ~)
             rev = 0;
         end
         
-        
     else
-        %Reading user keyboard commands
-
-        %Reading Brake commands
-        if (find(ismember(keys,'space')))
-             brake = 100;
-             thro = 0;
-             rev = 0;
-        elseif (find(ismember(keys,'n'))) %'n' = strong brake
-             brake = 75;
-             thro = 0;
-             rev = 0;
-        elseif (find(ismember(keys,'b')))%'b' = medium brake
-             brake = 50;
-             thro = 0;
-             rev = 0;
-        elseif (find(ismember(keys,'v')))%'v' = minimal brake
-             brake = 25;
-             thro = thro / 2;
-             rev = rev / 2;
-        else
-             brake = 0;
-
-             %If no brake, reading throttle commands
-             if (find(ismember(keys,'uparrow'))) %'uparrow'
-                thro = thro+5-thro/20;
-                rev = 0;
-             else
-               thro = thro-25;
-               if(thro < 0)
-                   thro = 0;
-               end
-
-               %If no brake or throttle then read reverse
-               if (find(ismember(keys,'downarrow'))) %'downarrow'
-                    thro = 0;
-                    % if carspeed < 2? --> enable TODOOOOOO ---> check this in
-                    % microcontrols!
-                    rev = rev+5-rev/20;
-               else
-                    rev = rev-25;
-                    if (rev < 0)
-                        rev = 0;
-                    end
-               end  
-
-             end
-        end  
-
-        %Reading steering commands
-        if (find(ismember(keys,'rightarrow'))) %rightarrow
-            dir = -45;%dir - 20;
-             if(dir < -45)
-                dir=-45;
-            end
-        end
-        %Reading steering commands
-        if (find(ismember(keys,'leftarrow'))) %leftarrow
-            dir = 45;%dir + 20;
-            if(dir > 45)
-                 dir = 45;
-             end
-        end
-
-        %If no steering command given
-        if (~any(ismember(keys,'leftarrow') + ismember(keys,'rightarrow'))) % ~right && ~left arrow
-             if(dir>0)
-                  dir = dir - 10;
-                  if(dir < 0)
-                       dir = 0;
-                  end
-             else
-                  dir = dir + 10;
-                  if(dir > 0)
-                      dir = 0;
-                  end     
-             end
-        end
+        % Read user keyboard commands
+        [dir, thro, rev, brake] = parseInputFromKeyboard(keys, maxAngle, c);
     end
     
-
+    % check sound horn
     if find(ismember(keys,'t'))
         sound_horn = 1;
     end
 
-    % Process received measurement data
-    
     % Store measured values
     c.cardata.wheelspeeds = [c.cardata.wheelspeeds; data(1:4)];
-%    c.cardata.wheelspeeds = [c.cardata.wheelspeeds; 2 2 2 2];
     c.cardata.acceleration = [c.cardata.acceleration; data(5:7)];
     c.cardata.gyro = [c.cardata.gyro; data(8:10)];
     c.cardata.wheeldirection = [c.cardata.wheeldirection; data(11)];
@@ -163,18 +82,14 @@ function UpdateDisplay(~, ~, hfigure, ~)
     c.cardata.controllerBatteryVoltage = [c.cardata.controllerBatteryVoltage; data(13)];
     
     % Update Timer
-%    if isnan(c.cardata.timepassed(end))
-%        c.cardata.timepassed(end+1) = 0.1;
-%    else
-    c.cardata.timepassed(end+1) = c.cardata.timepassed(end) +0.1; %+ handles2.timer.InstantPeriod;
-%    end
+    c.cardata.timepassed(end+1) = c.cardata.timepassed(end) + 0.05; %+ handles2.timer.InstantPeriod;
     
     % Car Total velocity
-%    totalvelocity = sum(c.cardata.wheelspeeds(end,1:4))/4;
-    totalvelocity = max(c.cardata.wheelspeeds(end,1:4));
+    totalvelocity = sum(c.cardata.wheelspeeds(end,1:4))/4;
+%    totalvelocity = max(c.cardata.wheelspeeds(end,1:4));
     c.cardata.totalvelocity = [c.cardata.totalvelocity; totalvelocity];
 
-    % plot some measurements
+    % plot some measurements (if figure is open)
     if ishandle(2)
         h = getappdata(2, 'handles');
         if isfield(h,'h1')
@@ -190,15 +105,12 @@ function UpdateDisplay(~, ~, hfigure, ~)
     if(numel(c.cardata.timepassed) > 1)
         timeSinceLast = c.cardata.timepassed(end) - c.cardata.timepassed(end-1);
     end
-%    posLength = size(c.cardata.position,1);
-%    c.cardata.position = [c.cardata.position; c.cardata.position(posLength,:) + deltaPos];
 
 
-    % Use Kalman filter to predict position using velocity,
+    %% Use Kalman filter to predict position using velocity,
     % acceleration and theta angle
     % initialize on the first time
     if (~isfield(c.appdata,'kalmanfilter'))
-        dt = 0.1; %timeSinceLast;
         s.A = calcA(nan); % initialize with theta 0
 
         % Define a process noise (stdev) as the car operates:
@@ -240,8 +152,8 @@ function UpdateDisplay(~, ~, hfigure, ~)
         % set measured data
         s(end).z = [
            c.cardata.totalvelocity(end)
-           c.cardata.acceleration(end)
-           degtorad(dir*-1) % direction angle between [-45, 45] deg
+           max(c.cardata.acceleration(end))
+           degtorad(dir*-1) % direction angle between [-maxAngle, maxAngle] deg
         ];
 
         s(end+1) = kalmanfilter(s(end)); % perform a Kalman filter iteration
@@ -256,7 +168,9 @@ function UpdateDisplay(~, ~, hfigure, ~)
         c.cardata.position = [c.cardata.position; pos];
         c.appdata.kalmanfilter = s;
     end
-    % Update c.cardata
+    
+    
+    %% Update c.cardata
     set(handles2.carpath,'XData',c.cardata.position(:,1));
     set(handles2.carpath,'YData',c.cardata.position(:,2));
 
@@ -269,24 +183,19 @@ function UpdateDisplay(~, ~, hfigure, ~)
     c.cardata.steeringwheel = [c.cardata.steeringwheel; dir];
     c.cardata.reverse = [c.cardata.reverse; rev];
 
-%    thro = thro * 0.2; % TODO: scaling throttle and reverse shoudn't be needed here!
-%    rev = rev * 0.2;
     %SEND DATA TO CAR
     if (rev > 0)
-        thro = rev*-1;
+        thro = -rev;
     end
-    drv_throttle = thro * 10; % throttle or reverse [-1000, 1000]
-    drv_dir = dir/45*1000; % steering wheel angle [-255, 255]
-    drv_brake = brake * 10;
+    drv_throttle = thro * 10;    % throttle or reverse [-1000, 1000]
+    drv_dir = dir/maxAngle*1000; % steering wheel angle [-1000, 1000]
+    drv_brake = brake * 10;      % brake [0, 1000]
 
     % throttle
     data = [drv_throttle drv_throttle];
     c.appdata.com.write2(120, data);
 
     % steering
-%    if drv_dir > 0
-%        [121 drv_dir]
-%    end
     c.appdata.com.write2(121, drv_dir);
 
     % brake
