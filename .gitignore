@@ -1,4 +1,8 @@
 *.swp
 *.gz
 *.*#*
-
+*.autosave
+*.original
+*.nav
+*.snm
+slprj*
