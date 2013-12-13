@@ -23,6 +23,14 @@ static uint8_t in_sync;
 // previous byte was ff
 static uint8_t in_ff;
 
+// ping timeout -> do this
+void uarthost_desync(void) {
+	cli();
+	in_sync = 0;
+	in_ff = 0;
+	sei();
+}
+
 // only the drive controller uses usart 0
 // it's a special case, needs this sync shit
 ISR(USART0_RX_vect) {

@@ -1,3 +1,5 @@
+#include "core_common.h"
+#include "core.h"
 #include "config.h"
 #include "encoders.h"
 #include "motors.h"
@@ -26,26 +28,6 @@ void steering_init(void) {
 void sensors_update(void) {
 	//encoders_update();
 	ana_meas_update();
-}
-
-uint16_t watchdog_val;
-
-void watchdog_reset(void) {
-	watchdog_val = WATCHDOG_MAX;
-}
-
-// 0 if cannot run
-uint8_t watchdog(void) {
-	if (watchdog_val)
-		watchdog_val--;
-
-	return watchdog_val;
-}
-
-static void pingpong(uint8_t sz, uint8_t id) {
-	(void)sz; (void)id;
-	dump_info(BUF_TXHOST, MSG_PONG, 0, NULL);
-	watchdog_reset();
 }
 
 // ping pong the actual brake command to the brake ctrlr
@@ -92,14 +74,6 @@ static void *imu_dump(void *p) {
 	return memcpy(p, &state, sizeof(state)) + sizeof(state);
 }
 
-static void err_from_brakectl(uint8_t sz, uint8_t id) {
-	(void)sz; (void)id;
-
-	uint16_t errtype = comm_u16(BUF_RXSLAVE);
-	uint16_t param = comm_u16(BUF_RXSLAVE);
-	comm_error(errtype | MSG_ERR_PROXIED_MASK, param);
-}
-
 static void meas_from_brakectl(uint8_t sz, uint8_t id) {
 	(void)sz; (void)id;
 	// TODO update those set by brakectl
@@ -116,6 +90,7 @@ static void meas_from_brakectl(uint8_t sz, uint8_t id) {
 
 // driver init; separate stuff for all three controllers
 void init() {
+	init_common();
 	pwm_init();
 	motors_init();
 	steering_init();
@@ -124,13 +99,9 @@ void init() {
 	init_param_array(BUF_RXHOST, MSG_ABS_PARAMS_START, MSG_ABS_PARAMS_END, brake_proxy);
 	init_param_array(BUF_RXHOST, MSG_ESP_PARAMS_START, MSG_ESP_PARAMS_END, brake_proxy);
 	msgs_register_handler(BUF_RXHOST, MSG_BRAKE, 4*sizeof(uint16_t), brake_cmd_proxy);
-	msgs_register_handler(BUF_RXHOST, MSG_PING, 0, pingpong);
 
 	msgs_register_handler(BUF_RXSLAVE, MSG_CAR_MEAS_VECTOR,
 			MEAS_NITEMS*sizeof(uint16_t), meas_from_brakectl);
-
-	msgs_register_handler(BUF_RXSLAVE, MSG_ERR,
-			2*sizeof(uint16_t), err_from_brakectl);
 
 	msgs_register_handler(BUF_RXHOST, MSG_REQ_PARAMS, 0, dump_params_proxy);
 
@@ -142,11 +113,12 @@ void init() {
 
 void failmode(void) {
 	motorctl_set(0, 0);
+	uarthost_desync();
 }
 
 /* write the state vector to a single packet and send it to the host */
 uint8_t transmit_vals(void) {
-	if (!watchdog()) {
+	if (msgwatchdog()) {
 		failmode();
 		return 1;
 	}

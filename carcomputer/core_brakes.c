@@ -1,3 +1,5 @@
+#include "core_common.h"
+#include "core.h"
 #include "config.h"
 #include "encoders.h"
 #include "servos.h"
@@ -14,11 +16,6 @@ void sensors_update(void) {
 	//encoders_update(st);
 }
 
-// TODO: make this a watchdog, stop if no ping in e.g. 10 ms
-static void pingpong(uint8_t sz, uint8_t id) {
-	(void)sz; (void)id;
-	dump_info(BUF_TXHOST, MSG_PONG, 0, NULL);
-}
 #include <avr/io.h>
 #include <util/delay.h>
 static void param_saver_brakes(uint8_t sz, uint8_t id) {
@@ -72,8 +69,6 @@ static void brake_cmd(uint8_t sz, uint8_t id) {
 	servo_set(PWM_BRAKE_FL, brk.fl/2);
 	servo_set(PWM_BRAKE_RL, brk.rl/2);
 	servo_set(PWM_BRAKE_RR, brk.rr/2);
-	extern int initd;
-	initd = 1;
 }
 
 static void dump_params(uint8_t sz, uint8_t id) {
@@ -102,21 +97,29 @@ static void meas_from_wheelctl(uint8_t sz, uint8_t id) {
 }
 
 void init() {
+	init_common();
 	pwm_init();
 	servos_init();
 	init_param_array(MSG_BRAKE_PARAMS_START, MSG_BRAKE_PARAMS_END, param_saver_brakes);
 	init_param_array(MSG_ABS_PARAMS_START, MSG_ABS_PARAMS_END, param_saver_esp);
 	init_param_array(MSG_ESP_PARAMS_START, MSG_ESP_PARAMS_END, param_saver_abs);
 	msgs_register_handler(BUF_RXHOST, MSG_BRAKE, 4*sizeof(uint16_t), brake_cmd);
-	msgs_register_handler(BUF_RXHOST, MSG_PING, 0, pingpong);
 
 	msgs_register_handler(BUF_RXSLAVE, MSG_CAR_MEAS_VECTOR,
 			MEAS_NITEMS*sizeof(uint16_t), meas_from_wheelctl);
 	msgs_register_handler(BUF_RXHOST, MSG_REQ_PARAMS, 0, dump_params);
 }
 
+void failmode(void) {
+	// TODO: brakes 100%
+}
+
 /* write the state vector to a single packet and send it to the host */
-void transmit_vals() {
+uint8_t transmit_vals(void) {
+	if (msgwatchdog()) {
+		failmode();
+		return 1;
+	}
 	static struct {
 		uint8_t sz, type;
 		uint16_t data[MEAS_NITEMS];
@@ -132,6 +135,8 @@ void transmit_vals() {
 	p = imu_dump(p); // acc, gyro
 
 	HOSTBUF_DUMP(packet);
+
+	return 0;
 }
 
 void driveiter(void) {

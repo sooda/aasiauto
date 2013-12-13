@@ -62,23 +62,24 @@ def parse_packet(data):
 				print "hax",hax
 				hax = struct.pack("<h", hax)
 				#ser.write("\xff\x02\x79" + hax)
-			# pingpong
-			print "le send"
-			ser.write("\xff\x00\x00")
-			print "le send done"
 			i += 10
 			#if i == 500:
 			#	i = 0
 	elif kind == MSG_ERR:
-		print "YHYY MSGERR"
+		print "YHYY MSGERR (id, sender, arg)"
+		print "(id |= 128 if proxied (not used actually))"
 		print map(ord, data[2:])
 		time.sleep(1)
 	elif kind == MSG_PONG:
-		print "YAAAAAY PONG"
-		time.sleep(0.1)
+		print "YAAAAAY PONG from %s" % data[2:]
+		time.sleep(0.05) # user actually sees it, almost
+		# keep them alive
+		ser.write("\xff\x00\x00")
 	else:
 		print "wat %s %s %s %s" % (sz, kind, data, "".join(data))
-		time.sleep(1)
+		time.sleep(0.2)
+		while True:
+			print list(ser.read())
 
 def parse(data):
 	if len(data) < 2:
@@ -91,19 +92,31 @@ def parse(data):
 	return data[:blksz], data[blksz:]
 
 ser = serial.Serial(argv[1], 38400)
+ser.setTimeout(0.1)
+
+print "init flush"
+xx = []
+x = ser.read(1)
+while x != "":
+	xx.append(x)
+	x = ser.read(1)
+print "flushed: %s" % xx
+
 time.sleep(2)
 print "init send"
 ser.write("\xff\x00\x00")
 data = []
 
 last = time.time()
-ser.setTimeout(0.1)
 while True:
 	if time.time() - last > 2:
 		print "timeout? data=%s %s" % (data, "".join(data))
+		print "init send"
+		ser.write("\xff\x00\x00")
 	#print "read..."
 	x = ser.read()
 	if len(x):
+		#print "got %s" % list(x)
 		last = time.time()
 		data.append(x)
 		if len(data) > 100:

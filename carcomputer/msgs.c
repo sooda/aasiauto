@@ -23,9 +23,11 @@ int8_t msgs_work(uint8_t bufid) {
 	uint8_t handbuf = (bufid == BUF_RXHOST) ? 1 : 0;
 	uint8_t available = comm_rxsize(bufid);
 
+#if 0 // yes now it responds to ping, ho
 #if MCU_ENCODERS
 	comm_ignore(bufid, available);
 	return 0;
+#endif
 #endif
 
 	if (available < MSG_HDRSIZE)
@@ -54,7 +56,7 @@ int8_t msgs_work(uint8_t bufid) {
 	}
 
 	if (packsize != msg_handlers[handbuf][type].size) {
-		comm_error(MSG_ERR_SIZE_MISMATCH, type);
+		comm_error(MSG_ERR_SIZE_MISMATCH, type | (msg_handlers[handbuf][type].size << 8));
 		comm_ignore(bufid, packsize);
 		return -1;
 	}
@@ -71,3 +73,17 @@ int8_t msgs_work(uint8_t bufid) {
 
 	return 0;
 }
+
+uint16_t watchdog_val;
+
+void msgwatchdog_reset(void) {
+	watchdog_val = WATCHDOG_MAX;
+}
+
+uint8_t msgwatchdog(void) {
+	if (watchdog_val)
+		watchdog_val--;
+
+	return watchdog_val == 0;
+}
+

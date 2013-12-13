@@ -3,7 +3,15 @@
 
 /* Hardware configuration: pin numbers etc. */
 
+// transmitter id numbers for at least ping and error messages
+#define ID_DRIVER 0
+#define ID_BRAKES 1
+// FIXME: rename to speeds? length would match, yay!
+#define ID_ENCODERS 2
+
 #ifdef MCU_DRIVER
+#define MY_ID ID_DRIVER
+#define HAS_SLAVE 1
 
 // OCR1A
 #define PWM_LEFTMOTOR 0
@@ -23,6 +31,8 @@
 
 #else
 #ifdef MCU_BRAKES
+#define MY_ID ID_BRAKES
+#define HAS_SLAVE 1
 
 // OCR1A front right
 #define PWM_BRAKE_FR 0
@@ -38,6 +48,8 @@
 
 #else
 #ifdef MCU_SIM
+#define MY_ID ID_DRIVER // ?
+#define HAS_SLAVE 0
 
 #define PWM_LEFTMOTOR 0
 #define PWM_RIGHTMOTOR 1
@@ -51,6 +63,8 @@
 
 #else
 #ifdef MCU_ENCODERS
+#define MY_ID ID_ENCODERS
+#define HAS_SLAVE 0
 
 #define UART_HOST 1
 

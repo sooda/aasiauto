@@ -2,6 +2,7 @@
 #include "comm.h"
 #include "uartbuf.h"
 #include "core.h"
+#include "core_common.h"
 #include "msgs.h"
 #include <stdint.h>
 #include <string.h>
@@ -27,7 +28,6 @@ volatile uint8_t flag_drive;    // 1000 Hz
 // 1000 Hz
 ISR(TIMER0_COMPA_vect) {
 	static uint8_t prescale;
-#warning change back to 10
 	if (++prescale == 10) {
 		prescale = 0;
 		flag_transmit = 1;
@@ -79,10 +79,10 @@ int main() {
 	usart_1_init(38400);
 	// assert(!"testing");
 	DDRD |= _BV(3); // tx
-	DDRA |= 3;
+	DDRA |= 3; // drive leds
 	// leds
-	DDRA |= _BV(2);
-	DDRB |= _BV(7);
+	DDRA |= _BV(2); // ext blue
+	DDRB |= _BV(7); // internal
 	init();
 	worktimer_init();
 	sei();
@@ -95,16 +95,8 @@ int main() {
 			driveiter();
 		}
 		if (flag_transmit) {
-			static uint8_t subid;
 			flag_transmit = 0;
-			uint8_t err = transmit_vals();
-			if (err) {
-				if ((subid++ & 0x7f) < 0x40) // ~ 1s period
-					heartbeat();
-			} else {
-				if ((subid++ & 0x7) < 0x04) // ~ 0.1s period
-					heartbeat();
-			}
+			transmit();
 		}
 	}
 }

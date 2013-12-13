@@ -4,12 +4,19 @@
 #include <stdint.h>
 // FIXME BUF_TXHOST into config etc
 #include "ringbuf.h"
+#include "uartbuf.h"
 
 void dump_info(uint8_t stream, uint8_t type, uint8_t size, void *data);
 void recv_info(uint8_t stream, uint8_t *type, uint8_t *size, void *data);
 void recv_info_check(uint8_t stream, uint8_t type, uint8_t size, void *data);
 
 #define DUMP_INFO(type, data) dump_info(BUF_TXHOST, type, sizeof(data), &data)
+
+// relay data from buffer to another; useful for pings and brake parameters
+#define COMM_PROXY(from, to, msgid, data) do { \
+	uartbuf_read(from, &data, sizeof(data)); \
+	dump_info(to, msgid, sizeof(data), &data); \
+} while (0)
 
 // protocol desc
 #define MSG_PING 0

@@ -3,6 +3,9 @@
 
 #include <avr/io.h>
 
+// signal ping timeout
+void uarthost_desync(void);
+
 void uartflush_host(void);
 void uartflush_slave(void);
 #define uartflush(buf) (buf == BUF_TXHOST ? uartflush_host() : uartflush_slave())

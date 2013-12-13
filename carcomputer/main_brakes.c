@@ -2,6 +2,7 @@
 #include "comm.h"
 #include "uartbuf.h"
 #include "core.h"
+#include "core_common.h"
 #include "msgs.h"
 #include <stdint.h>
 #include <string.h>
@@ -27,8 +28,7 @@ volatile uint8_t flag_drive;    // 1000 Hz
 // 1000 Hz
 ISR(TIMER0_COMPA_vect) {
 	static uint8_t prescale;
-#warning 200 vs 10
-	if (++prescale == 50) {
+	if (++prescale == 10) {
 		prescale = 0;
 		flag_transmit = 1;
 	}
@@ -68,7 +68,10 @@ void worktimer_init(void) {
 	TIMSK0 |= (1 << OCIE0A);
 }
 
-int initd;
+void heartbeat(void) {
+	PORTA ^= _BV(2); // external blue led
+	PORTB ^= _BV(7); // some internal foo
+}
 
 int main() {
 #if 0
@@ -108,12 +111,7 @@ int main() {
 		}
 		if (flag_transmit) {
 			flag_transmit = 0;
-			//if (initd) { initd = 0;
-			//	transmit_vals(); }
-			transmit_vals();
-			PORTA ^= _BV(2);
-			PORTB ^= _BV(7);
+			transmit();
 		}
 	}
 }
-

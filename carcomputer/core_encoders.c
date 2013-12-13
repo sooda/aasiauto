@@ -1,3 +1,5 @@
+#include "core_common.h"
+#include "core.h"
 #include "config.h"
 #include "encoders.h"
 #include "servos.h"
@@ -10,26 +12,25 @@
 
 void sensors_update(void) {
 	// FIXME
+#if 0
 	struct encoderstate st;
 	st.fleft = 12300;
 	st.fright = 23400;
 	st.rleft = 3450;
 	st.rright = 4560;
 	//encoders_update(st);
-}
-
-// TODO: make this a watchdog, stop if no ping in e.g. 10 ms
-static void pingpong(uint8_t sz, uint8_t id) {
-	(void)sz; (void)id;
-	dump_info(BUF_TXHOST, MSG_PONG, 0, NULL);
+#endif
 }
 
 void init() {
-	msgs_register_handler(BUF_RXHOST, MSG_PING, 0, pingpong);
+	init_common();
 }
 
 /* write the state vector to a single packet and send it to the host */
-void transmit_vals() {
+uint8_t transmit_vals(void) {
+	if (msgwatchdog())
+		return 1;
+
 	// XXX currently updated here, not in sensors_update()
 
 	rData_t speeds = getSpeeds();
@@ -57,6 +58,8 @@ void transmit_vals() {
 	//memset(packet.data, 30, sizeof(packet.data));
 
 	HOSTBUF_DUMP(packet);
+
+	return 0;
 }
 
 void driveiter(void) {

@@ -1,6 +1,7 @@
 #include "uart.h"
 #include "msgs.h"
 #include "core.h"
+#include "core_common.h"
 #include "ringbuf.h"
 #include <avr/io.h>
 #include <util/delay.h>
@@ -31,13 +32,16 @@ void measinit(void) {
 	initInterrupts();
 }
 
+void heartbeat(void) {
+	PORTD ^= _BV(6);
+}
+
 void prgm800Hz() {
 	cycleData.intFlag = 0;
 	cycleData.Cnt++;
 	if (cycleData.Cnt == 1) { // e.g. 80 here to slow down
 		updateSpeeds();
 		cycleData.Cnt = 0;
-		PORTD ^= _BV(6);
 	}
 }
 
@@ -86,8 +90,7 @@ volatile uint8_t flag_drive;    // 1000 Hz
 // 1000 Hz
 ISR(TIMER0_COMPA_vect) {
 	static uint8_t prescale;
-#warning change 200 back to 10
-	if (++prescale == 200) {
+	if (++prescale == 10) {
 		prescale = 0;
 		flag_transmit = 1;
 	}
@@ -135,8 +138,7 @@ int main() {
 		}
 		if (flag_transmit) {
 			flag_transmit = 0;
-			transmit_vals();
-//			PORTD ^= _BV(6);
+			transmit();
 		}
 
 		// meas
