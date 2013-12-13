@@ -8,7 +8,7 @@
 #include <avr/interrupt.h>
 #include <avr/power.h>
 
-// meas
+// meas copypasta here
 #include "initTeensy.h"
 #include "wheelSpeeds.h"
 
@@ -28,7 +28,6 @@ void measinit(void) {
 	initWheelData();
 	initPorts();
 	initTimers();
-	//initUSART();
 	initInterrupts();
 }
 
@@ -39,43 +38,27 @@ void heartbeat(void) {
 void prgm800Hz() {
 	cycleData.intFlag = 0;
 	cycleData.Cnt++;
-	if (cycleData.Cnt == 1) { // e.g. 80 here to slow down
+	if (cycleData.Cnt == 1) {
 		updateSpeeds();
 		cycleData.Cnt = 0;
 	}
 }
 
-void prgm100Hz(void) {
-#if 0
-	cycleData.Cnt = 0;
-	rData_t speeds = getSpeeds();
-	rData_t acc = getAccelerations();
-	//msgData_t msg = parseMsg(speeds, acc);
-	//sendData(msg);
-#endif
-}
-// The service routine for interrupt 0 (front left)
+// encoder pulses: front left, front right, rear left, rear right
 ISR(INT0_vect) {
 	addFLCounter();
 }
-
-// The service routine for interrupt 1 (front right)
 ISR(INT1_vect) {
 	addFRCounter();
 }
-
-// The service routine for interrupt 6 (left rear)
 ISR(INT6_vect) {
 	addRLCounter();
 }
-
-// The service routine for interrupt 7 (right rear)
 ISR(INT7_vect) {
 	addRRCounter();
 }
 
-//The Timer1 Interrupt service routine
-//Will be executed at rate of 800Hz
+// 800 Hz
 ISR(TIMER1_COMPA_vect){
 	cycleData.intFlag = 1;
 }
@@ -122,10 +105,8 @@ int main() {
 	measinit();
 
 	usart_1_init(38400);
-	// assert(!"testing");
 	DDRD |= _BV(3); // tx
-	// leds
-	DDRD |= _BV(6);
+	DDRD |= _BV(6); // heartbeat
 	worktimer_init();
 	init();
 	sei();
@@ -134,7 +115,6 @@ int main() {
 		sensors_update();
 		if (flag_drive) {
 			flag_drive = 0;
-			//driveiter();
 		}
 		if (flag_transmit) {
 			flag_transmit = 0;
@@ -144,7 +124,5 @@ int main() {
 		// meas
 		if(cycleData.intFlag)
 			prgm800Hz();
-		//if(cycleData.Cnt == 8)
-		//	prgm100Hz(); // done already in other places
 	}
 }

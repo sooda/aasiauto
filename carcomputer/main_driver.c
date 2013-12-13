@@ -35,6 +35,7 @@ ISR(TIMER0_COMPA_vect) {
 	flag_drive = 1;
 }
 
+// for stderr and assert()
 static int uart_putchar(char c, FILE *stream) {
 	(void)stream;
 	cli();
@@ -77,12 +78,10 @@ int main() {
 	clock_prescale_set(clock_div_1);
 	usart_0_init(38400);
 	usart_1_init(38400);
-	// assert(!"testing");
 	DDRD |= _BV(3); // tx
 	DDRA |= 3; // drive leds
-	// leds
-	DDRA |= _BV(2); // ext blue
-	DDRB |= _BV(7); // internal
+	DDRA |= _BV(2); // ext blue led
+	DDRB |= _BV(7); // internal led
 	init();
 	worktimer_init();
 	sei();

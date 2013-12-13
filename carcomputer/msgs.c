@@ -23,13 +23,6 @@ int8_t msgs_work(uint8_t bufid) {
 	uint8_t handbuf = (bufid == BUF_RXHOST) ? 1 : 0;
 	uint8_t available = comm_rxsize(bufid);
 
-#if 0 // yes now it responds to ping, ho
-#if MCU_ENCODERS
-	comm_ignore(bufid, available);
-	return 0;
-#endif
-#endif
-
 	if (available < MSG_HDRSIZE)
 		return -1;
 
@@ -60,14 +53,6 @@ int8_t msgs_work(uint8_t bufid) {
 		comm_ignore(bufid, packsize);
 		return -1;
 	}
-
-	//if (handbuf == 0) printf(" yhyy %d %d\n", packsize, type);
-	//if (handbuf == 0) { comm_ignore(bufid, comm_rxsize(bufid)); return -1; }
-#if 0
-#if MCU_BRAKES
-	printf("ankka vankka");
-#endif
-#endif
 
 	msg_handlers[handbuf][type].handler(packsize, type);
 

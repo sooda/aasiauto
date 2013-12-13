@@ -11,13 +11,9 @@
 #include <stdio.h>
 
 void sensors_update(void) {
-	// FIXME
-	//struct encoderstate st = {42,43,44,45};
-	//encoders_update(st);
+	// no sensors here, just driving the brake servos
 }
 
-#include <avr/io.h>
-#include <util/delay.h>
 static void param_saver_brakes(uint8_t sz, uint8_t id) {
 	(void)sz;
 	uint16_t arg = comm_u16(BUF_RXHOST);
@@ -74,7 +70,6 @@ static void brake_cmd(uint8_t sz, uint8_t id) {
 static void dump_params(uint8_t sz, uint8_t id) {
 	(void)sz; (void)id;
 	uint16_t x;
-#if 1
 	for (uint8_t i = 0; i < 4; i++) {
 		x = servo_neutral_get(i);
 		DUMP_INFO(MSG_BRAKE_PARAMS_START + i, x);
@@ -83,13 +78,13 @@ static void dump_params(uint8_t sz, uint8_t id) {
 		x = servo_max_get(i);
 		DUMP_INFO(MSG_BRAKE_PARAMS_START + 4 + i, x);
 	}
-#endif
 	dump_info(BUF_TXHOST, MSG_PARAMS_EOF, 0, NULL);
 }
 
+// read just the encoder data, ignore everything else
+// the standard measurement vector is sent here also
 static void meas_from_wheelctl(uint8_t sz, uint8_t id) {
 	(void)sz; (void)id;
-	// TODO update those set by it
 	struct encoderstate enc;
 	uartbuf_read(BUF_RXSLAVE, &enc, sizeof(enc));
 	comm_ignore(BUF_RXSLAVE, (6+3)*sizeof(uint16_t));
@@ -115,6 +110,7 @@ void failmode(void) {
 }
 
 /* write the state vector to a single packet and send it to the host */
+// TODO: generalize me, no copypasta please
 uint8_t transmit_vals(void) {
 	if (msgwatchdog()) {
 		failmode();
@@ -140,6 +136,5 @@ uint8_t transmit_vals(void) {
 }
 
 void driveiter(void) {
-	//read_user_input();
-	//abs_execute();
+	// abs here
 }

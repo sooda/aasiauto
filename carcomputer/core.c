@@ -18,7 +18,6 @@
 void steer(uint8_t sz, uint8_t id) {
 	(void)sz; (void)id;
 	pwm_set(PWM_STEERING, (int16_t)comm_u16(BUF_RXHOST));
-//	hostbuf_read(&buf, sizeof(buf));
 }
 
 void steering_init(void) {
@@ -26,7 +25,6 @@ void steering_init(void) {
 }
 
 void sensors_update(void) {
-	//encoders_update();
 	ana_meas_update();
 }
 
@@ -144,6 +142,5 @@ uint8_t transmit_vals(void) {
 }
 
 void driveiter(void) {
-	//steering_execute();
-	//abs_execute();
+	// TODO: automaattiajo, abs, jne
 }

@@ -74,30 +74,19 @@ void heartbeat(void) {
 }
 
 int main() {
-#if 0
-	DDRA |= _BV(2);
-	DDRB |= _BV(7);
-	for(;;) {
-		PORTA ^= _BV(2);
-		PORTA ^= _BV(7);
-		_delay_ms(1000);
-	}
-#endif
 	stdout = &mystdout;
 	stderr = &mystdout;
 	clock_prescale_set(clock_div_1);
 	usart_0_init(38400);
-	UCSR0B &= ~(_BV(RXCIE0) | _BV(TXCIE0));
+	UCSR0B &= ~(_BV(RXCIE0) | _BV(TXCIE0)); // thanks init, but not for me
 	printf("Hello world"); // cli() in putchar won't affect yet here
-	printf("Wollo Hello world"); // cli() in putchar won't affect yet here
 	usart_1_init(38400);
 	usart_3_init(38400);
-	//DDRD |= _BV(6); // led
+	// TODO: board_init() or something
 	DDRD |= _BV(3); // tx
-	DDRA |= 3;
-	// leds
-	DDRA |= _BV(2);
-	DDRB |= _BV(7);
+	DDRA |= 3; // brake leds
+	DDRA |= _BV(2); // ext blue
+	DDRB |= _BV(7); // internal led
 	worktimer_init();
 	init();
 	sei();
