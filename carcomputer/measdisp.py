@@ -79,7 +79,10 @@ def parse_packet(data):
 		print "wat %s %s %s %s" % (sz, kind, data, "".join(data))
 		time.sleep(0.2)
 		while True:
-			print list(ser.read())
+			x = ser.read()
+			print list(x)
+			if len(x) == 0:
+				break
 
 def parse(data):
 	if len(data) < 2:
