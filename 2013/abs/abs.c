@@ -3,7 +3,7 @@
 #include "vehicle.h"
 #include "pwm.h"
 #include "config.h"
-#include "pid.h"
+#include "../pid/pid.h"
 #include <stdlib.h>
 
 static absData_t FLdata, FRdata, RLdata, RRdata;
@@ -12,25 +12,36 @@ static absParams_t absParams;
 static pidData_t accPid, slipPid;
 
 void initAbsData(void) {
-    absParams_t defaultValues = {
+    absParams_t defValues = {
         .slipTolerance = 10,
         .enabled = 1,
         .cutOffSpeed = 4,
         .minAcc = 2,
         .maxAcc = 8,
         .muSplitThreshold = 10,
+        .accK = 1,
+        .accTi = 1,
+        .accTd = 0,
+        .slipK = 1,
+        .slipTi = 1,
+        .slipTd = 0,
+        .maxCtrl = 100,
+        .minCtrl = 0,
     }; 
     FLdata.otherSide = &FRdata;
     FRdata.otherSide = &FLdata;
     RLdata.otherSide = &RRdata;
     RRdata.otherSide = &RLdata;
-    setAbsParam(defaultValues.slipTolerance, SLIPTOLERANCE);
-    setAbsParam(defaultValues.enabled, ENABLED);
-    setAbsParam(defaultValues.cutOffSpeed, CUTOFFSPEED);
-    setAbsParam(defaultValues.minAcc, MINACC);
-    setAbsParam(defaultValues.maxAcc, MAXACC);
-    setAbsParam(defaultValues.muSplitThreshold, MUSPLITTHRESHOLD);
-    
+    setAbsParam(defValues.slipTolerance, SLIPTOLERANCE);
+    setAbsParam(defValues.enabled, ENABLED);
+    setAbsParam(defValues.cutOffSpeed, CUTOFFSPEED);
+    setAbsParam(defValues.minAcc, MINACC);
+    setAbsParam(defValues.maxAcc, MAXACC);
+    setAbsParam(defValues.muSplitThreshold, MUSPLITTHRESHOLD);
+    initPid(&accPid, defValues.accK, defValues.accTi, defValues.accTd);
+    initPid(&slipPid, defValues.slipK, defValues.slipTi, defValues.slipTd);
+    setLimits(&accPid, defValues.maxCtrl, defValues.minCtrl);
+    setLimits(&slipPid, defValues.maxCtrl, defValues.minCtrl);
 }
 
 void absIter(unsigned char brakePos) {
@@ -76,10 +87,11 @@ void calculateBrakeForceReq(absDAta_t* wheel) {
     else if(wheel->acc < wheel->maxAcc)
         K = 100- wheel->acc/(wheel->maxAcc-wheel->minAcc);
     
-    int slipE = int(maxTyreForceIndex()) - int(wheel->slip) << 7;
+    int slipE = int(maxTyreForceIndex()) - int(wheel->slip);
     int accE = ((wheel->maxAcc - wheel->minAcc) >>2 ) - wheel->acc;
     
-    
+    wheel->brakeForce += K*ctrl(&slipPid, slipE) + (100-K)*ctrl(&accPid, accE);
+    wheel->brakeForce = checkSaturation(&slipPid, wheel->brakeForce);
 }
 
 unsigned char getSlip(absData_t* wheel) {
@@ -135,8 +147,39 @@ void setAbsParam(unsigned char newValue, absParam param) {
         case MUSPLITTHRESHOLD:
             absParams.muSplitThreshold = newValue;
             break;
-        case P:
-            absParams.p = newValue;
+        case ACCK:
+            absParams.accK = newValue;
+            initPid(&accPid, newValue, accPid->Ti, accPid->Td);
+            break;
+        case ACCTI:
+            absParams.accTi = newValue;
+            initPid(&accPid, accPid->K, newValue, accPid->Td);
+            break;
+        case ACCTD:
+            absParams.accTd = newValue;
+            initPid(&accPid, accPid->K, accPid->Ti, newValue);
+            break;
+        case SLIPK:
+            absParams.slipK = newValue;
+            initPid(&slipPid, newValue, slipPid->Ti, slipPid->Td);
+            break;
+        case SLIPTI:
+            absParams.slipTi = newValue;
+            initPid(&slipPid, slipPid->K, newValue, slipPid->Td);
+            break;
+        case SLIPTD:
+            absParams.slipTd = newValue;
+            initPid(&slipPid, slipPid->K, slipPid->Ti, newValue);
+            break;
+        case MAXCTRL:
+            absParams.maxCtrl = newValue;
+            setLimits(&accPid, newValue, accPid->min);
+            setLimits(&slipPid, newValue, slipPid->min);
+            break;
+        case MINCTRL:
+            absParams.minCtrl = newValue;
+            setLimits(&accPid, accPid->max, newValue);
+            setLimits(&slipPid, slipPid->max, newValue);
             break;
         default:
             break;
@@ -163,8 +206,29 @@ unsigned char getAbsParam(absParam param) {
         case MUSPLITTHRESHOLD:
             return absParams.muSplitThreshold;
             break;
-        case P:
-            return absParams.P;
+        case ACCK:
+            return absParams.accK;
+            break;
+        case ACCTI:
+            return absParams.accTi;
+            break;
+        case ACCTD:
+            return absParams.accTd;
+            break;
+        case SLIPK:
+            return absParams.slipK;
+            break;
+        case SLIPTI:
+            return absParams.slipTi;
+            break;
+        case SLIPTD:
+            return absParams.slipTd;
+            break;
+        case MAXCTRL:
+            return absParams.maxCtrl;
+            break;
+        case MINCTRL:
+            return absParams.minCtrl;
             break;
         default:
             return -1;

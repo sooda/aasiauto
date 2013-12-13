@@ -12,8 +12,16 @@ typedef enum{
     MINACC,
     MAXACC,
     MUSPLITTHRESHOLD,
-    P,
-    ABSPARAM_MAX
+    ACCK,
+    ACCTI,
+    ACCTD,
+    SLIPK,
+    SLIPTI,
+    SLIPTD,
+    MAXCTRL,
+    MINCTRL,
+    ABSPARAM_MAX,
+
 }absParam; 
 
 //Datatype for holding wheel information for abs algorithm
@@ -34,7 +42,14 @@ typedef struct {
     unsigned char minAcc;
     unsigned char maxAcc;
     unsigned char muSplitThreshold;
-    unsigned char p;
+    int accK,
+    int accTi,
+    int accTd,
+    int slipK,
+    int slipTi,
+    int slipTd,
+    int maxCtrl,
+    int minCtrl,
 }absParams_t;
 
 //initialize abs system with default settings
