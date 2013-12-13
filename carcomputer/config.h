@@ -9,6 +9,10 @@
 // FIXME: rename to speeds? length would match, yay!
 #define ID_ENCODERS 2
 
+// 1000 / this = transmit frequency
+#warning turn back to 10 for 100 hz
+#define TRANSMIT_PRESCALE 40
+
 #ifdef MCU_DRIVER
 #define MY_ID ID_DRIVER
 #define HAS_SLAVE 1

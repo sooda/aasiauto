@@ -1,3 +1,4 @@
+#include "config.h"
 #include "uart.h"
 #include "msgs.h"
 #include "core.h"
@@ -73,7 +74,7 @@ volatile uint8_t flag_drive;    // 1000 Hz
 // 1000 Hz
 ISR(TIMER0_COMPA_vect) {
 	static uint8_t prescale;
-	if (++prescale == 10) {
+	if (++prescale == TRANSMIT_PRESCALE) {
 		prescale = 0;
 		flag_transmit = 1;
 	}
