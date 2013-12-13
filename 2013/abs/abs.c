@@ -3,11 +3,13 @@
 #include "vehicle.h"
 #include "pwm.h"
 #include "config.h"
+#include "pid.h"
 #include <stdlib.h>
 
 static absData_t FLdata, FRdata, RLdata, RRdata;
 static absData_t*[4] wheelData = {&FLdata, &FRdata, &RLdata, &RRdata };
 static absParams_t absParams;
+static pidData_t accPid, slipPid;
 
 void initAbsData(void) {
     absParams_t defaultValues = {
@@ -17,8 +19,7 @@ void initAbsData(void) {
         .minAcc = 2,
         .maxAcc = 8,
         .muSplitThreshold = 10,
-        .p = 1;
-    };
+    }; 
     FLdata.otherSide = &FRdata;
     FRdata.otherSide = &FLdata;
     RLdata.otherSide = &RRdata;
@@ -29,6 +30,7 @@ void initAbsData(void) {
     setAbsParam(defaultValues.minAcc, MINACC);
     setAbsParam(defaultValues.maxAcc, MAXACC);
     setAbsParam(defaultValues.muSplitThreshold, MUSPLITTHRESHOLD);
+    
 }
 
 void absIter(unsigned char brakePos) {
@@ -53,7 +55,7 @@ int currentSpeed(int deltaTime) {
         vehicle.speed += getAcc()*deltaTime;
 }
 
-
+/*
 void calculateBrakeForceReq(absData_t* wheel) {
    if (wheel->slip < minSlip(absParams.slipTolerance) || wheel->acc < absParams.minAcc)
        //More power
@@ -64,6 +66,20 @@ void calculateBrakeForceReq(absData_t* wheel) {
         wheel->forceReq -= MAX(wheel->slip - maxSlip(absParams.sliptolerance), wheel->acc - absParams.maxAcc)*absParams.p;
     //else
         //Same power
+}
+*/
+
+void calculateBrakeForceReq(absDAta_t* wheel) {
+    unsigned char K = 0;
+    if (wheel->acc < wheel->minAcc)
+        K = 100;
+    else if(wheel->acc < wheel->maxAcc)
+        K = 100- wheel->acc/(wheel->maxAcc-wheel->minAcc);
+    
+    int slipE = int(maxTyreForceIndex()) - int(wheel->slip) << 7;
+    int accE = ((wheel->maxAcc - wheel->minAcc) >>2 ) - wheel->acc;
+    
+    
 }
 
 unsigned char getSlip(absData_t* wheel) {
