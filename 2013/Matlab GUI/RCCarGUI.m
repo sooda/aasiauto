@@ -22,7 +22,7 @@ function varargout = RCCarGUI(varargin)
 
 % Edit the above text to modify the response to help RCCarGUI
 
-% Last Modified by GUIDE v2.5 07-Dec-2013 16:34:46
+% Last Modified by GUIDE v2.5 14-Dec-2013 17:53:09
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -423,7 +423,7 @@ function aboutGUI_ClickedCallback(~, ~, ~)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-msgbox('Author: Valter Sandström                                                 E-mail: valter.sandstrom@aalto.fi                                26.11.2012',...
+msgbox('Author: Valter Sandstrï¿½                                                 E-mail: valter.sandstrom@aalto.fi                                26.11.2012',...
     'About this GUI...');
 end
 
