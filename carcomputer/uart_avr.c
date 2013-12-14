@@ -1,5 +1,7 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include <stdio.h>
+#include "uart_stdio.h"
 #include "ringbuf.h"
 #include "config.h"
 
@@ -129,11 +131,17 @@ void uartflush_slave(void) {
 	}
 	sei();
 }
+#endif
 
-#else
-
-// won't get here, but needs to compile (FIXME)
-void uartflush_slave(void) {
+#ifdef UDRE0
+// for stderr and assert() in the arduinos
+int uart_putchar(char c, FILE *stream) {
+	(void)stream;
+	cli();
+	loop_until_bit_is_set(UCSR0A, UDRE0);
+	UDR0 = c;
+	loop_until_bit_is_set(UCSR0A, UDRE0);
+	//sei();
+	return 0;
 }
-
 #endif

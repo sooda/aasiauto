@@ -18,6 +18,11 @@ void msgs_register_handler(uint8_t buf, uint8_t type, uint8_t size, msg_handler 
 	msg_handlers[buf][type].size = size;
 }
 
+void init_param_array(uint8_t buf, uint8_t start, uint8_t end, msg_handler handler) {
+	for (; start <= end; start++)
+		msgs_register_handler(buf, start, sizeof(uint16_t), handler);
+}
+
 int8_t msgs_work(uint8_t bufid) {
 	// FIXME better indexing (divide by 2? get it from a single bit?)
 	uint8_t handbuf = (bufid == BUF_RXHOST) ? 1 : 0;

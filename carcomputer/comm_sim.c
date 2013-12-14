@@ -65,20 +65,3 @@ void dump_info(uint8_t stream, uint16_t type, uint16_t size, void *data) {
 	sim_write(&type, sizeof(type));
 	sim_write(data, size);
 }
-
-#if 0
-void recv_info(uint8_t stream, uint16_t *type, uint16_t *size, void *data) {
-	(void)stream;
-	sim_read(&size, sizeof(size));
-	sim_read(&type, sizeof(type));
-	sim_read(data, *size);
-}
-
-void recv_info_check(uint8_t stream, uint16_t type, uint16_t size, void *data) {
-	(void)stream;
-	int rtype, rsize;
-	recv_info(&rtype, &rsize, data);
-	assert(rtype == type);
-	assert(rsize == size);
-}
-#endif

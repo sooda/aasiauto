@@ -4,12 +4,13 @@
 ### !!!
 
 CC := avr-gcc
-CFLAGS := -std=c99 -Wall -Wextra -Os -DF_CPU=16000000
+CFLAGS := -std=c99 -Wall -Wextra -Os -DF_CPU=16000000 -fpack-struct
+#CFLAGS += -DMCU_BRAKES -mmcu=atmega2560 -D__ASSERT_USE_STDERR -MMD -MP
 DUDEOPTS := -pm2560 -cstk500v2 -P/dev/ttyACM0 -b115200
+TEENSYOPTS := -mmcu=at90usb1286 -w -v
 
-# TODO fpack struct
-
-SRC_COMMON := comm_avr.c msgs.c comm.c ringbuf.c uartbuf.c uart_avr.c core_common.c
+# TODO: fix header dependencies
+SRC_COMMON := comm_avr.c msgs.c comm.c ringbuf.c uartbuf.c uart_avr.c core_common.c core_avr.c
 SRC_DRIVER := main_driver.c core.c encoders.c motors.c motors_avr.c pwm_avr.c analog.c adc.c $(SRC_COMMON)
 SRC_BRAKES := main_brakes.c pwm_avr.c core_brakes.c encoders.c servos.c $(SRC_COMMON)
 SRC_ENCODERS := main_encoders.c core_encoders.c encoders.c initTeensy.c wheelSpeeds.c lsq.c $(SRC_COMMON)
@@ -23,7 +24,7 @@ flashbrakes: brakes.hex
 	avrdude $(DUDEOPTS) -U $^
 
 flashencoders: encoders.hex
-	teensy_loader_cli -mmcu=at90usb1286 -w -v $^
+	teensy_loader_cli $(TEENSYOPTS) $^
 
 clean:
 	rm -f *.hex *.elf
@@ -40,6 +41,9 @@ driver.elf: $(SRC_DRIVER)
 brakes.elf: $(SRC_BRAKES)
 	$(CC) -D__ASSERT_USE_STDERR -mmcu=atmega2560 -DMCU_BRAKES $(CFLAGS) $^ -o $@
 
+#OBJ_BRAKES=$(patsubst %.c,%.o,$(SRC_BRAKES))
+#brakes2.elf: $(OBJ_BRAKES)
+#	$(CC) -D__ASSERT_USE_STDERR -mmcu=atmega2560 -DMCU_BRAKES $(CFLAGS) $^ -o $@
+
 encoders.elf: $(SRC_ENCODERS)
 	$(CC) -mmcu=at90usb1286 -DMCU_ENCODERS $(CFLAGS) $^ -o $@
-#$(CC) -mmcu=at90usb1286 -DMCU_ENCODERS $(CFLAGS) $^ -o $@

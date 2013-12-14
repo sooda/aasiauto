@@ -1,19 +1,12 @@
-#include "core_common.h"
 #include "core.h"
-#include "config.h"
 #include "encoders.h"
 #include "motors.h"
 #include "servos.h"
 #include "analog.h"
 #include "comm.h"
 #include "msgs.h"
-#include "uartbuf.h"
 #include "pwm.h"
 #include "uart.h"
-#include <stdlib.h>
-
-/* Common drive cycles for both simulation and real drive */
-
 
 void steer(uint8_t sz, uint8_t id) {
 	(void)sz; (void)id;
@@ -53,14 +46,6 @@ static void brake_back_proxy(uint8_t sz, uint8_t id) {
 static void dump_params_proxy(uint8_t sz, uint8_t id) {
 	(void)sz;
 	dump_info(BUF_TXSLAVE, id, 0, NULL);
-}
-
-// u16 params
-// HOX end-inclusive
-static void init_param_array(uint8_t buf, uint8_t start, uint8_t end, msg_handler handler) {
-	for (; start <= end; start++) {
-		msgs_register_handler(buf, start, sizeof(uint16_t), handler);
-	}
 }
 
 static void *imu_dump(void *p) {
@@ -142,5 +127,5 @@ uint8_t transmit_vals(void) {
 }
 
 void driveiter(void) {
-	// TODO: automaattiajo, abs, jne
+	// TODO: automatic drive etc.
 }

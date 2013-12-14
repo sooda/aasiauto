@@ -11,7 +11,7 @@ arguments := -DMX_COMPAT_32
 CFLAGS += $(arguments)
 CFLAGS += -I$(MATLABDIR)/extern/include -I$(MATLABDIR)/simulink/include -DMATLAB_MEX_FILE -Wall -Wextra
 CFLAGS += $(CDEBUGFLAGS)
-CFLAGS += -DMCU_SIM
+CFLAGS += -DMCU_SIM -fpack-struct
 LIBS := -lmx -lmex -lmat -lm -lstdc++
 LDFLAGS := -pthread -shared -Wl,--version-script,$(MATLABDIR)/extern/lib/glnxa64/mexFunction.map -Wl,--no-undefined -Wl,-rpath-link,$(MATLABDIR)/bin/glnxa64 -L$(MATLABDIR)/bin/glnxa64 $(LIBS)
 

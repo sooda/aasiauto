@@ -1,13 +1,7 @@
-#include "core_common.h"
 #include "core.h"
-#include "config.h"
 #include "encoders.h"
-#include "servos.h"
 #include "comm.h"
 #include "msgs.h"
-#include "uartbuf.h"
-#include "pwm.h"
-#include <stdlib.h>
 #include "wheelSpeeds.h"
 
 void sensors_update(void) {

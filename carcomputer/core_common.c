@@ -1,4 +1,3 @@
-#include "core_common.h"
 #include "core.h"
 #include "msgs.h"
 #include "comm.h"

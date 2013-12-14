@@ -8,32 +8,23 @@
 
 // so far, everything should be race-free because only uint8's
 
-// power of two, please
-// bitmask and also index of last id
-#define SZMASK 255
-#define SIZE (SZMASK+1)
+// get size from cfg
+#include "config.h"
 
-#define BUFS 4
-#define BUF_TXHOST 0 // to host
-#define BUF_RXHOST 1 // from host
-// drive controller talks to brakes, brakes talk to teensy
-// (TODO teensy doesn't talk to anybody; tune these in config.h)
-#define BUF_TXSLAVE 2
-#define BUF_RXSLAVE 3
-
-extern volatile uint8_t wptr[BUFS], rptr[BUFS];
-extern uint8_t buffer[BUFS][SIZE];
+extern volatile uint8_t wptr[RBUF_NBUFS], rptr[RBUF_NBUFS];
+extern uint8_t buffer[RBUF_NBUFS][RBUF_SIZE];
 
 static inline uint8_t ringbuf_size(uint8_t buf) {
-	return (wptr[buf] - rptr[buf]) & SZMASK;
+	return (wptr[buf] - rptr[buf]) & RBUF_SZMASK;
 }
 
 static inline uint8_t ringbuf_empty(uint8_t buf) {
 	return wptr[buf] == rptr[buf];
 }
 
+// it's full when one item is unused!
 static inline uint8_t ringbuf_full(uint8_t buf) {
-	return ringbuf_size(buf) == SZMASK;
+	return ringbuf_size(buf) == RBUF_SZMASK;
 }
 
 // le ring side, byte at a time
@@ -45,14 +36,14 @@ static inline void ringbuf_putchar(uint8_t buf, uint8_t c) {
 	assert(!ringbuf_full(buf));
 	uint8_t wp = wptr[buf];
 	buffer[buf][wp] = c;
-	wptr[buf] = (wp + 1) & SZMASK;
+	wptr[buf] = (wp + 1) & RBUF_SZMASK;
 }
 #else
 #define ringbuf_putchar(buf, c) do { \
 	assert(!ringbuf_full(buf)); \
 	uint8_t wp = wptr[buf]; \
 	buffer[buf][wp] = c; \
-	wptr[buf] = (wp + 1) & SZMASK; \
+	wptr[buf] = (wp + 1) & RBUF_SZMASK; \
 } while (0)
 #endif
 
@@ -61,7 +52,7 @@ static inline uint8_t ringbuf_getchar(uint8_t buf) {
 	assert(!ringbuf_empty(buf));
 	uint8_t rp = rptr[buf];
 	uint8_t c = buffer[buf][rp];
-	rptr[buf] = (rp + 1) & SZMASK;
+	rptr[buf] = (rp + 1) & RBUF_SZMASK;
 	return c;
 }
 
