@@ -1,9 +1,9 @@
 function [dir, thro, rev, brake] = parseInputFromKeyboard(keys, maxAngle, c)
     %Reading user keyboard commands
 
-    thro = c.cardata.throttle;
-    rev  = c.cardata.reverse;
-    dir  = c.cardata.steeringwheel;
+    thro = c.cardata.throttle(end);
+    rev  = c.cardata.reverse(end);
+    dir  = c.cardata.steeringwheel(end);
     brake = 0;
     
     %Reading Brake commands
