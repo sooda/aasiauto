@@ -126,6 +126,8 @@ Alkuperäinen syy, minkä vuoksi tämä projekti AS-projektikurssille tuli, oli 
 
 Projektin edetessä tuimme osaamisellamme toista ryhmää ja yhteistuumin päätimme tilata ajoneuvoon uudet moottorit, nopeudensäätimet ja akut. Lisäksi autoon tilattiin etäisyysanturit sivuille ja eteen. Uudet akut tulivatkin riittävän ajoissa siten, että saimme loppudemossa ajettua autolla muutamia metrejä käyttäen kuitenkin vanhaa voimansiirtoa, moottoreita ja nopeudensäätimiä. Toisen renkaan voimansiirtoon käytetty kulmavaihde oli jo kulunut loppuun väärän mitoituksen vuoksi, mutta toisella renkaalla ajaminen onnistui kaikkien suureksi yllätykseksi kohtuullisen hyvin (metelistä ja valtavasta virrankulutuksesta huolimatta). Vaikka kytkin vielä säätöjenkin jälkeen luisti, kului toisenkin renkaan kulmavaihde pian olemattomaksi.
 
+Tarkempi kuvaus auton alkutilasta löytyy syksyn 2012 projektiryhmän loppuraportista~\cite{bib:loppuraportti}, sekä vuoden 2012 Ajoneuvon tuotekehitys -kurssin loppuraportin liitteestä 5 (mekatroniikka)~\cite{bib:mekatroniikka}.
+
 \section{Rakenne ja osa-alueet}
 \subsection{Jarrut}
 Jarrujärjestelmä on toteutettu FG Modellsportin vaijerikäyttöisillä levyjarruilla joita säädetään pienoismalleista tutuilla analogisilla RC-auton servoilla ja omituisen löysillä palautusjousilla. Tällainen vaijerikäyttöinen mekanismi on hyvin altis välyksille, kitkalle sekä venymiselle, mistä muodostuu säätöpiiriin viiveitä ja epälineaarisuuksia. Tällaiselle systeemille on mitattu 2,5 Hz:n taajuusvaste, kun sen tulisi olla yli 100 Hz jotta ABS-säätö olisi mahdollinen \cite{bib:testbed}.
@@ -224,7 +226,7 @@ Ajoneuvon varsinainen ohjaus sähköisesti oli toteutettu kolmen erillisen mikro
 
 Hajautuksen ideana oli ilmeisesti pelko siitä, että algoritmit eivät kykene toimimaan riittävän tehokkaasti yhdellä mikrokontrollerilla. Kuten jo projektin alkuvaiheilla todettiin mittauksista, tästä ei tule olemaan pelkoa, ennen kuin arduinoille yrittää ohjelmoida jotain erittäin raskasta laskentaa.
 
-\kuvaa{0.8}{elektroniikka}{Mekatroniikkatiimin viimevuotinen piirros auton kytkennöistä yksinkertaistettuna}{elektroniikka}
+\kuvaa{0.9}{elektroniikka}{Mekatroniikkatiimin viimevuotinen piirros auton kytkennöistä yksinkertaistettuna}{elektroniikka}
 
 Hajautus tuo kuitenkin mukanaan myös ongelmia. Koska eri anturit ja toimilaitteet ovat kiinni eri kontrollereissa, ohjauksen on pakko käyttää niitä kaikkia. Yksi ohjain kuuntelee renkaiden pyörintäenkoodereita, toinen ajaa jarruservoja, ja kolmas mittaa jännitteitä, lukee inertia-antureita ja ohjaa ajomoottoreita sekä rattiservoa. Ohjaimet ovat ketjutettu siten, että kahden välillä on aina yksi kaksisuuntainen sarjaliikenne (UART). Tämä nähdään kuvasta X. Näin esimerkiksi renkaiden nopeudet siirtyvät antureilta käyttöliittymälle teensyn, jarruohjaimen, ajo-ohjaimen sekä lopulta langattoman XBee-linkin läpi. Tällaisen ketjun läpi on luonnollisesti hyvin haasteellista olettaa saada siirrettyä tasanopeuksista tietoa, kun se pitää käsitellä useassa paikassa ja lähettää edelleen eteenpäin. Myöskään kovin tarkkoja säätöalgoritmeja tuskin kannattaa tällä algoritmilla lähteä tekemään nimenomaan viiveiden takia. Pohdittiin mm. erillisen keskeytysnastan reitittämistä ajo-ohjaimelta kahdelle muulle ohjaimelle, sekä sarjaliikenteen uudelleenreititystä teensyltä suoraan pääohjaimelle.
 
@@ -257,13 +259,13 @@ Koodissa on pieniä puutteita alkuperäiseen nähden: inertia-antureille ei ehdi
 \subsection{Käyttöliittymä}
 Käyttöliittymä vaikutti projektin alussa kohtuullisen viimeistellyltä ja päälisin puolin toimivalta. Koodikatselmoinnin jälkeen hyvin nopeasti selvisi, että käyttöliittymä oli toteutettu vähitellen pienistä osista - kokonaisuutta juuri miettimättä. Nopeasti selvisi myös, että niin sanotun asynkronisen tiedonsiirron ongelma oli oikeasti se, että sarjaporttia luettiin eri säikeistä (Matlabin ajastimilla laukastuista funktioista) samanaikaisesti, jolloin osa paketeista tietysti luettiin väärään toimilohkoon ja osa paketeista katkesi kesken luettaessa. Tästä perustavanlaatuisesta ongelmakohdasta lähdettiinkin käyttöliittymän koodia kehittämään eteenpäin modulaarisemmaksi ja geneerisemmäksi. Loppujen lopuksi yhteen tiedostoon kirjoitettu 2000-rivinen koodi jaettiin (kirjoitettiin käytännössä uudestaan) useammaksi luokaksi, apufunktioksi ja tiedostoksi, kuten kuvassa \ref{fig:guitiedostot} on esitetty. Eri luokista ja niiden toiminnallisuudesta on kerrottu tarkemmin liitteessä \ref{app:gui}.
 
-\kuvaa{0.8}{gui_tiedostolistaus}{Käyttöliittymä jaettu modulaarisempiin luokkiin ja apufunktioihin.}{guitiedostot}
+\kuvaa{0.6}{gui_tiedostolistaus}{Käyttöliittymä jaettu modulaarisempiin luokkiin ja apufunktioihin.}{guitiedostot}
 
 Kuten kuvasta huomataan, sarjaliikennekommunikointi ja tarkoitusta varten kehittämämme protokolla on määritetty omissa tiedostoissaan, jolloin ne on käytännössä helppo korvata millä tahansa muulla kommunikointimenetelmällä tai protokollalla. Lisäksi kaikki autoon liittyvät parametrit, käyttöliittymän tiedot ja ajotiedot säilytetään Car-nimisessä luokassa, jolloin luokka voidaan tallentaa kokonaisena tiedostoon ja auton senhetkistä tilaa päästään analysoimaan siten myöhemmin helposti.
 
 Vanhaa käyttöliittymäkoodia tutkimalla huomattiin myös, että auton paikan estimointi päänäkymässä toteutetaan pelkillä kiihtyvyysantureilla. Koska kiihtyvyysanturit olivat (ja ovat edelleen) kiinnitettynä löysästi auton ``katolle'' massakeskipisteen sijaan, niiden avulla ei kovin tarkkaa arviota auton paikasta tulla koskaan saamaan. Sen lisäksi pelkkien renkaiden pyörimisnopeuksien integroinnin katsottiin olevan sopimatonta, sillä meillä on kuitenkin käytössä myös kiihtyvyysanturit ja gyrometri. Päätettiin toteuttaa Kalman-suodin estimoimaan auton paikkaa käyttäen apuna mitattua ohjauskulmaa, renkaiden pyörimisnopeuksien keskiarvoa sekä kiihtyvyysantureita. Kiihtyvyysantureita ei ole tämän raportin kirjoitushetkellä kiinnitetty tukevasti, joten tällä hetkellä Kalman-suodin ei käytä kiihtyvyysantureiden mittausdataa hyödyksi.
 
-Liitteessä \ref{app:kalman} on esitetty Kalman-suotimen matriisit. Matriisit on johdettu yleiselle nelipyöräajoneuvolle ja itse Kalman-suotimen toiminta on toteutettu Michael Klederin Learning the Kalman filter \cite{bib:kalman} oppaan pohjalta ja sitä hieman mukaillen. Huom! Kalman-suotimen parametrit eivät ole täysin optimoidut ja ne on arvioitu pääosin simuloimalla, mutta koska autolla ei ole raportin kirjoitushetkellä päästy ajamaan, tulee parametrit säätää kohdalleen myöhemmin.
+Liitteessä \ref{app:kalman} on esitetty Kalman-suotimen matriisit. Matriisit on johdettu yleiselle nelipyöräajoneuvolle ja itse Kalman-suotimen toiminta on toteutettu Michael Klederin Learning the Kalman filter \cite{bib:kalman} -oppaan pohjalta ja sitä hieman mukaillen. Huom! Kalman-suotimen parametrit eivät ole täysin optimoidut ja ne on arvioitu pääosin simuloimalla, mutta koska autolla ei ole raportin kirjoitushetkellä päästy ajamaan, tulee parametrit säätää kohdalleen myöhemmin.
 
 Yhtenä käyttöliittymään liittyvänä tehtävänä oli alunperin automaattiajon toteuttaminen. Auton tila huomioon ottaen automaatiajoa ei voinut pitää kovinkaan suurella prioriteetilla, ja sen toteutus jäikin aivan viimehetkeen. Käyttöliittymään on nyt toteutettu pohja (uusi välilehti) automaattiajolle, ja pohjan päälle on luotu kolme eri testitilannetta. Testitilanteista on toteutettu ainoastaan liukuhihna-ajo, joskin etäisyysantureiden puuttumisen johdosta tätäkään ajoa ei olla päästy testaamaan oikean auton kanssa. Testin käynnistäminen piirtää näyttöön tällä hetkellä vain satunnaista etäisyysmittausdataa, eikä toimi todellisuudessa. Muut testit on kohtuullisen helppo toteuttaa valmiille pohjalle, joskin ne saattavat vaatia joitain uusia ominaisuuksia myös mikrokontrollereihin.
 
@@ -271,11 +273,12 @@ Automaattiajon lisäksi toiveena oli näppäimistöohjauksen rinnalle saada toim
 
 Käyttöliittymä vaati ennen toimiakseen (kohtuuttoman kattavan) PsychToolboxin Matlabiin, jotta näppäimistöpainalluksia auton ohjaamiseksi voitiin lukea. Päätimme kuitenkin toteuttaa näppäimistön lukemisen Matlabin ja GUIDEn sisäänrakennetuilla ominaisuuksilla, jolloin erillistä toolboxia ei tarvita. Haittapuolena tässä on kuitenkin se, että käyttöliittymän ``tausta'' eli figure1 tulee olla aktiivisena, jotta ohjaus toimii. Tämä tarkoittaa sitä, että ``Start manual drive'' napin painamisen jälkeen täytyy muistaa klikata hiirellä käyttöliittymän tyhjää kohtaa.
 
-Käyttöliittymää on ajettu enimmäkseen windowsilla. Linuxilla voi tulla ongelmia mm. sarjaporttien laitenodeasetusten/-oikeuksien kanssa; katso, että käyttäjä on oikeassa ryhmässä (ls -l /dev/ttyUSB0; groups) ja säädä matlabille työhakemistoon tiedosto java.opts, johon sisällöksi esim.
+Käyttöliittymää on ajettu enimmäkseen windowsilla. Linuxilla voi tulla ongelmia mm. sarjaporttien laitenodeasetusten tai -oikeuksien kanssa; katso, että käyttäjä on oikeassa ryhmässä (ls -l /dev/ttyUSB0; groups) ja säädä matlabille työhakemistoon tiedosto java.opts, johon sisällöksi esim.
 \begin{verbatim}
 ``-Dgnu.io.rxtx.SerialPorts=/dev/ttyS0:/dev/ttyS1:/dev/ttyUSB0:/dev/ttyACM0''.
 \end{verbatim}
-Myös Communication-luokasta tulee kovakoodata serial-kutsun parametreihin sopiva polku. Laitteen on oltava koneessa kiinni matlabia käynnistäessä.
+
+Laitteen on oltava koneessa kiinni Matlabia käynnistäessä.
 
 \section{Yhteenveto ja ajankäyttö}
 
@@ -295,7 +298,7 @@ Tällä kurssilla ei siis tultu eikä tulla ajamaan autolla tätä pidempiä mat
 
 Kuten projektitöissä yleensä, tässäkin voidaan jälkiviisastella, että tokihan olisi kannattanut aloittaa aikaisemmin. Auton epävarmuudet saivat projektin alun vähän ontumaan, ja vauhtiin päästiin vasta lähempänä loppua (kuva \ref{fig:tyojakauma}), kun varmistui, että vanha voimansiirto tulee pysymään kurssin demotilaisuuteen asti kiinni. Tätä varten tehtiin pikaisesti ohjauksen yleinen rakenne loppuun ja lukittiin alkuperäisen voimansiirron kytkin pysyvästi lukkoon ruuvaamalla sinne pultti (mikä sekään ei riittänyt estämään kytkimen luistamista). Uudessa voimansiirrossa kytkintä ei ole.
 
-\kuvaa{0.8}{jakauma}{Kumulatiivinen ajankäyttö työn eri osa-alueiden välillä. General tarkoittaa kurssin luentoja, actual work on varsinaista autoon liittyvää kehitystyötä.}{tyojakauma}
+\kuvaa{1}{jakauma}{Kumulatiivinen ajankäyttö työn eri osa-alueiden välillä. General tarkoittaa kurssin luentoja, actual work on varsinaista autoon liittyvää kehitystyötä.}{tyojakauma}
 
 Työ jaettiin alunperin kolmeen osaan, siten että Lasse keskittyy ABS:n ja ESP:n toimintaan, Konsta mikrokontrollereiden uudelleenohjelmointiin ja Toni käyttöliittymään. Projektin edetessä ja uusien työtehtävien ilmaantuessa kukin teki jonkin verran töitä myös toistensa osa-alueisiin. Kaikki tekivät tasapuolisesti työtä myös auton yleisen kunnon selvittämiseen, sekä kaikkiin yleisiin kurssiin liittyviin tehtäviin.
 
@@ -304,15 +307,15 @@ Seurasimme ajankäyttöämme työtehtäväkohtaisesti, päiväkohtaisesti ja pro
 \begin{table}
 	\caption{Projektin ajankäyttö karkeisiin osakokonaisuuksiin jaettuna.}
 	\label{tab:osakok-ajat}
-	\centering \begin{tabular}{ r l }
-	Yleiset kurssin asiat, tapaamiset & 80 h\\
-	Projektiin tutustuminen & 22 h\\
-	Protokollan uudelleenkirjoittaminen & 28 h\\
-	ABS ja ESP & 31 h\\
-	Käyttöliittymä & 62 h\\
-	Jarrujen kehitystyö & 27 h\\
-	Mikrokontrollerit & 60 h\\
-	Muu autoon liittyvä kehitystyö & 24 h\\
+	\centering \begin{tabular}{ | r | l | } \hline
+	Yleiset kurssin asiat, tapaamiset & 80 h\\ \hline
+	Projektiin tutustuminen & 22 h\\ \hline
+	Protokollan uudelleenkirjoittaminen & 28 h\\ \hline
+	ABS ja ESP & 31 h\\ \hline
+	Käyttöliittymä & 62 h\\ \hline
+	Jarrujen kehitystyö & 27 h\\ \hline
+	Mikrokontrollerit & 60 h\\ \hline
+	Muu autoon liittyvä kehitystyö & 24 h\\ \hline
 	\end{tabular}
 \end{table}
 
@@ -322,14 +325,16 @@ Yhteensä koko projektiin aikaa on kulunut noin 370 tuntia. Henkilöittäin täm
 \begin{table}
 	\caption{Projektin ajankäyttö henkilöittäin. TODO FIXME}
 	\label{tab:henk-ajat}
-	\centering \begin{tabular}{ r l }
-	Lasse & 110 h\\
-	Toni & 122 h\\
-	Konsta & 136 h
+	\centering \begin{tabular}{ | r | l | } \hline
+	Lasse & 110 h\\ \hline
+	Toni & 122 h\\ \hline
+	Konsta & 136 h \\ \hline
 	\end{tabular}
 \end{table}
 
 Aallon politiikan mukaan yhtä opintopistettä vastaa noin 27 tuntia töitä, joten tämän mittarin mukaan Lasse ja Toni olisivat ansainneet kurssista neljä opintopistettä ja Konsta viisi. Uskomme että kaikki ovat projektin vaikeuksista huolimatta tehneet ansioituneesti töitä näiden tuntien eteen.
+
+\clearpage
 
 \begin{thebibliography}{99}
 \bibitem{bib:milliken}{Milliken W.F., Milliken D.L, Race Car Vehicle Dynamics, 1994, SAE International}
@@ -340,6 +345,9 @@ Aallon politiikan mukaan yhtä opintopistettä vastaa noin 27 tuntia töitä, jo
 \bibitem{bib:kalman}{Michael Kleder, Learning the Kalman filter \url{http://www.mathworks.com/matlabcentral/fileexchange/5377-learning-the-kalman-filter}}
 \bibitem{bib:testbed}{Patil C. B., Anti-lock Brake System Re-design and Control Prototyping using a One-Fifth Scale Vehicle Experimental Test-bed, 2003, Thesis, \url{http://www.me.utexas.edu/~longoria/research/svcl/theses/Patil_2003.pdf}, viitattu 13.12.2013}
 \bibitem{bib:hbridge}{Vishay, Si9986 Buffered H-Bridge, Datasheet, \url{http://www.vishay.com/docs/70007/si9986.pdf}, viitattu 14.12.2013}
+\bibitem{bib:loppuraportti}{Kevään 2012 mekatroniikkaryhmän loppuraportti, \url{http://autsys.aalto.fi/intranet/as-0.3200/attach/A12-09/A12-09_RC-auton_kehitys_Loppuraportti_wiki.pdf}, viitattu 15.12.2013}
+\bibitem{bib:mekatroniikka}{Ajoneuvon tuotekehitys -kurssin 2012 Mekatroniikan loppuraportti, \url{https://wiki.aalto.fi/download/attachments/77115783/raportti_liite_Storsjo.pdf}, viitattu 15.12.2013}
+
 \end{thebibliography}
 
 \clearpage
