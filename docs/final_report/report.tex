@@ -41,7 +41,7 @@
 \begin{document}
 
 % coverpage erikseen eka, jätetään titlesivu myös wikiversioon
-\input{coverpage.tex}
+%\input{coverpage.tex}
 
 % normaali titlesivu kuolevaisille
 \title{
@@ -65,7 +65,7 @@ AS-0.3200 Automaatio- ja systeemitekniikan projektityöt, ryhmä~A13-10
 \section{Projektin tavoite}
 
 \subsection{Tausta}
-Projektin taustana on Aalto-yliopiston Insinööritieteiden korkeakoulun Koneenrakennustekniikan kurssi Kon-16.4081 Ajoneuvojen tuotekehitys. Kurssilla aloitettiin vuonna 2011 projekti, jonka tarkoituksena oli rakentaa radio-ohjattavan auton pienoismalli ajodynamiikan opetuskäyttöön. Syksyllä 2012 Automaatio- ja systeemitekniikan projektityökurssilla autoon tehtiin osaprojektina Matlab-käyttöliittymä ja rakennettiin ohjelmisto ABS- ja ESP-ohjauksille, ja samalla samana vuonna ajoneuvokurssilla kehitettiin auton mekatroniikkaa. Molemmat projektit jäivät kuitenkin kesken, ja tänä vuonna niitä jatkettiin molempien laitosten osalta. Kon-16.4081-kurssin projektiryhmässä työskenteli vuoden ajan viisi henkilöä ja Automaatio- ja systeemitekniikan projektityökurssilla syksyn ajan kolme henkilöä. Kuvassa \ref{fig:ryhmajako} alkuperäinen suunnitelma ryhmäjaoksi.
+Projektin taustana on Aalto-yliopiston Insinööritieteiden korkeakoulun Koneenrakennustekniikan kurssi Kon-16.4081 Ajoneuvojen tuotekehitys. Kurssilla aloitettiin vuonna 2011 projekti, jonka tarkoituksena oli rakentaa radio-ohjattavan auton pienoismalli ajodynamiikan opetuskäyttöön. Syksyllä 2012 Automaatio- ja systeemitekniikan projektityökurssilla autoon tehtiin osaprojektina Matlab-käyttöliittymä ja rakennettiin ohjelmisto ABS- ja ESP-ohjauksille, ja samalla samana vuonna ajoneuvokurssilla kehitettiin auton mekatroniikkaa yleisellä tasolla. Molemmat projektit jäivät kuitenkin kesken, ja tänä vuonna niitä jatkettiin kummankin laitoksen osalta. Kon-16.4081-kurssin projektiryhmässä työskenteli vuoden ajan viisi henkilöä ja Automaatio- ja systeemitekniikan projektityökurssilla syksyn ajan kolme henkilöä. Kuvassa \ref{fig:ryhmajako} alkuperäinen suunnitelma ryhmäjaoksi.
 
 \kuvaa{0.8}{ryhmajako}{Alkuperäinen ryhmäjakosuunnitelma.}{ryhmajako}
 
@@ -79,9 +79,9 @@ Projekti rajattiin ohjaus- ja säätöjärjestelmien kehitykseen, käyttöliitty
 Tavoitteena oli projektin lopuksi päästä testaamaan autoa eri ympäristöissä siten, että auton ohjelmisto ja säätöjärjestelmät olisivat täysin kunnossa ja helposti jatkokehitettävissä. Tavoitteena oli myös auton helppo kauko-ohjaus joko Matlab-käyttöliittymän kautta näppäimistön avulla, tai erillisellä kauko-ohjaimella tai joystickillä.
 
 \section{Lähtötilanne}
-Kuten projektit yleensä, tämäkään ei mennyt - tai edes lähtenyt käyntiin - aivan niin kuin suunniteltiin. Hyvin pian projektin alussa huomasimme, että auton tilasta saadut lähtötiedot olivat vakavasti puutteellisia ja osittain jopa vääriä. Auto ei todellakaan ollut siinä tilassa, että ABS:ää olisi voinut testata tai käyttöliittymää olisi kannattanut lähteä laajentamaan nykyisestä tilastaan. Auto ei itseasiassa edes liikkunut, sillä autossa oli väärin mitoitettuna niin akut, moottorit, nopeudensäätimet kuin voimansiirtokin - jarruservoista puhumattakaan.
+Kuten projektit yleensä, tämäkään ei mennyt - tai edes lähtenyt käyntiin - aivan niin kuin suunniteltiin. Hyvin pian projektin alussa huomasimme, että auton tilasta saadut lähtötiedot olivat vakavasti puutteellisia ja osittain jopa vääriä. Auto ei todellakaan ollut siinä tilassa, että ABS:ää olisi voinut testata tai käyttöliittymää olisi kannattanut lähteä laajentamaan nykyisestä tilastaan. Auto ei itseasiassa edes liikkunut, sillä siinä oli väärin mitoitettuna niin akut, moottorit, nopeudensäätimet kuin voimansiirtokin - jarruservoista puhumattakaan.
 
-Auton ohjelmistotkin oli kasattu monen projektin aikana pienistä palasista, eikä kokonaisuutta oltu koskaan oikein mietitty. Sen näki muun muassa siitä, että kaikki koodi - sekä käyttöliittymässä että mikrokontrollereissa - oli kirjoitettu yhteen tiedostoon prototyypinomaisesti ``tällä se toimi'' -tyylillä, ilman minkäänlaista modulaarisuutta. Ohjelmistojen jatkokehittäminen tästä tilasta olisi ollut vähintään tyhmää ja tuskallista, eikä ainakaan reilua käyttäjille tulevaisuudessa.
+Auton ohjelmistotkin oli kasattu monen projektin aikana pienistä palasista, eikä kokonaisuutta oltu koskaan oikein mietitty. Sen näki muun muassa siitä, että kaikki koodi - sekä käyttöliittymässä että mikrokontrollereissa - oli kirjoitettu yhteen tiedostoon prototyypinomaisesti ``tällä se nyt toimi'' -tyylillä, ilman minkäänlaista modulaarisuutta. Ohjelmistojen jatkokehittäminen tästä tilasta olisi ollut vähintään tyhmää ja tuskallista, eikä ainakaan reilua käyttäjille tulevaisuudessa.
 
 Projektin alkuvaihe menikin, suunnitelmista poiketen, pitkälti auton nykytilan selvittämiseen ja mahdollisten korjausten suunnitteluun. Huomattiin nopeasti, että projekti ei tule valmistumaan suunnitelmien mukaisesti ajallaan, eikä kaikkia suunniteltuja ominaisuuksia pystytä mitenkään toteuttamaan. Lisäksi Ajoneuvon tuotekehityskurssin ryhmän palaveriin osallistuttuamme meille selvisi, että heillä on tavoitteena saada auto ajokuntoon juuri ennen joulua, joten mekään emme pääsisi ajamaan autolla ennen sitä. Jouduimme siis muuttamaan suunnitelmia radikaalisesti ja keskittymään lähinnä auton simulointiin ja jo olemassaolevien ominaisuuksien korjaamiseen ja parantamiseen. Yksi tällaisista ominaisuuksista oli valmiina oleva protokolla ja sen koodi, jotka katsottiin joustamattomuutensa vuoksi hankalaksi jatkokehittää.
 
@@ -98,25 +98,28 @@ RC-auton servo on paikkaohjattu aktuaattori, jota ohjataan 50 Hz:n PWM-signaalil
 Uudet piirilevyt ovat valmistusteknisistä seikoista johtuen vielä tällä hetkellä työn alla.
 
 \subsection{ABS-järjestelmä}
-ABS- ja ESP-järjestelmien algoritmien laskentojen epäiltiin olevan hitaita niissä käytettyjen laskutoimitusten vuoksi. Tätä tutkittiin lisäämällä algoritmien suoritusten väliin suoritusaikaa mittaavia laskureita. Kuvassa 1 on esitetty mikrokontrollereiden eri syklien kumulatiivisten suoritusaikojen vaihtelu. Huomataan, että molemmat kontrollerit suoriutuvat hyvin tehtävistään säädetyssä 10 ms:n suoritussyklissä. Yhtään ylivuotoakaan ei testiajon aikana ilmennyt, eli kaikki tehtävät tulivat jokaisella syklillä suoritettua.
-Kuva 1. Alkuperäisten mikrokontrollerien syklien suoritusajat
+ABS- ja ESP-järjestelmien algoritmien laskutoimitusten epäiltiin olevan hitaita niissä käytettyjen laskutoimitusten vuoksi. Tätä tutkittiin lisäämällä algoritmien suoritusten väliin suoritusaikaa mittaavia laskureita. Kuvassa \ref{fig:exectimes} on esitetty mikrokontrollereiden eri syklien kumulatiivisten suoritusaikojen vaihtelu. Huomataan, että molemmat kontrollerit suoriutuvat hyvin tehtävistään säädetyssä 10 ms:n suoritussyklissä. Yhtään ylivuotoakaan ei testiajon aikana ilmennyt, eli kaikki tehtävät tulivat jokaisella syklillä suoritettua.
+
+\kuvaa{0.8}{exectimes}{Alkuperäisten mikrokontrollerien syklien suoritusajat}{exectimes}
 
 Koska alunperin määriteltyä ABS-järjestelmän jatkokehittämistä ei päästy RC-auton testaamisen muodossa tekemään, simuloitiin mahdollisia vaihtoehtoisia säätöjärjestelmiä. 
 
 Ajoneuvon hidastuvuus määräytyy renkaan jarrutusvoiman
 
-\[
+\begin{equation} \label{eq:fr}
 	F_r = \mu G_p
-\]
+\end{equation}
 
 mukaan, missä $F_r$ on jarrutusvoima, $\mu$ on tien ja renkaan välinen kitkakerroin ja $G_p$ on renkaalla oleva paino. Simulaatioissa käytettiin neljännesajoneuvon massaa $9/4$ kg. Käytettävissä oleva kitkakerroin tietyllä alustalla riippuu renkaan luistosta\cite{bib:milliken} ja optimoimalla luisto saavutetaan paras hidastuvuus. Esimerkki renkaan jarrutusvoiman tuotosta luiston funktiona on esitetty kuvassa \ref{fig:slip}.
 
 \kuvaa{0.8}{frVsSlip}{Renkaan jarrutusvoiman tuotto luiston funktiona \cite{bib:milliken}.}{slip}
 
 Alkuperäinen ohjelmistokoodi perustui menetelmään, jossa renkaiden kiihtyvyyksien mukaan säädetään jarrutusvoimaa \cite{bib:bosch}. Tämä oli toteutettu siten, että parametrein säädettävien rajakiihtyvyyksien mukaan vaihdeltiin tilaa eri jarrutusvaiheiden välillä. Tätä pyrittiin uudessa järjestelmässä parantamaan huomioimalla säädössä renkaan kiihtyvyyden lisäksi myös renkaan luisto. Tämä on määritetty seuraavan kaavan mukaan:
-\[
+
+\begin{equation}
 	S = 1 - \frac{\omega_w}{\omega_v}
-\]
+\end{equation}
+
 missä $S$ on luisto, $\omega_w$ on renkaan kulmanopeus ja $\omega_v$ on ajoneuvon kulmanopeus. Jos luisto $S$ on $0$, renkaan ja ajoneuvon kulmanopeuksissa ei ole eroa, ja jos luisto $S$ on $1$, niin rengas on täysin lukittunut.
 
 Renkaan luisto jarrutuksen aikana otettiin huomioon uuden säätimen suunnittelussa, ja näin pyrittiin optimoimaan ajoneuvon hidastuvuutta. Säätimen periaatekaavio on esitetty kuvassa \ref{fig:absmdl}. Etukäteen määritellyn rengasmallin mukaan määritellään optimaalinen luisto, jonka perusteella pyritään säätämään jarrutusvoimaa. Jos kuitenkin renkaan kiihtyvyys/hidastuvuus kasvaa yli säädettyjen maksimi- ja minimiarvojen, alkaa se muuttaa painotuskerrointa K, jolloin kiihtyvyyssäädin saa suuremman painoarvon. Tällöin pyritään äkilliset muutokset korjaamaan kiihtyvyyssäätimellä ja hienosäätämään jarrutustapahtumaa luiston perusteella.
@@ -124,10 +127,12 @@ Renkaan luisto jarrutuksen aikana otettiin huomioon uuden säätimen suunnittelu
 \kuvaa{0.8}{mdl}{ABS-säätimen lohkokaavio.}{absmdl}
 
 Simulaatiomallissa jarrujärjestelmää kuvattiin mallilla
-\[
+
+\begin{equation}
 	J_w \dot \omega = F_r R_w - \tau_\text{brake}
-\]
-jossa $J_w = 9e-4 \text{kg} \text{m}^2$, $F_r$ kaavasta (TODO), $R_w = 0.0625 \text{m}$, sekä jarruttava momentti $\tau_\text{brake} = \text{brakepos} * 1.408e-4 Nm$. Jarruttavan momentin kerroin on arvioitu olemassa olevasta jarrujärjestelmästä. Lisäksi mallissa otettiin huomioon viive, joka on olemassa ohjauspyynnön tulosta siihen että jarruvoimaa alkaa syntyä renkaalla. Täksi viiveeksi arvoitiin 100 ms. Tämän viiveen mittaaminen oli tarkoitus tehdä projektin aikana, mutta tarvittavia antureita ei ole vielä tätä raporttia kirjoittaessa tullut. Jarrujärjestelmän malli on esitetty kuvassa \ref{fig:brakemdl}.
+\end{equation}
+
+jossa $J_w = 9*10^{-4} \text{kg} \text{m}^2$, $F_r$ kaavasta \ref{eq:fr}, $R_w = 0.0625 \text{m}$, sekä jarruttava momentti $\tau_\text{brake} = \text{brakepos} * 1.408*10^{-4} Nm$. Jarruttavan momentin kerroin on arvioitu olemassa olevasta jarrujärjestelmästä. Lisäksi mallissa otettiin huomioon viive, joka on olemassa ohjauspyynnön tulosta siihen että jarruvoimaa alkaa syntyä renkaalla. Täksi viiveeksi arvoitiin 100 ms. Tämän viiveen mittaaminen oli tarkoitus tehdä projektin aikana, mutta tarvittavia antureita ei ole vielä tätä raporttia kirjoittaessa tullut. Jarrujärjestelmän malli on esitetty kuvassa \ref{fig:brakemdl}.
 
 \kuvaa{0.8}{brakeMdl}{Simulink-malli jarrujärjestelmästä.}{brakemdl}
 
@@ -140,10 +145,10 @@ Ajonhallinnan vakautusjärjestelmän (ESP) tehtävänä on stabiloida ajoneuvon 
 
 ESP-järjestelmän simuloinnissa käytettiin lineaarista 2-pyörämallia \cite{bib:milliken}. Malli toteutttiin yhtälöiden \ref{eq:esp} mukaan
 
-\begin{equation} \label{eq:esp}
-I_z \dot r = N_\beta \beta + N_r r + N_\delta \delta \\
-mV(r + \dot \beta) = Y_\beta \beta + Y_r r + Y_\delta \delta
-\end{equation}
+\begin{eqnarray} \label{eq:esp}
+	I_z \dot r &= N_\beta \beta + N_r r + N_\delta \delta \\
+	mV(r + \dot \beta) &= Y_\beta \beta + Y_r r + Y_\delta \delta \nonumber
+\end{eqnarray}
 
 missä
 
@@ -185,21 +190,21 @@ ja todellisen (mallissa lasketun ja todellisessa ajoneuvossa mitatun) nopeuden e
 
 \subsection{Auton elektroninen ohjaus (mikrokontrollerit)}
 
-Ajoneuvon varsinainen ohjaus sähköisesti oli toteutettu kolmen erillisen mikrokontrollerin (Atmel AVR) avulla, jotka ovat ketjutettu toisiinsa. Ohjaustieto käyttöliittymältä tulee XBee-moduulien läpi, jotka saavat langattoman linkin näyttämään tavalliselta sarjaportilta kumpaankin päähän (AVR ja PC:n USB). Mikrokontrollerien koodi oli kirjoitettu arduino-sketcheinä; nykyversio on puhdasta C:tä siksi, että arduino-ympäristö ei ole kovin alustariippumaton, ja että projektin mikrokontrolleripuolen pääkoodaaja saa arduinosta näppylöitä. Auton kytkentöjä havainnollistetaan kaaviokuvalla \ref{fig:elektroniikka}. Tämä oli jo projektin alkaessa valmiina, ja päätettiin, ettei siihen ruveta tekemään muutoksia. Tämä vaatisi mm. pääpiirilevyn uudelleensuunnittelun, valmistuksen, ja testaamisen. Valmiissa toteutuksessa ei nähty varsinaisesti suurempia ongelmia.
+Ajoneuvon varsinainen ohjaus \cite{bib:mekatroniikka} sähköisesti oli toteutettu kolmen erillisen mikrokontrollerin (Atmel AVR) avulla, jotka ovat ketjutettu toisiinsa. Ohjaustieto käyttöliittymältä tulee XBee-moduulien läpi, jotka saavat langattoman linkin näyttämään tavalliselta sarjaportilta kumpaankin päähän (AVR ja PC:n USB). Mikrokontrollerien koodi oli kirjoitettu arduino-sketcheinä; nykyversio on puhdasta C:tä siksi, että arduino-ympäristö ei ole kovin alustariippumaton, ja että projektin mikrokontrolleripuolen pääkoodaaja saa arduinosta näppylöitä. Auton kytkentöjä havainnollistetaan kaaviokuvalla \ref{fig:elektroniikka}. Tämä oli jo projektin alkaessa valmiina, ja päätettiin, ettei siihen ruveta tekemään muutoksia. Tämä vaatisi mm. pääpiirilevyn uudelleensuunnittelun, valmistuksen, ja testaamisen. Valmiissa toteutuksessa ei nähty varsinaisesti suurempia ongelmia.
 
 Hajautuksen ideana oli ilmeisesti pelko siitä, että algoritmit eivät kykene toimimaan riittävän tehokkaasti yhdellä mikrokontrollerilla. Kuten jo projektin alkuvaiheilla todettiin mittauksista, tästä ei tule olemaan pelkoa, ennen kuin arduinoille yrittää ohjelmoida jotain erittäin raskasta laskentaa.
 
-\kuvaa{0.9}{elektroniikka}{Mekatroniikkatiimin viimevuotinen piirros auton kytkennöistä yksinkertaistettuna}{elektroniikka}
+\kuvaa{0.9}{elektroniikka}{Mekatroniikkatiimin viimevuotinen piirros auton kytkennöistä yksinkertaistettuna; yksityiskohtaiset ominaisuudet saatavilla \cite{bib:mekatroniikka}}{elektroniikka}
 
-Hajautus tuo kuitenkin mukanaan myös ongelmia. Koska eri anturit ja toimilaitteet ovat kiinni eri kontrollereissa, ohjauksen on pakko käyttää niitä kaikkia. Yksi ohjain kuuntelee renkaiden pyörintäenkoodereita, toinen ajaa jarruservoja, ja kolmas mittaa jännitteitä, lukee inertia-antureita ja ohjaa ajomoottoreita sekä rattiservoa. Ohjaimet ovat ketjutettu siten, että kahden välillä on aina yksi kaksisuuntainen sarjaliikenne (UART). Tämä nähdään kuvasta X. Näin esimerkiksi renkaiden nopeudet siirtyvät antureilta käyttöliittymälle teensyn, jarruohjaimen, ajo-ohjaimen sekä lopulta langattoman XBee-linkin läpi. Tällaisen ketjun läpi on luonnollisesti hyvin haasteellista olettaa saada siirrettyä tasanopeuksista tietoa, kun se pitää käsitellä useassa paikassa ja lähettää edelleen eteenpäin. Myöskään kovin tarkkoja säätöalgoritmeja tuskin kannattaa tällä algoritmilla lähteä tekemään nimenomaan viiveiden takia. Pohdittiin mm. erillisen keskeytysnastan reitittämistä ajo-ohjaimelta kahdelle muulle ohjaimelle, sekä sarjaliikenteen uudelleenreititystä teensyltä suoraan pääohjaimelle.
+Hajautus tuo kuitenkin mukanaan myös ongelmia. Koska eri anturit ja toimilaitteet ovat kiinni eri kontrollereissa, ohjauksen on pakko käyttää niitä kaikkia. Yksi ohjain kuuntelee renkaiden pyörintäenkoodereita, toinen ajaa jarruservoja, ja kolmas mittaa jännitteitä, lukee inertia-antureita ja ohjaa ajomoottoreita sekä rattiservoa. Ohjaimet ovat ketjutettu siten, että kahden välillä on aina yksi kaksisuuntainen sarjaliikenne (UART). Tämä nähdään myös elektroniikkakuvasta \ref{fig:elektroniikka}. Näin esimerkiksi renkaiden nopeudet siirtyvät antureilta käyttöliittymälle teensyn, jarruohjaimen, ajo-ohjaimen sekä lopulta langattoman XBee-linkin läpi. Tällaisen ketjun läpi on luonnollisesti hyvin haasteellista olettaa saada siirrettyä tasanopeuksista tietoa, kun se pitää käsitellä useassa paikassa ja lähettää edelleen eteenpäin. Myöskään kovin tarkkoja säätöalgoritmeja tuskin kannattaa tällä rakenteella lähteä tekemään nimenomaan viiveiden takia (tosin jo auton dynamiikan viiveet ovat monta kertaluokkaa pahempia). Pohdittiin mm. erillisen keskeytysnastan reitittämistä ajo-ohjaimelta kahdelle muulle ohjaimelle, sekä sarjaliikenteen uudelleenreititystä teensyltä suoraan pääohjaimelle, sekä tietenkin kaiken elektroniikan kytkemistä vain yhteen arduinoon hylkäämällä muut; tämä vaatisi mm. uuden piirilevynkin.
 
-Kuten aiemmin mainittu, alkuperäinen koodi oli prototyypinomaista, pötköön kirjoitettua ja vailla rakennetta. Se kyllä (luultavasti) toimisi, mutta lisäominaisuuksien koodaaminen vain monimutkistaisi koko systeemiä kohti kaaosta. Kommunikaatioprotokollan kaikkien eri viestityyppien käsittely oli kirjoitettu yhteen isoon peräkkäiseen pötköön, ja samaa formaattia oletettiin käytettävän monissa muissa paikoissa; tämä on riskialtista. Protokollan käsittelystä puuttui myös suurelta osin abstraktiot; viestintä oli pakettipohjaista, mutta tavuja kirjoitettiin puskuriin sellaisenaan kaikkialla. Jos protokolla muuttuisi oleellisesti, joka paikka pitäisi muistaa korjata. Itse oheislaitteiden ohjaus on mikrokontrollereilla aina varsin matalan tason operaatioita (mm. kiinteisiin muistiosoitteisiin kirjoittamista), mikä estää kommunikaation ja ohjausalgoritmien testaamisen ilman suurta simulaattorisetupia tai copypastea. Haluttiin, että auton ohjauskoodia voisi simuloida Matlabilla suoraan sekä joustavuuden että bugienmetsästyksen helpottamiseksi.
+Kuten aiemmin mainittu, alkuperäinen koodi oli prototyypinomaista, pötköön kirjoitettua ja vailla rakennetta. Se kyllä (luultavasti) toimisi, mutta lisäominaisuuksien koodaaminen vain monimutkistaisi koko systeemiä kohti kaaosta. Kommunikaatioprotokollan kaikkien eri viestityyppien käsittely oli kirjoitettu yhteen isoon peräkkäiseen switch-case-rakenteeseen, ja samaa formaattia oletettiin käytettävän monissa muissa paikoissa; tämä on riskialtista. Protokollan käsittelystä puuttui myös suurelta osin abstraktiot; viestintä oli pakettipohjaista, mutta tavuja kirjoitettiin puskuriin sellaisenaan kaikkialla. Jos protokolla muuttuisi oleellisesti, joka paikka pitäisi muistaa korjata. Itse oheislaitteiden ohjaus on mikrokontrollereilla aina varsin matalan tason operaatioita (mm. kiinteisiin muistiosoitteisiin kirjoittamista), mikä estää kommunikaation ja ohjausalgoritmien testaamisen ilman suurta simulaattorisetupia tai copypastea. Haluttiin, että auton ohjauskoodia voisi simuloida Matlabilla suoraan sekä joustavuuden että bugienmetsästyksen helpottamiseksi.
 
 Itse pakettipohjainen viestintämuoto pysyi pitkälti samannäköisenä; alkuperäisen datan sisältö ja tunnistenumerot pidettiin sellaisenaan, sillä niiden muuttamiselle ei nähty tarvetta. Samaa muotoa käytetään sekä käyttöliittymän ja pääkontrollerin välillä että autossa eri kontrollerien välillä; ne jakavat suurelta osin saman ohjelmakoodin (jossa on tuskin riviäkään alkuperäisestä).
 
 Viestipaketti alkaa otsikolla, johon kuuluu pituus (yksi tavu) ja tunnistenumero (yksi tavu). Näiden jälkeen tulee pituustavun verran itse hyötykuormaa (pituuteen ei sisälly otsikkotiedon kahta tavua). Koodissa näiden käsittely hoidetaan lähetys- ja vastaanottofunktioilla, joille annetaan osoitin puskuriin ja datan pituus tavuina. Käyttöliittymäkoneen ja pääkontrollerin välillä on vielä ylimääräinen taso datansiirrossa, joka helpottaa ohjelman käynnistyksen synkronointia; käyttöliittymältä lähetetään ennen joka pakettia tavu 255 (heksana 0xFF); sarjaliikenteen vastaanottokoodissa on tälle käsittely, joka odottaa aluksi tällaista tavua paketin alkuun ennen datan hyväksymistä ja edelleenvälittämistä. Jos itse datassa on tavu 255, se lähetetään kahdesti peräkkäin. Paketin ensimmäinen tavu, pituus, on sovittu olemaan aina korkeintaan 254 (kovin suuria paketteja ei tarvita) - tästä päätellään, että 255 ja jokin pienempi luku tarkoittaa paketin alkua. Näin käyttöliittymäkoneen potentiaalisesti vahingossa lähettämä paketti, jonka kontrolleri vastaanottaa vain osittain, ei häiritse synkronointia. Ylimääräiset synkronointitavut jätetään huomiotta tavuja välittäessä itse paketinhallinnalle.
 
-Mikrokontrollerien koodi on hajautettu pariinkymmeneen erilliseen osaan (kuva \ref{fig:mcucode}, liite \ref{app:mcucode} abstraktioperiaatteen mukaisesti ja varsinkin viestinkäsittelyssä on useita abstraktiotasoja; itseään toistavaa duplikaattikoodia ei juurikaan ole paitsi siellä missä se on perusteltua tehokkuuden vuoksi. Tämähän on yksi ylläpidettävyyden kannalta tärkeimmistä ominaisuuksista, ja ottaen huomioon projektin jatkuvan luonteen, on hyvä että seuraavat käyttäjät voivat laajentaa ohjaustyyliä minimivaivalla. Eri kontrollerit jakavat monet viestintäkoodit yms., ja esim. enkooderikoodi ylipäätään sisällytetään vain siihen, joka menee enkooderimittauskontrollerille. Tämä logiikka hoidetaan Makefile-tiedostossa \cite{bib:make} ja config.h-otsikkotiedostossa. (Kääntämistä on testattu vain linux-koneella, mutta minimaalisin muutoksin saman pitäisi toimia muillakin alustoilla.)
+Mikrokontrollerien koodi on hajautettu pariinkymmeneen erilliseen osaan (kuva \ref{fig:mcucode}, liite \ref{app:mcucode} abstraktioperiaatteen mukaisesti ja varsinkin viestinkäsittelyssä on useita abstraktiotasoja; itseään toistavaa duplikaattikoodia ei juurikaan ole paitsi siellä missä se on perusteltua tehokkuuden vuoksi. Tämähän on yksi ylläpidettävyyden kannalta tärkeimmistä ominaisuuksista, ja ottaen huomioon projektin jatkuvan luonteen, on hyvä että seuraavat käyttäjät voivat laajentaa ohjaustyyliä minimivaivalla (jota ohjelman hajautettu rakenne tosin hieman hankaloittaa). Eri kontrollerit jakavat monet viestintäkoodit yms., ja esim. enkooderikoodi ylipäätään sisällytetään vain siihen, joka menee enkooderimittauskontrollerille. Tämä logiikka hoidetaan Makefile-tiedostossa \cite{bib:make} ja config.h-otsikkotiedostossa. (Kääntämistä on testattu vain linux-koneella, mutta minimaalisin muutoksin saman pitäisi toimia muillakin alustoilla.)
 
 \begin{figure}[h!]
 \begin{verbatim}
@@ -219,23 +224,25 @@ commtest.m  encoders.h        motors.c         ringbuftest.c
 \caption{Mikrokontrolleripuolen yleiskoodia. Rivejä on huomattavasti enemmän kuin alkuperäisessä pohjassa; ohjelma on monipuolisempi mutta toisaalta myös suurempi. \label{fig:mcucode}}
 \end{figure}
 
-Erillisiä pieniä ``moduuleita'' eli .c/.h-tiedostopareja on erillisille yksittäisille antureille ja toimilaitteille, viestinnän abstraktiolle, sekä itse päälogiikalle joka yhdistää tämän kaiken. Antureihin ja toimilaitteisiin kuuluvat esim. servot (kontrollereissa PWM-ohjain) ja akkujännitteet ja ratin asento (kontrollereissa suoraan A/D-muunnin). Tätä moduulirakennetta voisi verrata vaikka olio-ohjelmointiin; C tosin ei sitä helposti tue, eikä sitä tässä varsinaisesti tarvitakaan. Moduuleita ja niiden välistä vuorovaikutusta yritetään selventää kuvalla \ref{fig:avrsofta}.
+Erillisiä pieniä ``moduuleita'' eli .c/.h-tiedostopareja on erillisille yksittäisille antureille ja toimilaitteille, viestinnän abstraktiolle, sekä itse päälogiikalle joka yhdistää tämän kaiken. Antureihin ja toimilaitteisiin kuuluvat esim. servot (kontrollereissa PWM-ohjain) ja akkujännitteet ja ratin asento (kontrollereissa suoraan A/D-muunnin). Tätä moduulirakennetta voisi verrata vaikka olio-ohjelmointiin; C tosin ei sitä helposti tue, eikä sitä tässä varsinaisesti tarvitakaan. Moduuleita ja niiden välistä vuorovaikutusta sekä datan liikkumista voi seurata edelleen elektroniikkarakenteen selittävästä kuvasta \ref{fig:elektroniikka}, sillä se on varsin saman muotoinen.
 
-% TODO \kuvaa{0.8}{avrsofta}{Mikrokontrollerien ohjelmarakenne yksinkertaistettuna. Laatikko foo per .c/.h-pari, nuoli bar per merkittävä vuorovaikutus, nuoli zing per kommunikaatiodatan kulku (HOX pitäskö tehdä erillinen kuva siitä)}{avrsofta}
+Kommunikaation eri tasot ovat jokseenkin seuraavat: XBeen musta laatikko - fyysinen johto - AVR:n rauta - uart\_avr - ringbuf - uartbuf - comm - msgs - viestikohtainen käsittelyfunktio. Käytetty AVR-arkkitehtuuri vastaanottaa sarjaväylältä tavun kerrallaan, ja sinne voi lähettää kerrallaan tavun; tämä hoidetaan keskeytyksillä. Tälle keskustellaan rajoitetun kokoisen puskurin avulla, joka on toteutettu suhteellisen käyttöagnostisina rengaspuskureina (bufferia sisään, bufferia ulos). Puskuriin voi yrittää kirjoittaa pitkän viestin, josta sinne kirjoitetaan kaikki mitä mahtuu; uartbuf hoitaa sen, että pakettia lähettäessä odotetaan puskurin tyhjentymistä sen verran, että koko paketti mahtuu sinne (samalla keskeytykset käsittelevät datansiirtoa eri suuntiin buffereissa). Vastaanotto menee vastaavasti niin, että uartbuf täyttää annettuun puskuriin toivotun tavumäärän, blokaten jos vastaanottopuskuri on tyhjä. Comm-moduuli (communication) helpottaa pakettipohjaisen datan ja yksittäisten tavujen käsittelyä, mitkä ovat yleisin käyttökohde uartin viestintäfunktioille.
 
-Kommunikaation eri tasot ovat jokseenkin seuraavat: fyysinen johto - AVR:n rauta - uart\_avr - ringbuf - uartbuf - comm - msgs. Käytetty AVR-arkkitehtuuri vastaanottaa sarjaväylältä tavun kerrallaan, ja sinne voi lähettää kerrallaan tavun; tämä hoidetaan keskeytyksillä. Tälle keskustellaan rajoitetun kokoisen puskurin avulla, joka on toteutettu suhteellisen käyttöagnostisena rengaspuskurina (bufferia sisään, bufferia ulos). Puskuriin voi yrittää kirjoittaa pitkän viestin, josta sinne kirjoitetaan kaikki mitä mahtuu; uartbuf hoitaa sen, että pakettia lähettäessä odotetaan puskurin tyhjentymistä sen verran, että koko paketti mahtuu sinne (samalla keskeytykset käsittelevät datansiirtoa eri suuntiin buffereissa). Vastaanotto menee vastaavasti niin, että uartbuf täyttää annettuun puskuriin toivotun tavumäärän, blokaten jos vastaanottopuskuri on tyhjä. Comm-moduuli (communication) helpottaa pakettipohjaisen datan ja yksittäisten tavujen käsittelyä, mitkä ovat yleisin käyttökohde uartin viestintäfunktioille. 
+Joka AVR-kontrollerilla on omat piirikohtaiset raaoilla numeroilla määrättävät sarjaväylät, joita viestintään käytetään suuntaan ja toiseen, mutta tämä piilotetaan abstraktion taakse ja kaikkialla koodissa termillä host tarkoitetaan lähempänä käyttöliittymää olevaa kontrolleria ja termillä slave taas kauempana olevaa; esim. jarruohjaimen host on pääohjain ja slave enkooderiohjain.
 
-Joka kontrollerilla on omat raaoilla numeroilla määrättävät sarjaväylät, joita viestintään käytetään suuntaan ja toiseen, mutta tämä piilotetaan abstraktion taakse ja kaikkialla koodissa termillä host tarkoitetaan lähempänä käyttöliittymää olevaa kontrolleria ja termillä slave taas kauempana olevaa; esim. jarruohjaimen host on pääohjain ja slave enkooderiohjain.
+Msgs-moduuli on oma kokonaisuutensa, joka käsittelee paketit ja jakaa ne eteenpäin koodille, jota tietty paketti-id kiinnostaa. Viestien tavujen veivaaminen apufunktioilla ei varsinaisesti hidasta toteutusta alkuperäiseen arduino-sketchiin ``bruteforce-tyyliin'' (tavukirjoituksia puskuriin kaikkialla, switch-case-rakenne id-käsittelylle) verrattuna oleellisesti, mutta tämä viestinkäsittely voisi olla pullonkaulana jos haluttaisiin (suhteessa) valtavaa tiedonsiirtonopeutta; tässäkin on valittu koodin siisteys ykkösprioriteetiksi.
 
-Msgs-moduuli on oma monimutkainen kokonaisuutensa, joka käsittelee paketit ja jakaa ne eteenpäin koodille, jota tietty paketti-id kiinnostaa. Viestien tavujen veivaaminen apufunktioilla ei varsinaisesti hidasta toteutusta alkuperäiseen arduino-sketchiin ``bruteforce-tyyliin'' (tavukirjoituksia puskuriin kaikkialla, switch-case-rakenne id-käsittelylle) verrattuna oleellisesti, mutta tämä viestinkäsittely voisi olla pullonkaulana jos haluttaisiin (suhteessa) valtavaa tiedonsiirtonopeutta; tässäkin on valittu koodin siisteys ykkösprioriteetiksi.
+Alustuksessa - ohjelman alussa - viesti-id:lle rekisteröidään hallintafunktio, joka annetaan msgs-viestinkäsittelyn tiedoksi funktiopointterina datan pituuden ja viesti-id:n kera. Funktiota msgs\_work kutsutaan jatkuvalla tahdilla; se tarkistaa, onko vastaanottopuskurissa viestiä. Jos sellainen löytyy, ja lähettäjän kuvaamat tyyppi ja pituus täsmäävät rekisteröityyn tietoon, niin suoritus siirtyy hallintafunktiolle, joka lukee puskurista viestin itse hyötykuorman. Jos otsaketiedot eivät täsmää, käyttöliittymälle lähetetään tiedoksi virhekoodi. Tämä virheenkäsittely osoittautui heti koodia kehittäessä hyödylliseksi ominaisuudeksi, sillä käyttöliittymä ja auton ohjelmisto eivät välttämättä ole aina ajan tasalla keskenään. Viestinkäsittely tällaisilla callback-kutsuilla on tavallaan moninkertaisesti kompleksimpi rakenne kuin verrokki raaka switch-case tai if-lauseläjä koodin kulun kannalta, mutta itse käytön pitäisi olla helpompaa ja joustavampaa, kun taustalla systeemin runko toimii automaattisesti.
 
-Alustuksessa - ohjelman alussa - viesti-id:lle rekisteröidään hallintafunktio, joka annetaan msgs-viestinkäsittelylle funktiopointterina datan pituuden ja viesti-id:n kera. Funktiota msgs\_work kutsutaan jatkuvalla tahdilla; se tarkistaa, onko vastaanottopuskurissa viestiä. Jos sellainen löytyy, ja lähettäjän kuvaamat tyyppi ja pituus täsmäävät rekisteröityyn tietoon, niin suoritus siirtyy hallintafunktiolle, joka lukee puskurista viestin itse hyötykuorman. Jos otsaketiedot eivät täsmää, käyttöliittymälle lähetetään tiedoksi virhekoodi. Tämä virheenkäsittely osoittautui heti koodia kehittäessä hyödylliseksi ominaisuudeksi, sillä käyttöliittymä ja auton ohjelmisto eivät välttämättä ole aina ajan tasalla keskenään. Viestinkäsittely tällaisilla callback-kutsuilla on tavallaan moninkertaisesti kompleksimpi rakenne kuin verrokki raaka switch-case tai if-lauseläjä koodin kulun kannalta, mutta itse käytön pitäisi olla helpompaa ja joustavampaa, kun taustalla systeemin runko toimii automaattisesti.
-
-Modulaarinen rakenne mahdollistaa suhteellisen triviaalisti sen, että suuren osan kontrollereilla ajettavaa koodia voi kääntää myös perus-PC:lle Matlabissa ajettavaksi (ohjausloopista viestinkäsittelyineen tehdään ns. mex-funktio Matlabia varten). Tämä paitsi uudelleenkäyttää valmista koodia, myös mahdollistaa tuotantokoodin debuggaamisen isommilla työkaluilla. Erona on viestinnän käsittely (ei tule fyysiseltä sarjaväylänastalta vaan Matlabin vektorista) ja anturitietojen huijaaminen varsinaisen mittaamisen sijaan. Matlabsimulaation testailu jäi projektissa viime tinkaan; sen pitäisi silti olla helposti kehitettävissä. Sen käytöstä on esimerkki-m-tiedostot; itse käyttöliittymään on koodattu vain sarjaportti. (Tämä onkin hyvä paikka aloittaa jatkokehitys ja tutustua koodiin.) Iso ero oikeaan järjestelmään on se, että tässä kaikkia antureita ja toimilaitteita tulisi simuloida yhdessä pääohjelmassa sen sijaan, että ne olisivat kolmessa osassa. Erona on vain se, mitkä osat käännetään mukaan, ja se, mitä viestejä ja anturipäivityksiä pääohjelma alustaa käyttöön.
+Modulaarinen rakenne mahdollistaa suhteellisen triviaalisti sen, että suuren osan kontrollereilla ajettavaa koodia voi kääntää myös perus-PC:lle Matlabissa ajettavaksi (ohjausloopista viestinkäsittelyineen tehdään ns. mex-funktio Matlabia varten). Tämä paitsi uudelleenkäyttää valmista koodia, myös mahdollistaa tuotantokoodin debuggaamisen isommilla työkaluilla. Erona on viestinnän käsittely (ei tule fyysiseltä sarjaväylänastalta vaan Matlabin vektorista) ja anturitietojen huijaaminen varsinaisen mittaamisen sijaan. Matlabsimulaation testailu jäi projektissa viime tinkaan; sen pitäisi silti olla helposti kehitettävissä. Sen käytöstä on esimerkki-m-tiedostot; itse käyttöliittymään on myös koodattu simulaatiomoodi, mutta siinä on jokin pieni bugi eikä se suostu käynnistymään oikein. (Tämä onkin hyvä paikka aloittaa jatkokehitys ja tutustua koodiin.) Iso ero oikeaan järjestelmään on se, että tässä kaikkia antureita ja toimilaitteita tulisi simuloida yhdessä pääohjelmassa sen sijaan, että ne olisivat kolmessa osassa. Erona on vain se, mitkä osat käännetään mukaan, ja se, mitä viestejä ja anturipäivityksiä pääohjelma alustaa käyttöön.
 
 Muutamat viestit kulkevat mikrokontrollerilta toiselle ja taas takaisin päin. Alkuperäinen ohjaus jäi lähes aina jumiin satunnaisen oloiseksi ajaksi (sekunteja tai minuutin luokkaa). Jäi selvittämättömäksi, johtuiko tämä auton koodista vai käyttöliittymästä. On joka tapauksessa ongelma, jos renkaat voivat jäädä pyörimään yhteyden katketessa. Nykyisellään joka kontrollerilla on vahtikoira (watchdog) joka pysäyttää ohjauksen ja kytkee jarrut päälle, mikäli ping-viestiä ei tule ennalta määrättyyn aikaan (puoli sekuntia on sopiva). Pingiin vastataan pongilla, jossa on paketin hyötykuormana tieto lähettäjäkontrollerista. Ping lähetetään eteenpäin muille kontrollereille kun pääohjain vastaanottaa sen käyttöliittymältä, ja vastaavasti kontrollerit välittävät pongit eteenpäin: jarrulta enkooderien viesti pääohjaimelle; pääohjaimelta enkooderien ja jarrujen viestit käyttöliittymään. Ohjainten heartbeat-ledit välkkyvät eri taajuudella riippuen siitä, onko vahtikoira lauennut vai ei; hidas vilkku tarkoittaa idletilaa, ja nopea vilkku aktiivista, jossa pingviesti on saatu pienen ajan sisällä. Vahtikoiran laukeaminen pääkontrollerilla resetoi myös kommunikaation synkkaustilan siten, että pakettireunat tunnistetaan taas oikein, kun käyttöliittymä käynnistetään seuraavan kerran.
 
-Koodissa on pieniä puutteita alkuperäiseen nähden: inertia-antureille ei ehditty tehdä koodia (alkuperäisessä oli valmiit arduinokirjastot käytössä; mittaustiedolla ei kuitenkaan tehty paljoakaan). Anturit ovat yleisesti suosittuja, ja niille löytyy internetistä valmiita toteutuksia, eikä kaikkea tarvitse tehdä alusta itse \cite{bib:sparkfunacc} \cite{bib:sparkfungyro}.
+Koodissa on pieniä puutteita alkuperäiseen nähden: kaikkea ohjausta ei ehditty testata kunnolla, eikä esim. inertia-antureille ehditty tehdä koodia; muu priorisoitiin, koska niitäkään ei voi helposti testata jos auto ei aja (alkuperäisessä oli valmiit arduinokirjastot käytössä; mittaustiedolla ei kuitenkaan tehty paljoakaan). Anturit ovat yleisesti suosittuja, ja niille löytyy internetistä valmiita toteutuksia, eikä kaikkea tarvitse tehdä alusta itse \cite{bib:sparkfunacc} \cite{bib:sparkfungyro}.
+
+A/D-muunnokset tehdään viiden voltin käyttöjännitteeseen vertaamalla; tässä on sen verran häiriötä, että vastusjaot kannattaa laskea ja kolvata uudelleen siten, että voidaan käyttää AVR:ien sisäistä 2.56 voltin tarkkaa referenssiä.
+
+Koodi käyttää kriittisten virhetilanteiden tarkisteluun assert()ia joka tulostaa virhetilanteen sarjaporttiin ja pysäyttää ohjelman (ja ledivilkut), sekä käytössä on muutenkin avr-libc:n standardijuttuja \cite{bib:avrlibc} kun vain mahdollista.
 
 \subsection{Pyörintänopeustiedon luku (Teensy)}
 Jokaisen renkaan akselille asennetut enkooderit on kytketty Teensy-mikrokontrollerin keskeytys-sisääntuloihin, tällöin jokainen enkooderilta tuleva pulssi luo keskeytyksen kontrollerilta ja näitä laskemalla saadaan mitattua renkaan pyörintänopeus.
@@ -254,19 +261,19 @@ Käyttöliittymä vaikutti projektin alussa kohtuullisen viimeistellyltä ja pä
 
 Kuten kuvasta huomataan, sarjaliikennekommunikointi ja tarkoitusta varten kehittämämme protokolla on määritetty omissa tiedostoissaan, jolloin ne on käytännössä helppo korvata millä tahansa muulla kommunikointimenetelmällä tai protokollalla. Lisäksi kaikki autoon liittyvät parametrit, käyttöliittymän tiedot ja ajotiedot säilytetään Car-nimisessä luokassa, jolloin luokka voidaan tallentaa kokonaisena tiedostoon ja auton senhetkistä tilaa päästään analysoimaan siten myöhemmin helposti.
 
-Vanhaa käyttöliittymäkoodia tutkimalla huomattiin myös, että auton paikan estimointi päänäkymässä toteutetaan pelkillä kiihtyvyysantureilla. Koska kiihtyvyysanturit olivat (ja ovat edelleen) kiinnitettynä löysästi auton ``katolle'' massakeskipisteen sijaan, niiden avulla ei kovin tarkkaa arviota auton paikasta tulla koskaan saamaan. Sen lisäksi pelkkien renkaiden pyörimisnopeuksien integroinnin katsottiin olevan sopimatonta, sillä meillä on kuitenkin käytössä myös kiihtyvyysanturit ja gyrometri. Päätettiin toteuttaa Kalman-suodin estimoimaan auton paikkaa käyttäen apuna mitattua ohjauskulmaa, renkaiden pyörimisnopeuksien keskiarvoa sekä kiihtyvyysantureita. Kiihtyvyysantureita ei ole tämän raportin kirjoitushetkellä kiinnitetty tukevasti, joten tällä hetkellä Kalman-suodin ei käytä kiihtyvyysantureiden mittausdataa hyödyksi.
+Vanhaa käyttöliittymäkoodia tutkimalla huomattiin myös, että auton paikan estimointi päänäkymässä toteutetaan pelkillä kiihtyvyysantureilla. Koska kiihtyvyysanturit olivat (ja ovat edelleen) kiinnitettynä löysästi auton ``katolle'' massakeskipisteen sijaan, niiden avulla ei kovin tarkkaa arviota auton paikasta tulla koskaan saamaan. Sen lisäksi pelkkien renkaiden pyörimisnopeuksien integroinnin katsottiin olevan sopimatonta, sillä meillä on kuitenkin käytössä myös kiihtyvyysanturi ja gyroskooppi. Päätettiin toteuttaa Kalman-suodin estimoimaan auton paikkaa käyttäen apuna mitattua ohjauskulmaa, renkaiden pyörimisnopeuksien keskiarvoa sekä kiihtyvyysantureita. Kiihtyvyysantureita ei ole tämän raportin kirjoitushetkellä kiinnitetty tukevasti, joten tällä hetkellä Kalman-suodin ei käytä kiihtyvyysantureiden mittausdataa hyödyksi.
 
 Liitteessä \ref{app:kalman} on esitetty Kalman-suotimen matriisit. Matriisit on johdettu yleiselle nelipyöräajoneuvolle ja itse Kalman-suotimen toiminta on toteutettu Michael Klederin Learning the Kalman filter \cite{bib:kalman} -oppaan pohjalta ja sitä hieman mukaillen. Huom! Kalman-suotimen parametrit eivät ole täysin optimoidut ja ne on arvioitu pääosin simuloimalla, mutta koska autolla ei ole raportin kirjoitushetkellä päästy ajamaan, tulee parametrit säätää kohdalleen myöhemmin.
 
 Yhtenä käyttöliittymään liittyvänä tehtävänä oli alunperin automaattiajon toteuttaminen. Auton tila huomioon ottaen automaatiajoa ei voinut pitää kovinkaan suurella prioriteetilla, ja sen toteutus jäikin aivan viimehetkeen. Käyttöliittymään on nyt toteutettu pohja (uusi välilehti) automaattiajolle, ja pohjan päälle on luotu kolme eri testitilannetta. Testitilanteista on toteutettu ainoastaan liukuhihna-ajo, joskin etäisyysantureiden puuttumisen johdosta tätäkään ajoa ei olla päästy testaamaan oikean auton kanssa. Testin käynnistäminen piirtää näyttöön tällä hetkellä vain satunnaista etäisyysmittausdataa, eikä toimi todellisuudessa. Muut testit on kohtuullisen helppo toteuttaa valmiille pohjalle, joskin ne saattavat vaatia joitain uusia ominaisuuksia myös mikrokontrollereihin.
 
-Automaattiajon lisäksi toiveena oli näppäimistöohjauksen rinnalle saada toimiva joystick-ohjaus. Joystick-ohjaus on nyt toteutettu, mutta vaatii manuaalista kalibrointia aina joystick-kohtaisesti. Kalibrointi onnistuu tests-kansiosta löytyvällä calibrateJoystick-funktiolla ja tämän jälkeen asettamalla saatu ääriarvovektori UpdateDisplay-funktion alkuun joy-muuttujaan. Huomioi, jos käyttämäsi joystick eroaa testeissä käytetystä 8-ulotteisesta helikopteriohjaimesta, voit joutua kalibrointifunktiossa lukemaan joystickilta arvoja mittausvektorin eri indekseistä, samoin kun UpdateDisplay-funktiossakin.
+Automaattiajon lisäksi toiveena oli näppäimistöohjauksen rinnalle saada toimiva joystick-ohjaus. Joystick-ohjaus on nyt toteutettu, mutta vaatii manuaalista kalibrointia aina joystick-kohtaisesti. Kalibrointi onnistuu tests-kansiosta löytyvällä calibrateJoystick-funktiolla ja tämän jälkeen asettamalla saatu ääriarvovektori UpdateDisplay-funktion alkuun joy-muuttujaan. Huomioi, jos käyttämäsi joystick eroaa testeissä käytetystä monikanavaisesta helikopteriohjaimesta, voit joutua kalibrointifunktiossa lukemaan joystickilta arvoja mittausvektorin eri indekseistä, samoin kun UpdateDisplay-funktiossakin.
 
 Käyttöliittymä vaati ennen toimiakseen (kohtuuttoman kattavan) PsychToolboxin Matlabiin, jotta näppäimistöpainalluksia auton ohjaamiseksi voitiin lukea. Päätimme kuitenkin toteuttaa näppäimistön lukemisen Matlabin ja GUIDEn sisäänrakennetuilla ominaisuuksilla, jolloin erillistä toolboxia ei tarvita. Haittapuolena tässä on kuitenkin se, että käyttöliittymän ``tausta'' eli figure1 tulee olla aktiivisena, jotta ohjaus toimii. Tämä tarkoittaa sitä, että ``Start manual drive'' napin painamisen jälkeen täytyy muistaa klikata hiirellä käyttöliittymän tyhjää kohtaa.
 
-Käyttöliittymää on ajettu enimmäkseen windowsilla. Linuxilla voi tulla ongelmia mm. sarjaporttien laitenodeasetusten tai -oikeuksien kanssa; katso, että käyttäjä on oikeassa ryhmässä (ls -l /dev/ttyUSB0; groups) ja säädä matlabille työhakemistoon tiedosto java.opts, johon sisällöksi esim.
+Käyttöliittymää on ajettu enimmäkseen windowsilla, mutta Linuxillakin on todettu se pikaisesti toimivaksi. Linuxilla voi tulla ongelmia mm. sarjaporttien laitenodeasetusten tai -oikeuksien kanssa; katso, että käyttäjä on oikeassa ryhmässä (ls -l /dev/ttyUSB0; groups) ja säädä matlabille työhakemistoon tiedosto java.opts, johon sisällöksi esim.
 \begin{verbatim}
-``-Dgnu.io.rxtx.SerialPorts=/dev/ttyS0:/dev/ttyS1:/dev/ttyUSB0:/dev/ttyACM0''.
+-Dgnu.io.rxtx.SerialPorts=/dev/ttyS0:/dev/ttyS1:/dev/ttyUSB0:/dev/ttyACM0
 \end{verbatim}
 
 Laitteen on oltava koneessa kiinni Matlabia käynnistäessä.
@@ -274,7 +281,8 @@ Laitteen on oltava koneessa kiinni Matlabia käynnistäessä.
 \section{Yhteenveto ja ajankäyttö}
 
 \subsection{Auton nykytilanne}
-Raportin kirjoitushetkellä ajoneuvokurssin ryhmä on saanut autoon uuden voimansiirron ja päässyt ajamaan (toisella moottorilla) joitain metrejä. Tällä hetkellä mikrokontrollerit ovat autosta kuitenkin irti, ja sitä on muutenkin purettu jonkin verran (kuva \ref{fig:autoauki}). Autoon on tehty myös kori (kuva \ref{fig:autonkori}); ohjauselektroniikan mahtuminen alkuperäisessä laatikossa korin alle ei ole varmaa. Voimansiirtomekaniikkaa tehdessä ei ilmeisesti oltu otettu huomioon siinä aiemmin olleita enkoodereita, joten eturenkaista ei tällä hetkellä saada paikkaa tai pyörimisnopeutta mitattua. Suositellaan jatkajille, että niille etsitään jokin paikka. Mikrokontrollerien paikalle on kiinnitetty uusien ajomoottorien akut nippusiteillä ilmeisesti mekaniikkatiimin loppudemoa varten; autolla voinee ajaa perinteistä RC-auton radiota käyttäen, eli ilman mikrokontrolleriohjausta. Mikrokontrollerilaatikon kiinnitystä pitää viilata, jotta sen saisi paikalleen, ja joitakin johdotuksia pitää uusia.
+
+Raportin kirjoitushetkellä ajoneuvokurssin ryhmä on saanut autoon uuden voimansiirron ja päässyt ajamaan (toisella moottorilla) joitain metrejä. Uusien akkujen virranantokyky riittää, toisin kuin alkuperäisen, jonka jännite kyykkäsi aivan liikaa heti liikkeelle lähtiessä. Tällä hetkellä mikrokontrollerit ovat autosta kuitenkin irti, ja sitä on muutenkin purettu jonkin verran (kuva \ref{fig:autoauki}). Autoon on tehty myös kori (kuva \ref{fig:autonkori}); ohjauselektroniikan mahtuminen alkuperäisessä laatikossa korin alle ei ole varmaa. Voimansiirtomekaniikkaa tehdessä ei ilmeisesti oltu otettu huomioon siinä aiemmin olleita enkoodereita, joten eturenkaista ei tällä hetkellä saada paikkaa tai pyörimisnopeutta mitattua. Suositellaan jatkajille, että niille etsitään jokin paikka. Mikrokontrollerien paikalle on kiinnitetty uusien ajomoottorien akut nippusiteillä ilmeisesti mekaniikkatiimin loppudemoa varten; autolla voinee ajaa perinteistä RC-auton radiota käyttäen, eli ilman mikrokontrolleriohjausta. Mikrokontrollerilaatikon kiinnitystä pitää viilata, jotta sen saisi paikalleen, ja joitakin johdotuksia pitää uusia.
 
 Voimansiirron moottoripää oli alunperin suuren vaihteiston ja kytkimen kautta renkaissa, mikä aiheutti monimutkaisuutta (kytkin ei toiminut) ja moottorijarrutusta (jota alunperin pyrittiin välttämään kytkimellä). Uudessa voimansiirrossa on suora hihnaveto välityksellä 1:1.
 
@@ -289,11 +297,11 @@ Tällä kurssilla ei siis tultu eikä tulla ajamaan autolla tätä pidempiä mat
 
 Kuten projektitöissä yleensä, tässäkin voidaan jälkiviisastella, että tokihan olisi kannattanut aloittaa aikaisemmin. Auton epävarmuudet saivat projektin alun vähän ontumaan, ja vauhtiin päästiin vasta lähempänä loppua (kuva \ref{fig:tyojakauma}), kun varmistui, että vanha voimansiirto tulee pysymään kurssin demotilaisuuteen asti kiinni. Tätä varten tehtiin pikaisesti ohjauksen yleinen rakenne loppuun ja lukittiin alkuperäisen voimansiirron kytkin pysyvästi lukkoon ruuvaamalla sinne pultti (mikä sekään ei riittänyt estämään kytkimen luistamista). Uudessa voimansiirrossa kytkintä ei ole.
 
-\kuvaa{1}{jakauma}{Kumulatiivinen ajankäyttö työn eri osa-alueiden välillä. General tarkoittaa kurssin luentoja, actual work on varsinaista autoon liittyvää kehitystyötä.}{tyojakauma}
+\kuvaa{1}{jakauma}{Kumulatiivinen ajankäyttö työn eri osa-alueiden välillä siitä työstä, mitä enimmäkseen seurattiin. General tarkoittaa kurssin luentoja ja tapaamisia, actual work on varsinaista autoon liittyvää kehitystyötä.}{tyojakauma}
 
-Työ jaettiin alunperin kolmeen osaan, siten että Lasse keskittyy ABS:n ja ESP:n toimintaan, Konsta mikrokontrollereiden uudelleenohjelmointiin ja Toni käyttöliittymään. Projektin edetessä ja uusien työtehtävien ilmaantuessa kukin teki jonkin verran töitä myös toistensa osa-alueisiin. Kaikki tekivät tasapuolisesti työtä myös auton yleisen kunnon selvittämiseen, sekä kaikkiin yleisiin kurssiin liittyviin tehtäviin.
+Työ jaettiin alunperin kolmeen osaan, siten että Lasse keskittyy ABS:n ja ESP:n toimintaan, Konsta mikrokontrollereiden uudelleenohjelmointiin ja Toni käyttöliittymään. Projektin edetessä ja uusien työtehtävien ilmaantuessa kukin teki jonkin verran töitä myös toistensa osa-alueisiin. Kaikki tekivät tasapuolisesti työtä myös auton yleisen kunnon selvittämiseen, sekä kaikkiin yleisiin kurssiin liittyviin tehtäviin. Yhteistyö toimi mainiosti IRC:n välityksellä, ja Git-versionhallinta auttoi huomattavasti koodin hajautetussa kehityksessä; näitä suositellaan tulevillekin.
 
-Seurasimme ajankäyttöämme työtehtäväkohtaisesti, päiväkohtaisesti ja projektin osa-aluekohtaisesti. Koska projekti (kuvan Z actual work) oli jaettu 16 eri työtehtävään, ja työtehtäviä tuli useita lisää myös projektin edetessä, emme saaneet eri työtehtäviin kulunutta aikaa esitettyä informatiivisesti yhdessä kuvaajassa. Sen sijaan, yhteensä aikaa kului karkeampiin osakokonaisuuksiin jaettuna, esitettynä taulukossa \ref{tab:osakok-ajat}
+Seurasimme ajankäyttöämme työtehtäväkohtaisesti, päiväkohtaisesti ja projektin osa-aluekohtaisesti. Koska projekti (kuvan \ref{fig:tyojakauma}) oli jaettu 16 eri työtehtävään, ja työtehtäviä tuli useita lisää myös projektin edetessä (ja toisaalta vanhat tehtävät jätettiin mahdottomana tekemättä), emme saaneet eri työtehtäviin kulunutta aikaa esitettyä informatiivisesti yhdessä kuvaajassa. Sen sijaan ajankäyttö jaettiin karkeampiin osakokonaisuuksiin, jotka ovat esitettynä taulukossa \ref{tab:osakok-ajat}. Satunnaista organisoimatonta keskustelua ja ajattelua, jota kukin teki luultavasti kymmenisen tuntia projektin aikana, ei pystynyt seuraamaan mitenkään järkevästi.
 
 \begin{table}
 	\caption{Projektin ajankäyttö karkeisiin osakokonaisuuksiin jaettuna.}
@@ -304,26 +312,28 @@ Seurasimme ajankäyttöämme työtehtäväkohtaisesti, päiväkohtaisesti ja pro
 	Protokollan uudelleenkirjoittaminen & 28 h\\ \hline
 	ABS ja ESP & 31 h\\ \hline
 	Käyttöliittymä & 62 h\\ \hline
-	Jarrujen kehitystyö & 27 h\\ \hline
-	Mikrokontrollerit & 60 h\\ \hline
+	Jarrujen kehitystyö & 30 h\\ \hline
+	Mikrokontrollerien yleinen säätö & 60 h\\ \hline
+	Kommunikaatiokoodin debuggaus & 20 h\\ \hline
 	Muu autoon liittyvä kehitystyö & 24 h\\ \hline
+	Lopun dokumentointi ja & 20 h\\ \hline
 	\end{tabular}
 \end{table}
 
 
-Yhteensä koko projektiin aikaa on kulunut noin 370 tuntia. Henkilöittäin tämä jakautuu taulukon \ref{tab:henk-ajat} mukaan.
+Yhteensä koko projektiin aikaa on kulunut noin 380 tuntia. Henkilöittäin tämä jakautuu taulukon \ref{tab:henk-ajat} mukaan.
 
 \begin{table}
-	\caption{Projektin ajankäyttö henkilöittäin. TODO FIXME}
+	\caption{Projektin ajankäyttö henkilöittäin.}
 	\label{tab:henk-ajat}
 	\centering \begin{tabular}{ | r | l | } \hline
 	Lasse & 110 h\\ \hline
-	Toni & 122 h\\ \hline
-	Konsta & 136 h \\ \hline
+	Toni & 124 h\\ \hline
+	Konsta & 144 h \\ \hline
 	\end{tabular}
 \end{table}
 
-Aallon politiikan mukaan yhtä opintopistettä vastaa noin 27 tuntia töitä, joten tämän mittarin mukaan Lasse ja Toni olisivat ansainneet kurssista neljä opintopistettä ja Konsta viisi. Uskomme että kaikki ovat projektin vaikeuksista huolimatta tehneet ansioituneesti töitä näiden tuntien eteen.
+Aallon politiikan mukaan yhtä opintopistettä vastaa noin 27 tuntia töitä, joten tämän mittarin mukaan Lasse ja Toni olisivat ansainneet kurssista neljä opintopistettä ja Konsta viisi. Uskomme, että kaikki ovat projektin vaikeuksista huolimatta tehneet ansioituneesti töitä näiden tuntien eteen.
 
 \clearpage
 
@@ -338,7 +348,7 @@ Aallon politiikan mukaan yhtä opintopistettä vastaa noin 27 tuntia töitä, jo
 \bibitem{bib:hbridge}{Vishay, Si9986 Buffered H-Bridge, Datasheet, \url{http://www.vishay.com/docs/70007/si9986.pdf}, viitattu 14.12.2013}
 \bibitem{bib:loppuraportti}{Kevään 2012 mekatroniikkaryhmän loppuraportti, \url{http://autsys.aalto.fi/intranet/as-0.3200/attach/A12-09/A12-09_RC-auton_kehitys_Loppuraportti_wiki.pdf}, viitattu 15.12.2013}
 \bibitem{bib:mekatroniikka}{Ajoneuvon tuotekehitys -kurssin 2012 Mekatroniikan loppuraportti, \url{https://wiki.aalto.fi/download/attachments/77115783/raportti_liite_Storsjo.pdf}, viitattu 15.12.2013}
-
+\bibitem{bib:avrlibc}{AVR-libc, \url{http://www.nongnu.org/avr-libc/user-manual/modules.html}, viitattu 15.12.2013}
 \end{thebibliography}
 
 \clearpage
@@ -374,16 +384,16 @@ Kooditiedostot ovat yhdessä läjässä; tässä esitellään ne lyhyesti aakkos
 \item[main\_encoders.c] Enkooderikontrollerin alustuskoodit yms.
 \item[main\_matlab.c] Matlabin vastaavat; ei ole saanut erityisesti huomiota.
 \item[Makefile] Make-ohjeet matlab-version kääntämiseksi. Tämä on kopioitu ja siistitty matlabin tarjoamasta tiedostosta ja kokeiltu koulun linux-koneilla.
-\item[Makefile.avr] Make-ohjeet mikrokontrollereille (kaikille kolmelle). Tässä asetetaan myösö kullekin makro, joka määrittää erinäisiä asetuksia.
+\item[Makefile.avr] Make-ohjeet mikrokontrollereille (kaikille kolmelle). Tässä asetetaan myös kullekin makro, joka määrittää erinäisiä asetuksia.
 \item[measdisp.py] Testikoodia viestintään. Ei toimi aina kovin luotettavasti pitkän aikaa.
 \item[motors\_avr.c] Moottoriohjaimen avr-toteutus; välittää ohjaukset pwm:lle.
 \item[motors.c] Ajomoottorien abstraktio.
-\item[msgs.c] Tärkeimmät viestinnän korkean tason käsittelyt.
+\item[msgs.c] Tärkeimmät viestinnän korkean tason pakettien käsittelyt.
 \item[parse\_buffer.m] Matlabin puolen viestipuskurinkäsittelyesimerkki.
 \item[parse\_item.m] Yliyksinkertaistettu esimerkki yksittäisen viestipaketin käsittelystä.
 \item[protocol.h] Kommunikointiprotokollan numerot (sisällytetään comm.h:hon).
 \item[pwm\_avr.c] AVR-puolen varsinainen pwm-toteutus.
-\item[pwm\_sim.c] PWM-``huijaus'' matlabsimulaatiolle; muistaa ohjatut arvot siltä varalta, että niiden perusteella simuloitaisiin jotakin.
+\item[pwm\_sim.c] PWM-huijaus matlabsimulaatiolle; muistaa ohjatut arvot siltä varalta, että niiden perusteella simuloitaisiin jotakin.
 \item[ringbuf.c] Geneerinen rengaspuskuri.
 \item[ringbuftest.c] Yksikkötestejä rengaspuskurille; testattu aluksi pienemmillä puskureilla eikä enää merkityksellinen.
 \item[servos\_avr.c] Servojen toiminta AVR-puolella.
