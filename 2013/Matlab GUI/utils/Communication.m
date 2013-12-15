@@ -169,7 +169,7 @@ classdef Communication < handle
 				return;
 
 			elseif (this.status == this.STATUSCODE.Simul)
-				this.appdata.connected = 1;
+				c.appdata.connected = 1;
 				this.write2(0, []); % ping
 				this.async_Communication_triggered();
 				
