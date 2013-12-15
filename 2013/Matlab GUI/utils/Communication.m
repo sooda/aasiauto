@@ -46,8 +46,8 @@ classdef Communication < handle
 
             elseif (strcmp(comport, 'Simul'))
                 Logging.log('Opening car simulation...');
-                this.status = 5; % this.STATUSCODE.Simul;
-                
+                this.status = this.STATUSCODE.Simul;
+
                 start(this.communicationTimer);
             else
                 try 
@@ -143,8 +143,11 @@ classdef Communication < handle
 %                c = Car.getInstance;
 %                c.appdata.connected = 1;
 
+			if (this.status == this.STATUSCODE.Simul)
+				c.appdata.connected = 1;
+				
             % wait for input from car
-            if (this.serial_data.BytesAvailable && ...
+            elseif (this.serial_data.BytesAvailable && ...
                     this.status ~= this.STATUSCODE.Initialized)
                 this.status = this.STATUSCODE.Initialized;
                 Logging.log('Initialized and ready for drive session.');
