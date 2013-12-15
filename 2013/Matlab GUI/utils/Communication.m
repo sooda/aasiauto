@@ -190,9 +190,10 @@ classdef Communication < handle
         function this = async_Communication_triggered(this) %, varargin)
             if (this.status == this.STATUSCODE.Simul)
                 if (exist('controller','file')) % file or builtin or class..
-                    buf = controller(this.buf_out);
+                    buf = controller(this.buf_out)
                     this.buf_out = [];
                     this.buf_in = [this.buf_in buf];
+                    this.buf_in = Protocol.parse_buffer(this.buf_in);
                 end
             elseif (this.status == this.STATUSCODE.Initialized)
                 val = this.getBytes();
