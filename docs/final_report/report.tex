@@ -203,18 +203,18 @@ Mikrokontrollerien koodi on hajautettu pariinkymmeneen erilliseen osaan (kuva \r
 
 \begin{figure}[h!]
 \begin{verbatim}
-Makefile      comm_sim.h       initTeensy.c     msgs.c          servos_avr.c
-Makefile.avr  commtest.m       initTeensy.h     msgs.h          test_ringbuf.sh
-adc.c         config.h         lsq.c            parse_buffer.m  uart.h
-adc.h         controller.c     lsq.h            parse_item.m    uart_avr.c
-analog.c      core.c           main_brakes.c    pwm.h           uartbuf.c
-analog.h      core.h           main_driver.c    pwm_avr.c       uartbuf.h
-buf2num.m     core_brakes.c    main_encoders.c  pwm_sim.c       wheelSpeeds.c
-comm.c        core_common.c    main_matlab.c    ringbuf.c       wheelSpeeds.h
-comm.h        core_common.h HAX FIXME tää ei oo täällä enää, tsekkaa läppäriltä kivabranchista uudet    measdisp.py      ringbuf.h
-comm_avr.c    core_encoders.c  motors.c         ringbuftest.c
-comm_avr.h    encoders.c       motors.h         servos.c
-comm_sim.c    encoders.h       motors_avr.c     servos.h
+adc.c       config.h          initTeensy.c     motors.h        servos_avr.c
+adc.h       controller.c      initTeensy.h     msgs.c          servos.c
+adc_sim.c   controller_cli.c  lsq.c            msgs.h          servos.h
+analog.c    core_avr.c        lsq.h            parse_buffer.m  test_ringbuf.sh
+analog.h    core_avr.h        main_brakes.c    parse_item.m    uart_avr.c
+buf2num.m   core_brakes.c     main_driver.c    protocol.h      uartbuf.c
+comm_avr.c  core_common.c     main_encoders.c  pwm_avr.c       uartbuf.h
+comm.c      core_driver.c     main_matlab.c    pwm.h           uart.h
+comm.h      core_encoders.c   Makefile         pwm_sim.c       uart_stdio.h
+comm_sim.c  core.h            Makefile.avr     ringbuf.c       wheelSpeeds.c
+comm_sim.h  encoders.c        motors_avr.c     ringbuf.h       wheelSpeeds.h
+commtest.m  encoders.h        motors.c         ringbuftest.c
 \end{verbatim}
 \caption{Mikrokontrolleripuolen yleiskoodia. Rivejä on huomattavasti enemmän kuin alkuperäisessä pohjassa; ohjelma on monipuolisempi mutta toisaalta myös suurempi. \label{fig:mcucode}}
 \end{figure}
@@ -349,21 +349,22 @@ Aallon politiikan mukaan yhtä opintopistettä vastaa noin 27 tuntia töitä, jo
 Kooditiedostot ovat yhdessä läjässä; tässä esitellään ne lyhyesti aakkosjärjestyksessä. Otsikkotiedostoja on jätetty irrelevantteina pois; ne liittyvät oleellisesti vastaaviin .c-tiedostoihin.
 
 \begin{description}
-\item[Makefile] Make-ohjeet matlab-version kääntämiseksi. Tämä on kopioitu ja siistitty matlabin tarjoamasta tiedostosta ja kokeiltu koulun linux-koneilla.
-\item[Makefile.avr] Make-ohjeet mikrokontrollereille (kaikille kolmelle). Tässä asetetaan myösö kullekin makro, joka määrittää erinäisiä asetuksia.
 \item[adc.c] AVR-spesifistä A/D-muuntimen koodia; käytetään mm. akkujännitteiden mittaamiseen ja ratin suunnan havaitsemiseen, joka on toteutettu potentiometrillä.
+\item[adc\_sim.c] Simulaation adc-huijauskoodi, säilöö ohjaukset myöhempiä huijauksia varten
 \item[analog.c] Analogisten mittausten abstraktio. Kun adc:stä tekisi matlabillekin pwm:n kaltaisen (kuvattu alla) simulaation, ohjelma ei ota kantaa siihen, missä mittaaminen suoritetaan.
 \item[buf2num.m] Esimerkki raakabufferin muuntamisesta numeerisiksi arvoiksi matlabilla.
-\item[comm.c] Yleisiä alustariippumattomia kommunikaatiofunktioita.
-\item[comm.h] Kommunikoinnin perusmäärittelyt, kuten viestinumerot ja pari apumakroa.
 \item[comm\_avr.c] AVR-puolen kommunikointi; käyttää uartia.
-\item[comm\_sim.c]a Simulaattorin eli matlabin kanssa kommunikointi; puuhaa viestinnän yhden suuren taulukon läpi, joka annetaan valmiiksi matlabista kutsuttaessa.
+\item[comm.c] Yleisiä alustariippumattomia kommunikaatiofunktioita.
+\item[comm.h] Kommunikoinnin perusmäärittelyt; viestinumerot ja pari apumakroa.
+\item[comm\_sim.c] Simulaattorin eli matlabin kanssa kommunikointi; puuhaa viestinnän yhden suuren taulukon läpi, joka annetaan valmiiksi matlabista kutsuttaessa.
 \item[commtest.m] Lyhyt esimerkki kommunikaation matalan tason hallinnasta matlabilla.
 \item[config.h] Asetuksia, jotka vaihtelevat laitekohtaisesti; esim. kommunikaatioon käytettyjen sarjaporttien numerot.
 \item[controller.c] Matlabin controller-funktion kirjasto-api.
-\item[core.c] TODO RENAME core\_driver.c Pääohjelma ohjaimelle, joka säätää moottoreita ja rattia ja on suoraan kytköksissä pc:hen radiolla sekä välittää viestit eteenpäin.
+\item[controller\_cli.c] Komentoriviltä ajettava pikainen testi demonstroimaan modulaarisuuden joustavuutta.
+\item[core\_avr.c] Mikrokontrollereille yhteistä pääkoodia, mm. alustukset ja ajastukset.
 \item[core\_brakes.c] Pääohjelma jarrukontrollerille, joka ajaa abs-algoritmeja, ohjaa niillä jarruja ja välittää viestejä edelleen enkooderikontrollerille.
 \item[core\_common.c] Yleisiä kontrolleririippumattomia pääohjelmasta kutsuttavia funktioita.
+\item[core\_driver.c] Pääohjelma ohjaimelle, joka säätää moottoreita ja rattia ja on suoraan kytköksissä pc:hen radiolla sekä välittää viestit eteenpäin.
 \item[core\_encoders.c] Pääohjelma enkooderikontrollerille (teensy). Mittaa enkooderien pyörimisnopeutta ja arvioi kiihtyvyyksiä; välittää ne käyttöliittymälle.
 \item[encoders.c] Enkooderien abstraktio käytettäväksi joka kontrollerissa.
 \item[initTeensy.c] Enkooderille spesifiset alustusrutiinit (mm. keskeytykset ja ajastimet).
@@ -372,21 +373,25 @@ Kooditiedostot ovat yhdessä läjässä; tässä esitellään ne lyhyesti aakkos
 \item[main\_driver.c] Pääkontrollerin alustuskoodit yms.
 \item[main\_encoders.c] Enkooderikontrollerin alustuskoodit yms.
 \item[main\_matlab.c] Matlabin vastaavat; ei ole saanut erityisesti huomiota.
+\item[Makefile] Make-ohjeet matlab-version kääntämiseksi. Tämä on kopioitu ja siistitty matlabin tarjoamasta tiedostosta ja kokeiltu koulun linux-koneilla.
+\item[Makefile.avr] Make-ohjeet mikrokontrollereille (kaikille kolmelle). Tässä asetetaan myösö kullekin makro, joka määrittää erinäisiä asetuksia.
 \item[measdisp.py] Testikoodia viestintään. Ei toimi aina kovin luotettavasti pitkän aikaa.
-\item[motors.c] Ajomoottorien abstraktio.
 \item[motors\_avr.c] Moottoriohjaimen avr-toteutus; välittää ohjaukset pwm:lle.
+\item[motors.c] Ajomoottorien abstraktio.
 \item[msgs.c] Tärkeimmät viestinnän korkean tason käsittelyt.
 \item[parse\_buffer.m] Matlabin puolen viestipuskurinkäsittelyesimerkki.
 \item[parse\_item.m] Yliyksinkertaistettu esimerkki yksittäisen viestipaketin käsittelystä.
+\item[protocol.h] Kommunikointiprotokollan numerot (sisällytetään comm.h:hon).
 \item[pwm\_avr.c] AVR-puolen varsinainen pwm-toteutus.
 \item[pwm\_sim.c] PWM-``huijaus'' matlabsimulaatiolle; muistaa ohjatut arvot siltä varalta, että niiden perusteella simuloitaisiin jotakin.
 \item[ringbuf.c] Geneerinen rengaspuskuri.
 \item[ringbuftest.c] Yksikkötestejä rengaspuskurille; testattu aluksi pienemmillä puskureilla eikä enää merkityksellinen.
-\item[servos.c] Servoabstraktio jarruille sekä myös mahdollisesti moottorinohjaimille, sillä niitä ohjataan samalla tekniikalla.
 \item[servos\_avr.c] Servojen toiminta AVR-puolella.
+\item[servos.c] Servoabstraktio jarruille sekä myös mahdollisesti moottorinohjaimille, sillä niitä ohjataan samalla tekniikalla.
 \item[test\_ringbuf.sh] Apuskripti rengaspuskuritestien ajamiseksi.
 \item[uart\_avr.c] Viestinkäsittely avr:lle matalimmalla tasolla eli tavuina rautapuskuriin.
 \item[uartbuf.c] Uartin helpottamiseksi viestittelyabstraktio, joka puskee viestejä rengaspuskuriin kunnes kaikki data on perillä; lukee vastaavasti.
+\item[uart\_stdio.h] Arduinojen uartia käytetään myös standardikirjaston stdio-stderr-virtoina, jolloin kaapataan assert()in debugviestit.
 \item[wheelSpeeds.c] Enkooderin rengasnopeuksien mittauksen yksityiskohdat.
 \end{description}
 
