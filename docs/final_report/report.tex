@@ -256,6 +256,16 @@ Muutamat viestit kulkevat mikrokontrollerilta toiselle ja taas takaisin päin. A
 
 Koodissa on pieniä puutteita alkuperäiseen nähden: inertia-antureille ei ehditty tehdä koodia (alkuperäisessä oli valmiit arduinokirjastot käytössä; mittaustiedolla ei kuitenkaan tehty paljoakaan). Anturit ovat yleisesti suosittuja, ja niille löytyy internetistä valmiita toteutuksia, eikä kaikkea tarvitse tehdä alusta itse \cite{bib:sparkfunacc} \cite{bib:sparkfungyro}.
 
+\subsection{Pyörintänopeustiedon luku (Teensy)}
+Jokaisen renkaan akselille asennetut enkooderit on kytketty Teensy-mikrokontrollerin keskeytys-sisääntuloihin, tällöin jokainen enkooderilta tuleva pulssi luo keskeytyksen kontrollerilta ja näitä laskemalla saadaan mitattua renkaan pyörintänopeus.
+
+Aikaisemmassa toteutuksessa Teensy-kontrolleri laski keskeytysten määrän 10ms:n aikana, josta laskettiin keskiarvo kahden edellisen mittauksen kanssa ja tämä tieto lähetettiin jarrukontrollerille missä suoritettiin pyörintänopeuden laskeminen ABS-algoritmia varten. Keskiarvoistuksen takia anturitiedon mittaussykli oli hitaampi kuin säätöalgoritmin.
+
+Nyt haluttiin muuttaa niin että mittaustaajuus olisi suurempi kuin säätötaajuus, jotta säätimen saama anturidata olisi ajan tasalla. Tämän vuoksi siirrettiin pyörintänopeuslaskenta Teensy-kontrollerille, josta lähetetään 10 ms:n keskiarvo pyörintänopeustiedosta, sekä samaan aikaan mitattu renkaan kiihtyvyystieto jarrukontrollerille.
+
+Pyörintänopeusantureiden mittaustaajuus kasvatettiin 800Hz:iin, josta keskiarvoistettiin 100hz:n signaali. Mittaustaajuuden valinta tehtiin sillä perusteella, että se olisi ainakin 2 kertaa suurempi kuin säätötaajuus, ja 8:n moninkerralla on helppo suorittaa jakolasku yksinkertaisesti siirtämällä bittejä oikealle. Renkaiden kiihtyvyydet lasketaan sovittamalla suora jokaiseen 100Hz:n aikana mitattuun nopeustietoon (eli siis kahdeksan mitattua näytettä 10 ms:n aikana). Tässä tulikin ongelmaksi kasvaneen näytteenottotaajudeen tuoma ongelma nopeusresoluution pienenemisestä, mutta enkooderien pulssimäärää per kierros (PPR) saatiin kasvatettua 512:sta pulssista 2048:aan.
+
+
 \subsection{Käyttöliittymä}
 Käyttöliittymä vaikutti projektin alussa kohtuullisen viimeistellyltä ja päälisin puolin toimivalta. Koodikatselmoinnin jälkeen hyvin nopeasti selvisi, että käyttöliittymä oli toteutettu vähitellen pienistä osista - kokonaisuutta juuri miettimättä. Nopeasti selvisi myös, että niin sanotun asynkronisen tiedonsiirron ongelma oli oikeasti se, että sarjaporttia luettiin eri säikeistä (Matlabin ajastimilla laukastuista funktioista) samanaikaisesti, jolloin osa paketeista tietysti luettiin väärään toimilohkoon ja osa paketeista katkesi kesken luettaessa. Tästä perustavanlaatuisesta ongelmakohdasta lähdettiinkin käyttöliittymän koodia kehittämään eteenpäin modulaarisemmaksi ja geneerisemmäksi. Loppujen lopuksi yhteen tiedostoon kirjoitettu 2000-rivinen koodi jaettiin (kirjoitettiin käytännössä uudestaan) useammaksi luokaksi, apufunktioksi ja tiedostoksi, kuten kuvassa \ref{fig:guitiedostot} on esitetty. Eri luokista ja niiden toiminnallisuudesta on kerrottu tarkemmin liitteessä \ref{app:gui}.
 
