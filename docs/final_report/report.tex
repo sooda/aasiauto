@@ -190,14 +190,33 @@ missä
 
 Simulink-malli on esitetty liitteessä \ref{app:espmodel}.
 
-Ajoneuvon hetkellistä kiertokulmanopeutta verrataan estimoituun kiertokulmanopeuteen \ref{eq:estkk}
+ESP-säädössä ajoneuvon hetkellistä kiertokulmanopeutta verrataan estimoituun kiertokulmanopeuteen \ref{eq:estkk}
 \begin{equation} \label{eq:estkk}
-r_{est} = \delta \frac{V}{l} (1 + \frac{v^2}{v_{ch}^2}) \\
-v_{ch} = \sqrt{\frac{gL}{K_{us}}} \\
-K_{us} = \frac{W_f}{C_{\alpha f}}-\frac{W_r}{C_{\alpha r}}
+\begin{split}
+r_{est} &= \delta \frac{V}{l} (1 + \frac{V^2}{V_{ch}^2}) \\
+v_{ch} &= \sqrt{\frac{gl}{K_{us}}} \\
+K_{us} &= \frac{W_f}{C_{\alpha f}}-\frac{W_r}{C_{\alpha r}}
+\end{split}
 \end{equation}
-
-ja todellisen (mallissa lasketun ja todellisessa ajoneuvossa mitatun) nopeuden erotusta estimoituun voidaan käyttää säätimen referenssinä.
+missä
+\begin{itemize}
+	\item $r_{est}$ = estimoitu kiertokulmanopeus
+	\item $\delta$ = ratin kääntökulma
+	\item $l$ = ajoneuvon akseliväli
+	\item $V_{ch}$ on ajoneuvon karakteristinen nopeus
+	\item $K_{us}$ = aliohjautuvuusgradientti
+	\item $W_f$ , $W_r$ = etu- ja taka-akselin paino
+	\item $C_{\alpha f}$, $C_{\alpha r}$ = etu- ja taka-akselin kaartojäykkyys
+\end{itemize}
+ja todellisen (mallissa lasketun ja todellisessa ajoneuvossa mitatun) nopeuden erotusta estimoituun voidaan käyttää säätimen referenssinä. Simulaatiotuloksia on esitetty Liitteesä \ref{app:espsim}. Parametreina ajoneuvolle simulaatioissa on käytetty:
+\begin{itemize}
+\item $m$ = 9 kg
+\item $J_z$ = 0.5 kgm$^2$
+\item $l$ = 0.5 m
+\item $C_{\alpha f}$ = 900 N/rad
+\item $C_{\alpha r}$ = 600 N/rad
+\item massakesipisteen etäisyys taka-akselilta = 0.3 m
+\end{itemize}
 
 \subsection{Auton elektroninen ohjaus (mikrokontrollerit)}
 
@@ -252,7 +271,11 @@ Automaattiajon lisäksi toiveena oli näppäimistöohjauksen rinnalle saada toim
 
 Käyttöliittymä vaati ennen toimiakseen (kohtuuttoman kattavan) PsychToolboxin Matlabiin, jotta näppäimistöpainalluksia auton ohjaamiseksi voitiin lukea. Päätimme kuitenkin toteuttaa näppäimistön lukemisen Matlabin ja GUIDEn sisäänrakennetuilla ominaisuuksilla, jolloin erillistä toolboxia ei tarvita. Haittapuolena tässä on kuitenkin se, että käyttöliittymän ``tausta'' eli figure1 tulee olla aktiivisena, jotta ohjaus toimii. Tämä tarkoittaa sitä, että ``Start manual drive'' napin painamisen jälkeen täytyy muistaa klikata hiirellä käyttöliittymän tyhjää kohtaa.
 
-Käyttöliittymää on ajettu enimmäkseen windowsilla. Linuxilla voi tulla ongelmia mm. sarjaporttien laitenodeasetusten/-oikeuksien kanssa; katso, että käyttäjä on oikeassa ryhmässä (ls -l /dev/ttyUSB0; groups) ja säädä matlabille työhakemistoon tiedosto java.opts, johon sisällöksi esim. ``-Dgnu.io.rxtx.SerialPorts=/dev/ttyS0:/dev/ttyS1:/dev/ttyUSB0:/dev/ttyACM0''. Myös Communication-luokasta tulee kovakoodata serial-kutsun parametreihin sopiva polku. Laitteen on oltava koneessa kiinni matlabia käynnistäessä.
+Käyttöliittymää on ajettu enimmäkseen windowsilla. Linuxilla voi tulla ongelmia mm. sarjaporttien laitenodeasetusten/-oikeuksien kanssa; katso, että käyttäjä on oikeassa ryhmässä (ls -l /dev/ttyUSB0; groups) ja säädä matlabille työhakemistoon tiedosto java.opts, johon sisällöksi esim.
+\begin{verbatim}
+``-Dgnu.io.rxtx.SerialPorts=/dev/ttyS0:/dev/ttyS1:/dev/ttyUSB0:/dev/ttyACM0''.
+\end{verbatim}
+Myös Communication-luokasta tulee kovakoodata serial-kutsun parametreihin sopiva polku. Laitteen on oltava koneessa kiinni matlabia käynnistäessä.
 
 \section{Yhteenveto ja ajankäyttö}
 
@@ -408,24 +431,29 @@ TODO!!
 
 \section{ABS-simulaatiomalli} \label{app:simmodel}
 %\kuvaa{0.8}{qrtVehMdl}{qrtVehMdl}{qrtVehMdl}
-\centering \includegraphics[width=1.0\textwidth]{qrtVehMdl}
+{\centering \includegraphics[width=1.0\textwidth]{qrtVehMdl}}
 
 \section{ABS-simulaatioita} \label{app:abssim}
-\centering \includegraphics[width=0.8\textwidth]{abssim1}
+{\centering \includegraphics[width=0.8\textwidth]{abssim1}
 
-\centering \includegraphics[width=0.8\textwidth]{abssim2}
+ \includegraphics[width=0.8\textwidth]{abssim2}
 
-\centering \includegraphics[width=0.8\textwidth]{abssim3}
+ \includegraphics[width=0.8\textwidth]{abssim3}}
 %\kuvaa{0.8}{abssim1}{abssim1}{abssim1}
 %\kuvaa{0.8}{abssim2}{abssim2}{abssim2}
 %\kuvaa{0.8}{abssim3}{abssim3}{abssim3}
 
 \section{ESP-simulaatiomalli} \label{app:espmodel}
-\centering \includegraphics[width=1.0\textwidth]{espmdl1}
+{\centering \includegraphics[width=1.0\textwidth]{espmdl1}
 
-\centering \includegraphics[width=1.0\textwidth]{espmdl2}
+ \includegraphics[width=1.0\textwidth]{espmdl2}}
 %\kuvaa{0.8}{mdl-a}{mdl-a}{mdl-a}
 %\kuvaa{0.8}{mdl-b}{mdl-b}{mdl-b}
+
+\section{ESP-simulaatioita} \label{app:espsim}
+{\centering \includegraphics[width=0.8\textwidth]{espSim1}
+
+\includegraphics[width=0.8\textwidth]{espSim2}}
 \end{appendices}
 
 \end{document}
