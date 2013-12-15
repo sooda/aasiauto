@@ -199,7 +199,25 @@ Itse pakettipohjainen viestintämuoto pysyi pitkälti samannäköisenä; alkuper
 
 Viestipaketti alkaa otsikolla, johon kuuluu pituus (yksi tavu) ja tunnistenumero (yksi tavu). Näiden jälkeen tulee pituustavun verran itse hyötykuormaa (pituuteen ei sisälly otsikkotiedon kahta tavua). Koodissa näiden käsittely hoidetaan lähetys- ja vastaanottofunktioilla, joille annetaan osoitin puskuriin ja datan pituus tavuina. Käyttöliittymäkoneen ja pääkontrollerin välillä on vielä ylimääräinen taso datansiirrossa, joka helpottaa ohjelman käynnistyksen synkronointia; käyttöliittymältä lähetetään ennen joka pakettia tavu 255 (heksana 0xFF); sarjaliikenteen vastaanottokoodissa on tälle käsittely, joka odottaa aluksi tällaista tavua paketin alkuun ennen datan hyväksymistä ja edelleenvälittämistä. Jos itse datassa on tavu 255, se lähetetään kahdesti peräkkäin. Paketin ensimmäinen tavu, pituus, on sovittu olemaan aina korkeintaan 254 (kovin suuria paketteja ei tarvita) - tästä päätellään, että 255 ja jokin pienempi luku tarkoittaa paketin alkua. Näin käyttöliittymäkoneen potentiaalisesti vahingossa lähettämä paketti, jonka kontrolleri vastaanottaa vain osittain, ei häiritse synkronointia. Ylimääräiset synkronointitavut jätetään huomiotta tavuja välittäessä itse paketinhallinnalle.
 
-Mikrokontrollerien koodi on hajautettu pariinkymmeneen erilliseen osaan [TODO kuva tms ja appendixiin selityksiä] abstraktioperiaatteen mukaisesti ja varsinkin viestinkäsittelyssä on useita abstraktiotasoja; itseään toistavaa duplikaattikoodia ei juurikaan ole paitsi siellä missä se on perusteltua tehokkuuden vuoksi. Tämähän on yksi ylläpidettävyyden kannalta tärkeimmistä ominaisuuksista, ja ottaen huomioon projektin jatkuvan luonteen, on hyvä että seuraavat käyttäjät voivat laajentaa ohjaustyyliä minimivaivalla. Eri kontrollerit jakavat monet viestintäkoodit yms., ja esim. enkooderikoodi ylipäätään sisällytetään vain siihen, joka menee enkooderimittauskontrollerille. Tämä logiikka hoidetaan Makefile-tiedostossa \cite{bib:make} ja config.h-otsikkotiedostossa. (Kääntämistä on testattu vain linux-koneella, mutta minimaalisin muutoksin saman pitäisi toimia muillakin alustoilla.)
+Mikrokontrollerien koodi on hajautettu pariinkymmeneen erilliseen osaan (kuva \ref{fig:mcucode}, liite \ref{app:mcucode} abstraktioperiaatteen mukaisesti ja varsinkin viestinkäsittelyssä on useita abstraktiotasoja; itseään toistavaa duplikaattikoodia ei juurikaan ole paitsi siellä missä se on perusteltua tehokkuuden vuoksi. Tämähän on yksi ylläpidettävyyden kannalta tärkeimmistä ominaisuuksista, ja ottaen huomioon projektin jatkuvan luonteen, on hyvä että seuraavat käyttäjät voivat laajentaa ohjaustyyliä minimivaivalla. Eri kontrollerit jakavat monet viestintäkoodit yms., ja esim. enkooderikoodi ylipäätään sisällytetään vain siihen, joka menee enkooderimittauskontrollerille. Tämä logiikka hoidetaan Makefile-tiedostossa \cite{bib:make} ja config.h-otsikkotiedostossa. (Kääntämistä on testattu vain linux-koneella, mutta minimaalisin muutoksin saman pitäisi toimia muillakin alustoilla.)
+
+\begin{figure}[h!]
+\begin{verbatim}
+Makefile      comm_sim.h       initTeensy.c     msgs.c          servos_avr.c
+Makefile.avr  commtest.m       initTeensy.h     msgs.h          test_ringbuf.sh
+adc.c         config.h         lsq.c            parse_buffer.m  uart.h
+adc.h         controller.c     lsq.h            parse_item.m    uart_avr.c
+analog.c      core.c           main_brakes.c    pwm.h           uartbuf.c
+analog.h      core.h           main_driver.c    pwm_avr.c       uartbuf.h
+buf2num.m     core_brakes.c    main_encoders.c  pwm_sim.c       wheelSpeeds.c
+comm.c        core_common.c    main_matlab.c    ringbuf.c       wheelSpeeds.h
+comm.h        core_common.h HAX FIXME tää ei oo täällä enää, tsekkaa läppäriltä kivabranchista uudet    measdisp.py      ringbuf.h
+comm_avr.c    core_encoders.c  motors.c         ringbuftest.c
+comm_avr.h    encoders.c       motors.h         servos.c
+comm_sim.c    encoders.h       motors_avr.c     servos.h
+\end{verbatim}
+\caption{Mikrokontrolleripuolen yleiskoodia. Rivejä on huomattavasti enemmän kuin alkuperäisessä pohjassa; ohjelma on monipuolisempi mutta toisaalta myös suurempi. \label{fig:mcucode}}
+\end{figure}
 
 Erillisiä pieniä ``moduuleita'' eli .c/.h-tiedostopareja on erillisille yksittäisille antureille ja toimilaitteille, viestinnän abstraktiolle, sekä itse päälogiikalle joka yhdistää tämän kaiken. Antureihin ja toimilaitteisiin kuuluvat esim. servot (kontrollereissa PWM-ohjain) ja akkujännitteet ja ratin asento (kontrollereissa suoraan A/D-muunnin). Tätä moduulirakennetta voisi verrata vaikka olio-ohjelmointiin; C tosin ei sitä helposti tue, eikä sitä tässä varsinaisesti tarvitakaan. Moduuleita ja niiden välistä vuorovaikutusta yritetään selventää kuvalla \ref{fig:avrsofta}.
 
@@ -325,6 +343,52 @@ Aallon politiikan mukaan yhtä opintopistettä vastaa noin 27 tuntia töitä, jo
 
 \clearpage
 \begin{appendices}
+
+\section{Mikrokontrollerikoodin rakenne} \label{app:mcucode}
+
+Kooditiedostot ovat yhdessä läjässä; tässä esitellään ne lyhyesti aakkosjärjestyksessä. Otsikkotiedostoja on jätetty irrelevantteina pois; ne liittyvät oleellisesti vastaaviin .c-tiedostoihin.
+
+\begin{description}
+\item[Makefile] Make-ohjeet matlab-version kääntämiseksi. Tämä on kopioitu ja siistitty matlabin tarjoamasta tiedostosta ja kokeiltu koulun linux-koneilla.
+\item[Makefile.avr] Make-ohjeet mikrokontrollereille (kaikille kolmelle). Tässä asetetaan myösö kullekin makro, joka määrittää erinäisiä asetuksia.
+\item[adc.c] AVR-spesifistä A/D-muuntimen koodia; käytetään mm. akkujännitteiden mittaamiseen ja ratin suunnan havaitsemiseen, joka on toteutettu potentiometrillä.
+\item[analog.c] Analogisten mittausten abstraktio. Kun adc:stä tekisi matlabillekin pwm:n kaltaisen (kuvattu alla) simulaation, ohjelma ei ota kantaa siihen, missä mittaaminen suoritetaan.
+\item[buf2num.m] Esimerkki raakabufferin muuntamisesta numeerisiksi arvoiksi matlabilla.
+\item[comm.c] Yleisiä alustariippumattomia kommunikaatiofunktioita.
+\item[comm.h] Kommunikoinnin perusmäärittelyt, kuten viestinumerot ja pari apumakroa.
+\item[comm\_avr.c] AVR-puolen kommunikointi; käyttää uartia.
+\item[comm\_sim.c]a Simulaattorin eli matlabin kanssa kommunikointi; puuhaa viestinnän yhden suuren taulukon läpi, joka annetaan valmiiksi matlabista kutsuttaessa.
+\item[commtest.m] Lyhyt esimerkki kommunikaation matalan tason hallinnasta matlabilla.
+\item[config.h] Asetuksia, jotka vaihtelevat laitekohtaisesti; esim. kommunikaatioon käytettyjen sarjaporttien numerot.
+\item[controller.c] Matlabin controller-funktion kirjasto-api.
+\item[core.c] TODO RENAME core\_driver.c Pääohjelma ohjaimelle, joka säätää moottoreita ja rattia ja on suoraan kytköksissä pc:hen radiolla sekä välittää viestit eteenpäin.
+\item[core\_brakes.c] Pääohjelma jarrukontrollerille, joka ajaa abs-algoritmeja, ohjaa niillä jarruja ja välittää viestejä edelleen enkooderikontrollerille.
+\item[core\_common.c] Yleisiä kontrolleririippumattomia pääohjelmasta kutsuttavia funktioita.
+\item[core\_encoders.c] Pääohjelma enkooderikontrollerille (teensy). Mittaa enkooderien pyörimisnopeutta ja arvioi kiihtyvyyksiä; välittää ne käyttöliittymälle.
+\item[encoders.c] Enkooderien abstraktio käytettäväksi joka kontrollerissa.
+\item[initTeensy.c] Enkooderille spesifiset alustusrutiinit (mm. keskeytykset ja ajastimet).
+\item[lsq.c] Käyrän sovitus viimeksi mitattuihin pisteisiin.
+\item[main\_brakes.c] Jarrukontrollerin alustuskoodit yms.
+\item[main\_driver.c] Pääkontrollerin alustuskoodit yms.
+\item[main\_encoders.c] Enkooderikontrollerin alustuskoodit yms.
+\item[main\_matlab.c] Matlabin vastaavat; ei ole saanut erityisesti huomiota.
+\item[measdisp.py] Testikoodia viestintään. Ei toimi aina kovin luotettavasti pitkän aikaa.
+\item[motors.c] Ajomoottorien abstraktio.
+\item[motors\_avr.c] Moottoriohjaimen avr-toteutus; välittää ohjaukset pwm:lle.
+\item[msgs.c] Tärkeimmät viestinnän korkean tason käsittelyt.
+\item[parse\_buffer.m] Matlabin puolen viestipuskurinkäsittelyesimerkki.
+\item[parse\_item.m] Yliyksinkertaistettu esimerkki yksittäisen viestipaketin käsittelystä.
+\item[pwm\_avr.c] AVR-puolen varsinainen pwm-toteutus.
+\item[pwm\_sim.c] PWM-``huijaus'' matlabsimulaatiolle; muistaa ohjatut arvot siltä varalta, että niiden perusteella simuloitaisiin jotakin.
+\item[ringbuf.c] Geneerinen rengaspuskuri.
+\item[ringbuftest.c] Yksikkötestejä rengaspuskurille; testattu aluksi pienemmillä puskureilla eikä enää merkityksellinen.
+\item[servos.c] Servoabstraktio jarruille sekä myös mahdollisesti moottorinohjaimille, sillä niitä ohjataan samalla tekniikalla.
+\item[servos\_avr.c] Servojen toiminta AVR-puolella.
+\item[test\_ringbuf.sh] Apuskripti rengaspuskuritestien ajamiseksi.
+\item[uart\_avr.c] Viestinkäsittely avr:lle matalimmalla tasolla eli tavuina rautapuskuriin.
+\item[uartbuf.c] Uartin helpottamiseksi viestittelyabstraktio, joka puskee viestejä rengaspuskuriin kunnes kaikki data on perillä; lukee vastaavasti.
+\item[wheelSpeeds.c] Enkooderin rengasnopeuksien mittauksen yksityiskohdat.
+\end{description}
 
 \section{Käyttöliittymän rakenne} \label{app:gui}
 Tässä liitteessä käydään läpi kuvan X listauksessa esitetyt käyttöliittymän luokat ja funktiot pääpiirteittäin. Tarkemmin toiminta selviää lukemalla luokkien lähdekoodin seassa olevia kommentteja.
