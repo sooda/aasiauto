@@ -47,6 +47,7 @@ classdef Communication < handle
             elseif (strcmp(comport, 'Simul'))
                 Logging.log('Opening car simulation...');
                 this.status = this.STATUSCODE.Simul;
+				Logging.log('Ready to drive.');
 
                 start(this.communicationTimer);
             else
@@ -143,11 +144,8 @@ classdef Communication < handle
 %                c = Car.getInstance;
 %                c.appdata.connected = 1;
 
-			if (this.status == this.STATUSCODE.Simul)
-				c.appdata.connected = 1;
-				
             % wait for input from car
-            elseif (this.serial_data.BytesAvailable && ...
+            if (this.serial_data.BytesAvailable && ...
                     this.status ~= this.STATUSCODE.Initialized)
                 this.status = this.STATUSCODE.Initialized;
                 Logging.log('Initialized and ready for drive session.');
@@ -166,8 +164,16 @@ classdef Communication < handle
         %% Keep connection between GUI and Car alive
         function this = keepAlive(this, varargin)
             c = Car.getInstance();
-            
-            if ~isfield(c.appdata,'manualdrive') || (this.status == this.STATUSCODE.Initialized && c.appdata.manualdrive ~= 1)
+
+			if (isfield(c.appdata,'manualdrive') && c.appdata.manualdrive == 1)
+				return;
+
+			elseif (this.status == this.STATUSCODE.Simul)
+				this.appdata.connected = 1;
+				this.write2(0, []); % ping
+				this.async_Communication_triggered();
+				
+            elseif (this.status == this.STATUSCODE.Initialized)
                 this.write2(0, []); % ping
                 this.writeBytes(this.buf_out);
                 this.buf_out = [];
@@ -178,8 +184,6 @@ classdef Communication < handle
                     this.buf_in = Protocol.parse_buffer(this.buf_in); % just clean buffer here
                 end    
             end
-            % TODO: integrate simulation here
-            % if this.status == this.STATUSCODE.Simul etc.
         end
         
         %% Handle asynchronic reading and writing triggered by a timer.
