@@ -173,9 +173,10 @@ classdef Communication < handle
                 if (numel(val) > 0 && val(1) > -1)
                     this.buf_in = [this.buf_in val];
                     this.buf_in = Protocol.parse_buffer(this.buf_in); % just clean buffer here
-                end
+                end    
             end
-            
+            % TODO: integrate simulation here
+            % if this.status == this.STATUSCODE.Simul etc.
         end
         
         %% Handle asynchronic reading and writing triggered by a timer.
