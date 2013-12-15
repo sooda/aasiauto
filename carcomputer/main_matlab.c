@@ -20,12 +20,12 @@ int matlab_ctrl(int n, uint8_t* in, uint8_t* out) {
 
 	comm_simulate(n, in, out);
 
-	while (msgs_work() == 0)
+	while (msgs_work(BUF_RXHOST) == 0)
 		;
 
 	sensors_update();
 	driveiter();
-	transmit_vals();
+	assert(transmit_vals() == 0);
 
 	return comm_txsize();
 }

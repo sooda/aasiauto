@@ -6,7 +6,9 @@
 #include "comm.h"
 #include "msgs.h"
 #include "pwm.h"
-#include "uart.h"
+#ifndef MCU_SIM
+#include "uart.h" // ?
+#endif
 
 void steer(uint8_t sz, uint8_t id) {
 	(void)sz; (void)id;
@@ -94,17 +96,24 @@ void init() {
 	msgs_register_handler(BUF_RXSLAVE, MSG_PARAMS_EOF, 0, brake_back_proxy);
 }
 
+#ifndef MCU_SIM
 void failmode(void) {
 	motorctl_set(0, 0);
 	uarthost_desync();
 }
+#endif
 
 /* write the state vector to a single packet and send it to the host */
 uint8_t transmit_vals(void) {
+#ifndef MCU_SIM
 	if (msgwatchdog()) {
 		failmode();
 		return 1;
 	}
+#else
+	struct encoderstate enc;
+	encoders_update(enc);
+#endif
 
 	static struct {
 		uint8_t sz, type;

@@ -2,18 +2,22 @@
 
 % size type data
 % size in bytes
-hello = [0 0];
-throttle = [4 2]; % append left right speeds here
+
+% headers
+hello = uint8([0 0]);
+throttle = uint8([4 120]);
+steer = uint8([2 121]);
 
 cache = [];
 for main_i=1:5
 	disp('iter=');
 	disp(main_i);
 	% build control signals somehow...
-	thr = [throttle main_i main_i-1];
-	out = [hello thr];
+	thr = typecast(uint16([main_i main_i-1]), 'uint8')
+	st = typecast(uint16([10 * main_i]), 'uint8')
+	%out = [hello thr steer]
 
-	rawout = typecast(uint16(out), 'uint8')
+	rawout = [hello throttle thr steer st]
 	buf = controller(rawout)
 
 	% simulate partial buffers

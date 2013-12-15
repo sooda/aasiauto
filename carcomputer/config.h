@@ -92,6 +92,11 @@
 	#define PWM_BRAKE_RR 7
 	#define PWM_N 8
 
+#define ADC_STEER 0
+#define ADC_MAINBATTERY 1
+#define ADC_DRIVEBATTERY 2
+#define ADC_N 3
+
 #else
 #ifdef MCU_ENCODERS
 	#define MY_ID ID_ENCODERS

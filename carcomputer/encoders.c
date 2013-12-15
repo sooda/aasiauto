@@ -2,6 +2,7 @@
 #include "comm.h"
 #include "encoders.h"
 #include "motors.h" // testing
+#include "config.h" // testing
 
 static struct encoderstate state
 #ifdef MCU_BRAKES
@@ -41,5 +42,13 @@ void encoders_update(struct encoderstate newstate) {
 	state = newstate;
 #endif
 #endif
+#endif
+
+#if MCU_SIM
+	extern int16_t pwmval[PWM_N];
+	state.fleft = pwmval[PWM_LEFTMOTOR];
+	state.fright = pwmval[PWM_RIGHTMOTOR];
+	state.rleft = pwmval[PWM_LEFTMOTOR];
+	state.rright = pwmval[PWM_RIGHTMOTOR];
 #endif
 }

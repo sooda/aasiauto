@@ -33,6 +33,7 @@ void init_common(void) {
 	}
 }
 
+#ifndef MCU_SIM
 // transmit data and blink the led (FIXME: rename me)
 void transmit(void) {
 	static uint8_t subid;
@@ -45,3 +46,4 @@ void transmit(void) {
 			heartbeat();
 	}
 }
+#endif

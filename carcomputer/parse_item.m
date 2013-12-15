@@ -4,15 +4,15 @@ function parse_item(nums)
 sz = nums(1);
 type = nums(2);
 switch type
-    case 1
-        disp('pong');
-    case 3
-        disp('speed:')
-        disp(nums(3:6))
-    case 4
-    	disp('err:')
-        disp(nums(3))
-    otherwise
-        disp('bad message')
-        disp(nums)
+case 1
+		disp('MSG pong');
+	case 110
+		disp('MSG measurements:')
+		disp(nums(3:end))
+	case 4
+		disp('MSG err:')
+		disp(nums(3:end))
+	otherwise
+		disp('MSG bad message')
+		disp(nums)
 end
