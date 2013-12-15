@@ -2,7 +2,6 @@
 #define COMM_H
 
 #include <stdint.h>
-// FIXME BUF_TXHOST into config etc
 #include "ringbuf.h"
 #include "uartbuf.h"
 

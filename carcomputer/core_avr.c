@@ -67,6 +67,7 @@ void heartbeat(void) {
 void board_init(void) {
 	DDRD |= _BV(3); // tx
 	DDRA |= 3; // brake/drive leds
+	PORTA |= 3; // turn them on
 	DDRA |= _BV(2); // ext blue
 	DDRB |= _BV(7); // internal led
 }

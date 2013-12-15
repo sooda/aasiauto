@@ -38,6 +38,7 @@ void init_common(void) {
 void transmit(void) {
 	static uint8_t subid;
 	uint8_t err = transmit_vals();
+	// NOTE: these blinks are slower if in debug mode with transmit prescale
 	if (err) {
 		if ((subid++ & 0x3f) == 0) // ~ 1s period (100hz update, 64 toggles)
 			heartbeat();

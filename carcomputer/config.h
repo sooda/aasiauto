@@ -5,6 +5,7 @@
 
 // 1000 / this = transmit frequency
 // (increase to make processing slower and easier to debug)
+// (also makes led blinks slower)
 #warning turn back to 10 for 100 hz
 #define TRANSMIT_PRESCALE 30
 // how many iterations per second

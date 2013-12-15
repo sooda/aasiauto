@@ -6,7 +6,7 @@
 struct encoderstate {
 	int16_t fleft, fright;
 	int16_t rleft, rright;
-} __attribute__((packed));
+};
 
 void encoders_init(void);
 // TODO read from the stream, doh

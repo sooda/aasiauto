@@ -18,7 +18,6 @@ int main() {
 	printf("Hello world"); // cli() in putchar won't affect yet here
 	usart_1_init(38400);
 	usart_3_init(38400);
-	// TODO: board_init() or something
 	init();
 	avr_sched_init();
 	board_init();

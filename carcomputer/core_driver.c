@@ -73,13 +73,13 @@ static void meas_from_brakectl(uint8_t sz, uint8_t id) {
 	encoders_update(enc);
 }
 
-// driver init; separate stuff for all three controllers
 void init() {
 	init_common();
 	pwm_init();
 	motors_init();
 	steering_init();
 	ana_meas_init();
+	// initialize the communication to proxy the brake parameters to brake ctl
 	init_param_array(BUF_RXHOST, MSG_BRAKE_PARAMS_START, MSG_BRAKE_PARAMS_END, brake_proxy);
 	init_param_array(BUF_RXHOST, MSG_ABS_PARAMS_START, MSG_ABS_PARAMS_END, brake_proxy);
 	init_param_array(BUF_RXHOST, MSG_ESP_PARAMS_START, MSG_ESP_PARAMS_END, brake_proxy);

@@ -5,7 +5,7 @@
 
 struct motorstate {
 	int16_t left, right;
-} __attribute__((packed));
+};
 
 void motors_init(void);
 struct motorstate motors(void);
