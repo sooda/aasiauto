@@ -1,0 +1,109 @@
+\begin{itemize}
+\item Jotkut abs- ja esp-parametrit vanhentuneita, säilytettiin alkuperäisten algoritmikoodien sekavuuden vuoksi
+\item Raaka puskuri muotoa <0xFF> <datasize> <ID> <16bit numeroita>
+\item FF datassa korvataan kahdella FF:llä
+\item Bootissa tai watchdog-timeoutin jälkeen auton puolella odotellaan että tulee paketin alku (hosti streamaa dataa koko ajan), eli FF ja jotain muuta kuin FF, koska sovitaan että datasize ei ole koskaan 255
+\item Servojen rajaparametrit säilytetty ennallaan; tulee muuttumaan tulevaisuudessa servojen modifikaatioiden takia
+\end{itemize}
+
+\begin{longtable}{l | p{5cm} | l | p{5cm} }
+ID & Matlab-parametri, jos oleellinen & Parametri & Selitys\\ \hline
+0 & Ping & - & Ping request\\
+1 & Pong & pongaajan id & Ping response (Pong)\\
+2 & GUIRequestParams & - & GUI pyytää auton parametrejä\\
+3 & CarRequestParams & - & Auto pyyltää GUI:lta parametrejä (täh?)\\
+4 & Error & id, lähettäjä, parametri & Virheviesti, esim. viestin koko tai id ei täsmää\\
+5 &  &  & \\
+6 &  &  & \\
+7 &  &  & \\
+8 &  &  & \\
+9 &  &  & \\
+10 & frontAxleLeftBrakeServos NeutralPositions & 500-2500 & Etuakselin vasemman jarruservon nolla-asento\\
+11 & frontAxleRightBrakeServos NeutralPositions & 500-2500 & Etuakselin oikean jarruservon nolla-asento\\
+12 & rearAxleLeftBrakeServos NeutralPositions & 500-2500 & Taka-akselin vasemman jarruservon nolla-asento\\
+13 & rearAxleRightBrakeServos NeutralPositions & 500-2500 & Taka-akselin oikean jarruservon nolla-asento\\
+14 & frontAxleLeftBrakeServos MaximumPositions & 500-2500 & Etuakselin vasemman jarruservon maksimiasento\\
+15 & frontAxleRightBrakeServos MaximumPositions & 500-2500 & Etuakselin oikean jarruservon maksimiasento\\
+16 & rearAxleLeftBrakeServos MaximumPositions & 500-2500 & Taka-akselin vasemman jarruservon maksimiasento\\
+17 & rearAxleRightBrakeServos MaximumPositions & 500-2500 & Taka-akselin oikean jarruservon maksimiasento\\
+18 &  &  & \\
+19 &  &  & \\
+20 & absEnabled & 1/0 & ABS on/off\\
+21 & absLowThres & 0-255 & ABS low threshold\\
+22 & absMiddleThres & 0-255 & ABS middle threshold\\
+23 & absHighThres & 0-255 & ABS high threshold\\
+24 & finalPhaseLengthLift & 0-255 & Viimeisen vaiheen pituus jarruvoiman vaiheittaisessa nostossa (1=10ms, ..)\\
+25 & finalPhaseLengthHolding & 0-255 & Viimeisen vaiheen pituus jarruvoiman vakioarvon pitämisessä (1=10ms, ...)\\
+26 & slopeFirstPhaseCalcBrake & 0-255 & Ensimmäisen vaiheen kulmakerroin jarruvoimaa laskettaessa\\
+27 & thirdPhaseReleaseBrake & 0-255 & Kolmannen vaiheen kulmakerroin jarruvoimaa nostettaessa\\
+28 & lastPhaseReleaseBrake & 0-255 & Viimeisen vaiheen kulmakerroin jarruvoimaa nostettaessa (liittyy param. 24)\\
+29 &  &  & \\
+30 & slipTolerance & 0-100 & Sallittu luiston poikkeama maksimiluistosta, prosentteja\\
+31 & enabled & 0/1 & abs päällä vai ei\\
+32 & cutOffSpeed & 0-255 & miniminopeus missä abs on aktiivinen VALUE*0.6134 m/s\\
+33 & minAcc & 0-255 & säädön minimikiihtyvyys\\
+34 & maxAcc & 0-255 & säädön maksimikiihtyvyys\\
+35 & muSplitThreshold & 0-100 & sallittu luiston poikkeama akselilla, prosentteja\\
+36 &  &  & \\
+37 &  &  & \\
+38 &  &  & \\
+39 &  &  & \\
+40 & espEnabled & 1/0 & ESP on/off\\
+41 & espSensitivityControlAngVel & 0-255 & ESP herkkyys kulmanopeussäädössä\\
+42 & espSensitivityAdjSlipAngle & 0-255 & ESP herkkyys sortokulmasäädössä\\
+43 & espBrakeForceFactor & 0-255 & ESP jarruvoiman kerroin (muut paitsi säädettävä pyörä)\\
+44 & espBrakeForceDist & 0-255 & ESP jarruvoiman jako (muut paitsi säädettävä pyörä)\\
+45 & espAngularVelContPCoeff & 0-255 & ESP kulmanopeussäätö, PD säätimen vahvistus P\\
+46 & espAngularVelContDCoeff & 0-255 & ESP kulmanopeussäätö, PD säätimen derivaatta D\\
+47 & espDriftAngleContrPCoeff & 0-255 & ESP sortokulmasäätö, PD säätimen vahvistus P\\
+48 & espDriftAngleContrDCoeff & 0-255 & ESP sortokulmasäätö, PD säätimen derivaatta D\\
+49 & espThresValAngular VelToSlipAngleContrl & 0-255 & ESP sortokulmasäädön ja kulmanopeussäädön raja-arvo\\
+50 & dynamicWheelRollRadius & 0-255 & Pyörän dynaaminen vierintäsäde\\
+51 & wheelbase & $65535/10^5$ & Akseliväli (m)\\
+52 & vehicleMass & $65535/10^3$ & Ajoneuvon massa (kg)\\
+53 & distanceFrontAxleCoG & $65535/10^5$ & Etäisyys etuakselin painopisteestä (l1)\\
+54 & distanceRearAxleCoG & $65535/10^5$ & Etäisyys taka-akselin painopisteestä (l2)\\
+55 & frontAxleTurnStiffness & max 65536 & Etuakselin kaartojäykkyys C1\\
+56 & rearAxleTurnStiffness & max 65536 & Taka-akselin kaartojäykkyys C2\\
+57 &  &  & \\
+58 &  &  & \\
+59 &  &  & \\
+60 &  &  & \\
+ &  &  & \\
+99 & paramsSent & - & Kaikki parametrit lähetetty, ``EOF''\\
+110 & car measurement vector & - & Auto lähettää tilatietoa GUI:lle\\
+ &  &  & \\
+120 & Throttle & -1000..1000 & Throttle\\
+121 & Steering wheel direction & -1000..1000 & Steering wheel direction\\
+122 & Brake & 4 * 0..1000 & Neljän renkaan jarrut\\
+123 & Horn & 1/0 & Töötti \\
+124 &  &  & \\
+125 & Stop automatic drive & - & \\
+126 & Conveyor drive: Keep distance to front & distance & \\
+127 &  &  & \\
+128 &  &  & \\
+ &  &  & \\
+ &  &  & \\
+\end{longtable}
+
+Mittaustietojen välitys autolta käyttöliittymälle (meas vector, id 110)
+
+\begin{longtable}{l | p{5cm} | l }
+Indeksi & Arvo & Vakiokerroin jolla fysikaaliseksi yksiköksi \\ \hline
+0 & Wheelspeed 1 & m * 2*pi*62.5/1000*((1/2048)/0.00125)/16 ~= $9.5874*10^3$ \\
+1 & Wheelspeed 2 & m * 2*pi*62.5/1000*((1/2048)/0.00125)/16 ~= $9.5874*10^3$ \\
+2 & Wheelspeed 3 & m * 2*pi*62.5/1000*((1/2048)/0.00125)/16 ~= $9.5874*10^3$ \\
+3 & Wheelspeed 4 & m * 2*pi*62.5/1000*((1/2048)/0.00125)/16 ~= $9.5874*10^3$ \\
+4 & x-acceleration & m * 32.0/1024.0*9.81 \\
+5 & y-acceleration & m * 32.0/1024.0*9.81 \\
+6 & z-acceleration & m * 32.0/1024.0*9.81 \\
+7 & x-gyro & m * 1/14.38 \\
+8 & y-gyro & m * 1/14.38 \\
+9 & z-gyro & m * 1/14.38 \\
+10 & wheel direction & [-1000, 1000] ? \\
+11 & motor battery voltage & m * (1 / 1023 * 8.4) \\
+12 & controller battery voltage & m * (1 / 1023 * 12.6) \\
+13 & distance sensor, side 1 (ei vielä käytössä) & \\
+14 & distance sensor, side 2 (ei vielä käytössä) & \\
+15 & distance senros, front (ei vielä käytössä) & \\
+\end{longtable}
