@@ -14,11 +14,14 @@
 // half a second for emergency timeout
 #define WATCHDOG_MAX (HZ/2)
 
-// Ring buffer. Power of two, please
-// bitmask and also index of last id
-#define RBUF_SZMASK 255
+#ifndef MCU_RINGBUFTEST
+	// Ring buffer. Power of two, please
+	// bitmask and also index of last id
+	#define RBUF_SZMASK 255
+#else
+	#define RBUF_SZMASK 7
+#endif
 #define RBUF_SIZE (RBUF_SZMASK+1)
-
 #define BUF_TXHOST 0 // to host
 #define BUF_RXHOST 1 // from host
 // drive controller commands brakes, brakectl commands teensy
@@ -26,7 +29,6 @@
 #define BUF_TXSLAVE 2
 #define BUF_RXSLAVE 3
 #define RBUF_NBUFS 4
-
 // magic. simplifies uart handling
 #define UDRNUM1(x) UDR ## x
 #define UDRNUM(x) UDRNUM1(x)
@@ -104,7 +106,11 @@
 	
 	#define UART_HOST 1
 #else
+#ifdef MCU_RINGBUFTEST
+	// nothing
+#else
 	#error No proper MCU defined.
+#endif
 #endif
 #endif
 #endif

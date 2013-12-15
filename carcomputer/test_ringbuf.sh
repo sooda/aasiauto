@@ -1,1 +1,1 @@
-gcc -g -std=c99 -Wall -Wextra ringbuftest.c ringbuf.c && ./a.out
+gcc -g -std=c99 -Wall -Wextra -DMCU_RINGBUFTEST ringbuftest.c ringbuf.c && ./a.out

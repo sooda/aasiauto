@@ -1,4 +1,3 @@
-#include "comm_avr.h"
 #include "ringbuf.h"
 #include <stdio.h>
 
